@@ -6,6 +6,13 @@
     "build": "vite build",
     "serve": "vite preview"
   },
+  "buildOptions": {
+    "formats": [
+      "global"
+    ],
+    "env": "development",
+    "enableNonBrowserBranches": true
+  },
   "dependencies": {
     "@antfu/utils": "^0.1.6",
     "@vue/runtime-core": "^3.0.11",

@@ -8,8 +8,9 @@ export function copyVuePlugin(): Plugin {
     generateBundle() {
       const filePath = path.resolve(
         __dirname,
-        '../vue/dist/vue.runtime.esm-browser.js'
+        '../node_modules/vue/dist/vue.runtime.esm-browser.js'
       )
+      console.log(filePath)
       if (!fs.existsSync(filePath)) {
         throw new Error(
           `vue.runtime.esm-browser.js not built. ` +
