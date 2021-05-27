@@ -6,8 +6,6 @@ import { createSingletonPromise } from '@antfu/utils'
 import vueuseTypes from '@vueuse/core/dist/index.d.ts?raw'
 import vueTypes from '@vue/runtime-core/dist/runtime-core.d.ts?raw'
 
-console.log(vueTypes)
-
 const setup = createSingletonPromise(async() => {
   monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
     ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),

@@ -33,17 +33,17 @@ interface Store {
 }
 
 const files: any = {
-  [MAIN_FILE]: new File(MAIN_FILE, welcomeCode)
+  'App.vue': new File('App.vue', welcomeCode)
 }
 
 export const store: Store = reactive({
   files,
   scriptContent: '',
   templateContent: '',
-  activeFilename: MAIN_FILE,
+  activeFilename: 'App.vue',
   errors: [],
   get activeFile() {
-    return store.files[MAIN_FILE]
+    return store.files['App.vue']
   },
   get importMap() {
     return `

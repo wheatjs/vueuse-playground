@@ -4,8 +4,23 @@ import WindiCSS from 'vite-plugin-windicss'
 import ViteComponents from 'vite-plugin-components'
 import { copyVuePlugin } from './plugins/copy-vue'
 
+const prefix = `monaco-editor/esm/vs`;
+
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          jsonWorker: [`${prefix}/language/json/json.worker`],
+          cssWorker: [`${prefix}/language/css/css.worker`],
+          htmlWorker: [`${prefix}/language/html/html.worker`],
+          tsWorker: [`${prefix}/language/typescript/ts.worker`],
+          editorWorker: [`${prefix}/editor/editor.worker`],
+        },
+      }
+    }
+  },
   plugins: [
     vue(), 
     copyVuePlugin(),
