@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite'
+import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import WindiCSS from 'vite-plugin-windicss'
 import ViteComponents from 'vite-plugin-components'
+import Icons, { ViteIconsResolver } from 'vite-plugin-icons'
 import { copyVuePlugin } from './plugins/copy-vue'
 
 const prefix = `monaco-editor/esm/vs`;
@@ -25,10 +27,16 @@ export default defineConfig({
     vue(), 
     copyVuePlugin(),
     WindiCSS(),
-    ViteComponents(),
+    ViteComponents({
+      customComponentResolvers: ViteIconsResolver({
+        componentPrefix: ''
+      }),
+    }),
+    Icons(),
   ],
   resolve: {
     alias: {
+      '~/': `${path.resolve(__dirname, 'src')}/`,
       '@vue/compiler-sfc': '@vue/compiler-sfc/dist/compiler-sfc.esm-browser.js'
     }
   },

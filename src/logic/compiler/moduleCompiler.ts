@@ -1,5 +1,5 @@
-import { store, File } from '../store'
-import { MAIN_FILE } from '../sfcCompiler'
+import { store, File } from '../../store'
+import { MAIN_FILE } from './sfcCompiler'
 import {
   babelParse,
   MagicString,

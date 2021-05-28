@@ -1,7 +1,10 @@
 import { watch, Ref, unref } from 'vue'
 import { createEventHook, tryOnUnmounted } from '@vueuse/core'
 import darktheme from 'theme-vitesse/themes/vitesse-dark.json'
+import lightTheme from 'theme-vitesse/themes/vitesse-light.json'
 import setupMonaco from '../logic/editor'
+import { isDark } from '../logic/dark'
+
 export function useMonaco(target: Ref, options: any) {
   const changeEventHook = createEventHook<string>()
 
@@ -9,6 +12,8 @@ export function useMonaco(target: Ref, options: any) {
     const { monaco } = await setupMonaco()
     // @ts-expect-error
     monaco.editor.defineTheme('vitesse-dark', darktheme)
+    // @ts-expect-error
+    monaco.editor.defineTheme('vitesse-light', lightTheme)
   
     const stop = watch(target, () => {
       const el = unref(target)
@@ -39,6 +44,13 @@ export function useMonaco(target: Ref, options: any) {
           enabled: false,
         },
       })
+
+      watch(isDark, () => {
+        if (isDark.value)
+          monaco.editor.setTheme('vitesse-dark')
+        else
+          monaco.editor.setTheme('vitesse-light')
+      }, { immediate: true })
   
       editor.getModel()?.onDidChangeContent(e => changeEventHook.trigger(editor.getValue()))
     }, {

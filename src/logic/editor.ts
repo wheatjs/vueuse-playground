@@ -1,6 +1,7 @@
-import { getCurrentInstance, onMounted } from 'vue'
+import { getCurrentInstance, onMounted, watch } from 'vue'
 import * as monaco from 'monaco-editor'
 import { createSingletonPromise } from '@antfu/utils'
+import { store } from '~/store'
 /* __imports__ */
 
 import vueuseTypes from '@vueuse/core/dist/index.d.ts?raw'
@@ -13,8 +14,11 @@ const setup = createSingletonPromise(async() => {
     noUnusedParameters: false,
     allowUnreachableCode: true,
     allowUnusedLabels: true,
-    strict: true,
+    strict: false,
+    allowJs: true,
   })
+
+  const registered: string[] = ['vue', '@vueuse/core']
 
   monaco.languages.typescript.typescriptDefaults.addExtraLib(`
     declare module '@vueuse/core' { ${vueuseTypes} }
@@ -23,6 +27,21 @@ const setup = createSingletonPromise(async() => {
   monaco.languages.typescript.typescriptDefaults.addExtraLib(`
     declare module 'vue' { ${vueTypes} }
   `, 'ts:vue')
+
+  watch(() => store.packages, () => {
+    store.packages.forEach((pack) => {
+      if (registered.includes(pack.name))
+        return
+
+      registered.push(pack.name)
+      monaco.languages.typescript.typescriptDefaults.addExtraLib(`
+        declare module '${pack.name}' {
+          let x: any;
+          export = x;
+        }
+      `, pack.name)
+    })
+  }, { immediate: true })
 
   await Promise.all([
     // load workers

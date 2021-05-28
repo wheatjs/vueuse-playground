@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmit, ref } from 'vue'
-import { useMonaco } from '../logic/monaco'
-import { store } from '../store'
+import { useMonaco } from '~/logic/monaco'
+import { store } from '~/store'
 
 const emit = defineEmit(['change'])
 const props = defineProps<{ language: string, value: string }>()

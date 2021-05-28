@@ -8,11 +8,11 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watchEffect, watch } from 'vue'
 import type { WatchStopHandle } from 'vue'
-import srcdoc from './srcdoc.html?raw'
-import { PreviewProxy } from './PreviewProxy'
-import { MAIN_FILE, vueRuntimeUrl } from '../sfcCompiler'
-import { compileModulesForPreview } from './moduleCompiler'
-import { store } from '../store'
+import srcdoc from '../srcdoc.html?raw'
+import { PreviewProxy } from '~/logic/PreviewProxy'
+import { MAIN_FILE, vueRuntimeUrl } from '~/logic/compiler/sfcCompiler'
+import { compileModulesForPreview } from '~/logic/compiler/moduleCompiler'
+import { store } from '~/store'
 const container = ref()
 const runtimeError = ref()
 const runtimeWarning = ref()

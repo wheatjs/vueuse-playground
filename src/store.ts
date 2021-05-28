@@ -1,5 +1,5 @@
 import { reactive, watchEffect, watch } from 'vue'
-import { compileFile, MAIN_FILE } from './sfcCompiler'
+import { compileFile, MAIN_FILE } from './logic/compiler/sfcCompiler'
 
 const welcomeCode = `
 <script setup>
@@ -22,7 +22,14 @@ export class File {
   }
 }
 
+interface Package {
+  name: string
+  description: string
+  url: string
+}
+
 interface Store {
+  packages: Package[],
   files: Record<string, File>
   scriptContent: string,
   templateContent: string,
@@ -36,7 +43,31 @@ const files: any = {
   'App.vue': new File('App.vue', welcomeCode)
 }
 
+let savedState = {}
+
+if (location.hash.slice(1)) {
+  savedState = JSON.parse(atob(location.hash.slice(1)))
+}
+
+
 export const store: Store = reactive({
+  packages: [
+    {
+      name: 'vue-demi',
+      description: 'Vue Demi (half in French) is a developing utility allows you to write Universal Vue Libraries for Vue 2 & 3',
+      url: 'https://unpkg.com/vue-demi/lib/index.esm.js',
+    },
+    {
+      name: '@vueuse/shared',
+      description: 'Shared VueUse utilities.',
+      url: 'https://unpkg.com/@vueuse/shared/dist/index.esm.js'
+    },
+    {
+      name: '@vueuse/core',
+      description: 'Collection of essential Vue Composition Utilities',
+      url: 'https://unpkg.com/@vueuse/core/dist/index.esm.js',
+    }
+  ],
   files,
   scriptContent: '',
   templateContent: '',
@@ -46,18 +77,19 @@ export const store: Store = reactive({
     return store.files['App.vue']
   },
   get importMap() {
+    const imports = store.packages.map(({ name, url }) => `"${name}": "${url}"`)
+
     return `
       {
         "imports": {
-          "@vueuse/core": "https://unpkg.com/@vueuse/core/dist/index.esm.js",
-          "@vueuse/shared": "https://unpkg.com/@vueuse/shared/dist/index.esm.js",
-          "vue-demi": "https://unpkg.com/vue-demi/lib/index.esm.js"
+          ${imports.join(',\n')}
         }
       }
     `
-  }
+  },
+  ...savedState
 })
-
+let count = 0
 watch(() => [store.scriptContent, store.templateContent], () => {
   store.activeFile.code = `
     <script setup>
@@ -73,6 +105,16 @@ watch(() => [store.scriptContent, store.templateContent], () => {
       }
     </style>
   `
-}, {})
+}, { immediate: true })
 
+export function exportState() {
+  return btoa(JSON.stringify({
+    packages: store.packages,
+    scriptContent: store.scriptContent,
+    templateContent: store.templateContent,
+  }))
+}
+
+// watch(() => [store.scriptContent, store.templateContent, store.packages], 
+//   )
 watchEffect(() => compileFile(store.activeFile))

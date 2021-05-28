@@ -1,4 +1,4 @@
-import { store, File } from './store'
+import { store, File } from '../../store'
 import { SFCDescriptor, BindingMetadata } from '@vue/compiler-sfc'
 import * as defaultCompiler from '@vue/compiler-sfc'
 import { ref } from 'vue'
