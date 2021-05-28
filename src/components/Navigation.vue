@@ -27,8 +27,10 @@ const copyToClipboard = () => {
     <IconButton @click="isOpen = true">
       <carbon-settings class="text-xl" />
     </IconButton>
-    <IconButton>
-      <carbon-help class="text-xl" />
-    </IconButton>
+    <a href="https://github.com/wheatjs/vueuse-playground" target="_blank">
+      <IconButton>
+        <mdi-github class="text-xl" />
+      </IconButton>
+    </a>
   </div>  
 </template>

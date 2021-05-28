@@ -22,7 +22,9 @@ const isOpen = useVModel(props)
             <SkypackSearch />
           </SettingsTab>
           <SettingsTab name="Editor">
-            Some Content 2
+            <div class="h-[50vh] grid place-content-center text-lg place-items-center">
+              Coming Soon
+            </div>
           </SettingsTab>
         </SettingsTabs>
       </div>
