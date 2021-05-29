@@ -1,10 +1,8 @@
 <template>
-  <!-- <Transition name="fade">
-    <pre v-if="!dismissed && (err || warn)"
-      class="msg"
-      :class="err ? 'err' : 'warn'"
-      @click="dismissed = true">{{ formatMessage(err || warn) }}</pre>
-  </Transition> -->
+  <pre v-if="!dismissed && (err || warn)"
+    class="msg"
+    :class="err ? 'err' : 'warn'"
+    @click="dismissed = true">{{ formatMessage(err || warn) }}</pre>
 </template>
 
 <script setup lang="ts">

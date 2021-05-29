@@ -2,19 +2,20 @@
 import { Splitpanes, Pane } from 'splitpanes'
 import { store } from '~/store'
 
-const initialScriptContent = store.scriptContent.length > 0 ? store.scriptContent : `
+const initialScriptContent = store.scriptContent.length > 0
+  ? store.scriptContent
+  : `
 import { useMouse } from '@vueuse/core'
 
 const { x, y } = useMouse()
 `.trim()
 
-const initialTemplateContent = store.templateContent.length > 0 ? store.templateContent : `
+const initialTemplateContent = store.templateContent.length > 0
+  ? store.templateContent
+  : `
 X: {{ x }}
 Y: {{ y }}
 `.trim()
-
-let scriptContent = initialScriptContent
-let templateContent = ''
 
 const onContentChanged = (source: string, content: string) => {
   if (source === 'script')
@@ -30,20 +31,37 @@ const onContentChanged = (source: string, content: string) => {
       <Splitpanes class="h-full default-theme" horizontal>
         <Pane>
           <Container title="Script Setup">
-            <Editor @change="(content) => onContentChanged('script', content)" language="typescript" :value="initialScriptContent" />
+            <Editor
+              language="typescript"
+              :value="initialScriptContent"
+              @change="(content) => onContentChanged('script', content)"
+            />
           </Container>
         </Pane>
         <Pane>
           <Container title="Template">
-            <Editor @change="(content) => onContentChanged('template', content)" language="html" :value="initialTemplateContent" />
+            <Editor
+              language="html"
+              :value="initialTemplateContent"
+              @change="(content) => onContentChanged('template', content)"
+            />
           </Container>
         </Pane>
       </Splitpanes>
     </Pane>
     <Pane>
-      <Container title="Output">
-        <Preview />
-      </Container>
+      <Splitpanes horizontal>
+        <Pane>
+          <Container title="Output">
+            <Preview />
+          </Container>
+        </Pane>
+        <!-- <Pane size="25">
+          <Container title="Console">
+            <Console />
+          </Container>
+        </Pane> -->
+      </Splitpanes>
     </Pane>
   </Splitpanes>
 </template>

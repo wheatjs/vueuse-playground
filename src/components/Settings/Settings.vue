@@ -9,8 +9,7 @@ const isOpen = useVModel(props)
 <template>
   <!-- Scrim -->
   <div v-if="isOpen">
-    <div @click="isOpen = false" class="fixed z-500 inset-0 backdrop-blur-sm bg-white bg-opacity-5">
-  
+    <div class="fixed z-500 inset-0 backdrop-blur-sm bg-white bg-opacity-5" @click="isOpen = false">
     </div>
     <div class="fixed inset-0 p-4 z-500 grid place-items-center pointer-events-none">
       <div class=" rounded w-full h-[50vh] max-w-screen-lg dark:text-light-100 shadow-xl grid grid-cols-[200px,auto] overflow-hidden pointer-events-auto">
@@ -28,7 +27,7 @@ const isOpen = useVModel(props)
           </SettingsTab>
         </SettingsTabs>
       </div>
-    </div>  
+    </div>
   </div>
 </template>
 

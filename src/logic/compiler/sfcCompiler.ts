@@ -1,10 +1,11 @@
-import { store, File } from '../../store'
 import { SFCDescriptor, BindingMetadata } from '@vue/compiler-sfc'
 import * as defaultCompiler from '@vue/compiler-sfc'
 import { ref } from 'vue'
+import { store, File } from '../../store'
+import { generateStyles } from './windi'
 
 export const MAIN_FILE = 'App.vue'
-export const COMP_IDENTIFIER = `__sfc__`
+export const COMP_IDENTIFIER = '__sfc__'
 
 /**
  * The default SFC compiler we are using is built from each commit
@@ -24,10 +25,11 @@ export async function setVersion(version: string) {
   const runtimeUrl = `https://unpkg.com/@vue/runtime-dom@${version}/dist/runtime-dom.esm-browser.js`
   const [compiler] = await Promise.all([
     import(/* @vite-ignore */ compilerUrl),
-    import(/* @vite-ignore */ runtimeUrl)
+    import(/* @vite-ignore */ runtimeUrl),
   ])
   SFCCompiler = compiler
   vueRuntimeUrl.value = runtimeUrl
+  // eslint-disable-next-line no-console
   console.info(`Now using Vue version: ${version}`)
 }
 
@@ -51,7 +53,7 @@ export async function compileFile({ filename, code, compiled }: File) {
   const id = await hashId(filename)
   const { errors, descriptor } = SFCCompiler.parse(code, {
     filename,
-    sourceMap: true
+    sourceMap: true,
   })
   if (errors.length) {
     store.errors = errors
@@ -59,13 +61,13 @@ export async function compileFile({ filename, code, compiled }: File) {
   }
 
   if (
-    (descriptor.script && descriptor.script.lang) ||
-    (descriptor.scriptSetup && descriptor.scriptSetup.lang) ||
-    descriptor.styles.some(s => s.lang) ||
-    (descriptor.template && descriptor.template.lang)
+    (descriptor.script && descriptor.script.lang)
+    || (descriptor.scriptSetup && descriptor.scriptSetup.lang)
+    || descriptor.styles.some(s => s.lang)
+    || (descriptor.template && descriptor.template.lang)
   ) {
     store.errors = [
-      'lang="x" pre-processors are not supported in the in-browser playground.'
+      'lang="x" pre-processors are not supported in the in-browser playground.',
     ]
     return
   }
@@ -80,9 +82,9 @@ export async function compileFile({ filename, code, compiled }: File) {
   }
 
   const clientScriptResult = doCompileScript(descriptor, id, false)
-  if (!clientScriptResult) {
+  if (!clientScriptResult)
     return
-  }
+
   const [clientScript, bindings] = clientScriptResult
   clientCode += clientScript
 
@@ -90,11 +92,12 @@ export async function compileFile({ filename, code, compiled }: File) {
   // the render fn is inlined.
   if (descriptor.scriptSetup) {
     const ssrScriptResult = doCompileScript(descriptor, id, true)
-    if (!ssrScriptResult) {
+    if (!ssrScriptResult)
       return
-    }
+
     ssrCode += ssrScriptResult[0]
-  } else {
+  }
+  else {
     // when no <script setup> is used, the script result will be identical.
     ssrCode += clientScript
   }
@@ -106,30 +109,30 @@ export async function compileFile({ filename, code, compiled }: File) {
       descriptor,
       id,
       bindings,
-      false
+      false,
     )
-    if (!clientTemplateResult) {
+    if (!clientTemplateResult)
       return
-    }
+
     clientCode += clientTemplateResult
 
     const ssrTemplateResult = doCompileTemplate(descriptor, id, bindings, true)
-    if (!ssrTemplateResult) {
+    if (!ssrTemplateResult)
       return
-    }
+
     ssrCode += ssrTemplateResult
   }
 
   if (hasScoped) {
     appendSharedCode(
-      `\n${COMP_IDENTIFIER}.__scopeId = ${JSON.stringify(`data-v-${id}`)}`
+      `\n${COMP_IDENTIFIER}.__scopeId = ${JSON.stringify(`data-v-${id}`)}`,
     )
   }
 
   if (clientCode || ssrCode) {
     appendSharedCode(
-      `\n${COMP_IDENTIFIER}.__file = ${JSON.stringify(filename)}` +
-        `\nexport default ${COMP_IDENTIFIER}`
+      `\n${COMP_IDENTIFIER}.__file = ${JSON.stringify(filename)}`
+        + `\nexport default ${COMP_IDENTIFIER}`,
     )
     compiled.js = clientCode.trimStart()
     compiled.ssr = ssrCode.trimStart()
@@ -137,9 +140,14 @@ export async function compileFile({ filename, code, compiled }: File) {
 
   // styles
   let css = ''
+
+  // Compile windicss styles
+  if (descriptor.template && descriptor.template.content)
+    css = generateStyles(descriptor.template.content)
+
   for (const style of descriptor.styles) {
     if (style.module) {
-      store.errors = [`<style module> is not supported in the playground.`]
+      store.errors = ['<style module> is not supported in the playground.']
       return
     }
 
@@ -148,24 +156,24 @@ export async function compileFile({ filename, code, compiled }: File) {
       filename,
       id,
       scoped: style.scoped,
-      modules: !!style.module
+      modules: !!style.module,
     })
     if (styleResult.errors.length) {
       // postcss uses pathToFileURL which isn't polyfilled in the browser
       // ignore these errors for now
-      if (!styleResult.errors[0].message.includes('pathToFileURL')) {
+      if (!styleResult.errors[0].message.includes('pathToFileURL'))
         store.errors = styleResult.errors
-      }
+
       // proceed even if css compile errors
-    } else {
-      css += styleResult.code + '\n'
+    }
+    else {
+      css += `${styleResult.code}\n`
     }
   }
-  if (css) {
+  if (css)
     compiled.css = css.trim()
-  } else {
+  else
     compiled.css = '/* No <style> tags present */'
-  }
 
   // clear errors
   store.errors = []
@@ -174,7 +182,7 @@ export async function compileFile({ filename, code, compiled }: File) {
 function doCompileScript(
   descriptor: SFCDescriptor,
   id: string,
-  ssr: boolean
+  ssr: boolean,
 ): [string, BindingMetadata | undefined] | undefined {
   if (descriptor.script || descriptor.scriptSetup) {
     try {
@@ -184,26 +192,27 @@ function doCompileScript(
         inlineTemplate: true,
         templateOptions: {
           ssr,
-          ssrCssVars: descriptor.cssVars
-        }
+          ssrCssVars: descriptor.cssVars,
+        },
       })
       let code = ''
       if (compiledScript.bindings) {
         code += `\n/* Analyzed bindings: ${JSON.stringify(
           compiledScript.bindings,
           null,
-          2
+          2,
         )} */`
       }
-      code +=
-        `\n` +
-        SFCCompiler.rewriteDefault(compiledScript.content, COMP_IDENTIFIER)
+      code
+        += `\n${
+          SFCCompiler.rewriteDefault(compiledScript.content, COMP_IDENTIFIER)}`
       return [code, compiledScript.bindings]
-    } catch (e) {
-      store.errors = [e]
-      return
     }
-  } else {
+    catch (e) {
+      store.errors = [e]
+    }
+  }
+  else {
     return [`\nconst ${COMP_IDENTIFIER} = {}`, undefined]
   }
 }
@@ -212,7 +221,7 @@ function doCompileTemplate(
   descriptor: SFCDescriptor,
   id: string,
   bindingMetadata: BindingMetadata | undefined,
-  ssr: boolean
+  ssr: boolean,
 ) {
   const templateResult = SFCCompiler.compileTemplate({
     source: descriptor.template!.content,
@@ -224,20 +233,20 @@ function doCompileTemplate(
     ssrCssVars: descriptor.cssVars,
     isProd: false,
     compilerOptions: {
-      bindingMetadata
-    }
+      bindingMetadata,
+    },
   })
   if (templateResult.errors.length) {
     store.errors = templateResult.errors
     return
   }
 
-  const fnName = ssr ? `ssrRender` : `render`
+  const fnName = ssr ? 'ssrRender' : 'render'
 
   return (
     `\n${templateResult.code.replace(
       /\nexport (function|const) (render|ssrRender)/,
-      `$1 ${fnName}`
+      `$1 ${fnName}`,
     )}` + `\n${COMP_IDENTIFIER}.${fnName} = ${fnName}`
   )
 }

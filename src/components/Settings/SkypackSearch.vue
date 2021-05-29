@@ -13,7 +13,7 @@ const { data } = useFetch(url, { refetch: true }).get().json()
   <div class="h-[50vh]">
     <div class="h-14 bg-light-400 dark:bg-dark-900 flex flex-row items-center px-4">
       <ph-package class="text-xl" />
-      <input type="text" v-model="query" class="h-full flex-1 px-4 bg-transparent focus:outline-none" placeholder="Search Skypack Pakages...">
+      <input v-model="query" type="text" class="h-full flex-1 px-4 bg-transparent focus:outline-none" placeholder="Search Skypack Pakages...">
     </div>
     <div class="content-container overflow-auto">
       <div v-if="query === ''" class="grid gap-2 text-lg h-full place-items-center place-content-center">
@@ -23,11 +23,10 @@ const { data } = useFetch(url, { refetch: true }).get().json()
         </span>
       </div>
       <template v-else-if="data && data.results">
-        <SkypackItem v-bind="item" v-for="item in data.results" :key="item.name" />
+        <SkypackItem v-for="item in data.results" v-bind="item" :key="item.name" />
       </template>
     </div>
   </div>
-  
 </template>
 
 <style>

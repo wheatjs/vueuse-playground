@@ -14,7 +14,7 @@ import { store } from '~/store'
       </div>
     </div>
     <div>
-      <InstalledItem v-for="pack in store.packages" :name="pack.name" :description="pack.description" :key="pack.url" />
+      <InstalledItem v-for="pack in store.packages" :key="pack.url" :name="pack.name" :description="pack.description" />
     </div>
-  </div>  
+  </div>
 </template>

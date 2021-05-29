@@ -16,7 +16,7 @@ provide('activeTab', activeTab)
       :key="tab"
       :class="{ 'text-green-500': activeTab === tab }"
       class="focus:outline-none text-left px-4 py-2 text-md flex flex-row items-center space-x-2"
-      @click="activeTab = tab" 
+      @click="activeTab = tab"
     >
       <ph-package v-if="tab === 'Packages'" />
       <carbon-code v-if="tab === 'Editor'" />

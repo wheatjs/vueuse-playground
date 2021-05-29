@@ -18,7 +18,7 @@ const uninstall = () => {
       <span>{{ name }}</span>
       <span class="text-dark-100 dark:text-light-900 text-opacity-70 text-sm">{{ description }}</span>
     </div>
-    <button @click="uninstall" class="bg-light-900 dark:bg-dark-900 px-4 py-1 dark:text-light-900 text-opacity-75 rounded">
+    <button class="bg-light-900 dark:bg-dark-900 px-4 py-1 dark:text-light-900 text-opacity-75 rounded" @click="uninstall">
       Uninstall
     </button>
   </div>

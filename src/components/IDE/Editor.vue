@@ -4,7 +4,7 @@ import { useMonaco } from '~/logic/monaco'
 import { store } from '~/store'
 
 const emit = defineEmit(['change'])
-const props = defineProps<{ language: string, value: string }>()
+const props = defineProps<{ language: string; value: string }>()
 
 const target = ref()
 const { onChange } = useMonaco(target, {
@@ -21,6 +21,5 @@ emit('change', props.value)
 
 <template>
   <div ref="target" class="h-full w-full">
-
   </div>
 </template>

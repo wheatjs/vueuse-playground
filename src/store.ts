@@ -1,5 +1,5 @@
 import { reactive, watchEffect, watch } from 'vue'
-import { compileFile, MAIN_FILE } from './logic/compiler/sfcCompiler'
+import { compileFile } from './logic/compiler/sfcCompiler'
 
 const welcomeCode = `
 <script setup>
@@ -14,8 +14,9 @@ export class File {
   compiled = {
     js: '',
     css: '',
-    ssr: ''
+    ssr: '',
   }
+
   constructor(filename: string, code = '') {
     this.filename = filename
     this.code = code
@@ -29,10 +30,10 @@ interface Package {
 }
 
 interface Store {
-  packages: Package[],
+  packages: Package[]
   files: Record<string, File>
-  scriptContent: string,
-  templateContent: string,
+  scriptContent: string
+  templateContent: string
   activeFilename: string
   readonly activeFile: File
   readonly importMap: string | undefined
@@ -40,15 +41,13 @@ interface Store {
 }
 
 const files: any = {
-  'App.vue': new File('App.vue', welcomeCode)
+  'App.vue': new File('App.vue', welcomeCode),
 }
 
 let savedState = {}
 
-if (location.hash.slice(1)) {
+if (location.hash.slice(1))
   savedState = JSON.parse(atob(location.hash.slice(1)))
-}
-
 
 export const store: Store = reactive({
   packages: [
@@ -60,13 +59,13 @@ export const store: Store = reactive({
     {
       name: '@vueuse/shared',
       description: 'Shared VueUse utilities.',
-      url: 'https://unpkg.com/@vueuse/shared/dist/index.esm.js'
+      url: 'https://unpkg.com/@vueuse/shared/dist/index.esm.js',
     },
     {
       name: '@vueuse/core',
       description: 'Collection of essential Vue Composition Utilities',
       url: 'https://unpkg.com/@vueuse/core/dist/index.esm.js',
-    }
+    },
   ],
   files,
   scriptContent: '',
@@ -87,9 +86,9 @@ export const store: Store = reactive({
       }
     `
   },
-  ...savedState
+  ...savedState,
 })
-let count = 0
+
 watch(() => [store.scriptContent, store.templateContent], () => {
   store.activeFile.code = `
     <script setup>
@@ -98,12 +97,6 @@ watch(() => [store.scriptContent, store.templateContent], () => {
     <template>
       ${store.templateContent}
     </template>
-    <style>
-      html,
-      body {
-        color: white;
-      }
-    </style>
   `
 }, { immediate: true })
 
@@ -115,6 +108,4 @@ export function exportState() {
   }))
 }
 
-// watch(() => [store.scriptContent, store.templateContent, store.packages], 
-//   )
 watchEffect(() => compileFile(store.activeFile))

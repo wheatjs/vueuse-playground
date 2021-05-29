@@ -25,7 +25,7 @@ const install = () => {
         name: props.name,
         description: props.description,
         url: `https://cdn.skypack.dev/${props.name}`,
-      }
+      },
     ]
   }
 }
@@ -37,7 +37,11 @@ const install = () => {
       <span>{{ name }}</span>
       <span class="text-dark-100 dark:text-light-900 text-opacity-70 text-sm">{{ description }}</span>
     </div>
-    <button @click="install" :class="{ '!bg-green-500 !text-green-900': isInstalled }" class="bg-light-900 dark:bg-dark-900 px-4 py-1 dark:text-light-900 text-opacity-75 rounded">
+    <button
+      :class="{ '!bg-green-500 !text-green-900': isInstalled }"
+      class="bg-light-900 dark:bg-dark-900 px-4 py-1 dark:text-light-900 text-opacity-75 rounded"
+      @click="install"
+    >
       {{ isInstalled ? 'Installed' : 'Install' }}
     </button>
   </div>

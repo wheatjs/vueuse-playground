@@ -33,5 +33,5 @@ const copyToClipboard = () => {
         <mdi-github class="text-xl" />
       </IconButton>
     </a>
-  </div>  
+  </div>
 </template>
