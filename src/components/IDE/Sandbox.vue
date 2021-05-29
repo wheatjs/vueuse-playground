@@ -28,26 +28,35 @@ const onContentChanged = (source: string, content: string) => {
 <template>
   <Splitpanes class="default-theme">
     <Pane>
-      <Splitpanes class="h-full default-theme" horizontal>
-        <Pane>
-          <Container title="Script Setup">
-            <Editor
-              language="typescript"
-              :value="initialScriptContent"
-              @change="(content) => onContentChanged('script', content)"
-            />
-          </Container>
-        </Pane>
-        <Pane>
-          <Container title="Template">
-            <Editor
-              language="html"
-              :value="initialTemplateContent"
-              @change="(content) => onContentChanged('template', content)"
-            />
-          </Container>
-        </Pane>
-      </Splitpanes>
+      <div class="h-full">
+        <div class="bg-dark-800 rounded-t-md border-b dark:border-dark-900 flex flex-row items-center pr-2">
+          <Tab :name="file.filename" v-for="file in store.files" :key="file.filename">
+            {{ file.filename }}
+          </Tab>
+          <span class="flex-1" />
+          <carbon-add class="text-lg dark:text-light-900" />
+        </div>
+        <Splitpanes class="h-full default-theme" horizontal>
+          <Pane>
+            <Container title="Script Setup" no-overflow no-rounding>
+              <Editor
+                language="typescript"
+                :value="initialScriptContent"
+                @change="content => onContentChanged('script', content)"
+              />
+            </Container>
+          </Pane>
+          <Pane>
+            <Container title="Template" no-overflow>
+              <Editor
+                language="html"
+                :value="initialTemplateContent"
+                @change="content => onContentChanged('template', content)"
+              />
+            </Container>
+          </Pane>
+        </Splitpanes>
+      </div>
     </Pane>
     <Pane>
       <Splitpanes horizontal>
@@ -56,11 +65,11 @@ const onContentChanged = (source: string, content: string) => {
             <Preview />
           </Container>
         </Pane>
-        <!-- <Pane size="25">
+        <Pane size="25">
           <Container title="Console">
             <Console />
           </Container>
-        </Pane> -->
+        </Pane>
       </Splitpanes>
     </Pane>
   </Splitpanes>
