@@ -13,8 +13,16 @@ const { x, y } = useMouse()
 const initialTemplateContent = store.templateContent.length > 0
   ? store.templateContent
   : `
-X: {{ x }}
-Y: {{ y }}
+<div class="h-screen grid place-items-center place-content-center grid-flow-col gap-4 font-mono">
+  <div class="dark:bg-dark-500 bg-light-500 flex flex-col text-center p-2 rounded">
+    <span class="text-4xl">{{ x }}</span>
+    <span class="text-sm dark:text-light-900  dark:text-opacity-50 mt-2">Mouse X</span>
+  </div>
+  <div class="dark:bg-dark-500 bg-light-500 flex flex-col text-center p-2 rounded">
+    <span class="text-4xl">{{ y }}</span>
+    <span class="text-sm dark:text-light-900 dark:text-opacity-50 mt-2">Mouse Y</span>
+  </div>
+</div>
 `.trim()
 
 const onContentChanged = (source: string, content: string) => {
@@ -29,12 +37,12 @@ const onContentChanged = (source: string, content: string) => {
   <Splitpanes class="default-theme">
     <Pane>
       <div class="h-full">
-        <div class="bg-dark-800 rounded-t-md border-b dark:border-dark-900 flex flex-row items-center pr-2">
+        <div class="bg-dark-100 dark:bg-dark-800 text-light-200 rounded-t-md border-b dark:border-dark-900 flex flex-row items-center pr-2">
           <Tab :name="file.filename" v-for="file in store.files" :key="file.filename">
             {{ file.filename }}
           </Tab>
           <span class="flex-1" />
-          <carbon-add class="text-lg dark:text-light-900" />
+          <!-- <carbon-add class="text-lg dark:text-light-900" /> -->
         </div>
         <Splitpanes class="h-full default-theme" horizontal>
           <Pane>
