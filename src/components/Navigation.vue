@@ -14,7 +14,7 @@ const copyToClipboard = () => {
 </script>
 
 <template>
-  <div class="fixed left-0 top-0 bottom-0 py-4 w-18 flex flex-col items-center space-y-2">
+  <div class="fixed left-0 top-0 bottom-0 py-4 px-2 pr-4 w-14 m-r-2 flex flex-col items-center space-y-2 border-r-1 border-gray-500 border-opacity-50">
     <!-- <logos-vue class="text-4xl"/> -->
     <img src="/vueuse.svg" class="w-12" />
     <span class="flex-1"></span>

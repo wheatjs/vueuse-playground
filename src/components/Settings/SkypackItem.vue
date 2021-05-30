@@ -39,7 +39,7 @@ const install = () => {
     </div>
     <button
       :class="{ '!bg-green-500 !text-green-900': isInstalled }"
-      class="bg-light-900 dark:bg-dark-900 px-4 py-1 dark:text-light-900 text-opacity-75 rounded"
+      class="bg-light-900 dark:bg-dark-200 px-4 py-1 dark:text-light-900 text-opacity-75 rounded"
       @click="install"
     >
       {{ isInstalled ? 'Installed' : 'Install' }}
