@@ -35,7 +35,7 @@ const onContentChanged = (source: string, content: string) => {
 
 <template>
   <Splitpanes class="default-theme">
-    <Pane>
+    <Pane min-size="10" max-size="90">
       <div class="h-full flex flex-col">
         <div class="bg-light-500 border-light-900 dark:border-dark-400 border-1 dark:bg-dark-800 rounded-t-md border-b flex flex-row items-center pr-2">
           <Tab v-for="file in store.files" :key="file.filename" :name="file.filename">
@@ -44,7 +44,7 @@ const onContentChanged = (source: string, content: string) => {
           <carbon-add class="text-lg ml-2 block dark:text-light-900" />
         </div>
         <Splitpanes class="default-theme editors-height" horizontal>
-          <Pane>
+          <Pane min-size="20" max-size="80">
             <Container title="Script Setup" class="rounded-b-md" no-overflow no-rounding>
               <Editor
                 language="typescript"
@@ -53,7 +53,7 @@ const onContentChanged = (source: string, content: string) => {
               />
             </Container>
           </Pane>
-          <Pane>
+          <Pane min-size="20" max-size="80">
             <Container title="Template" class="border-1 border-white" no-overflow>
               <Editor
                 language="html"
@@ -72,7 +72,7 @@ const onContentChanged = (source: string, content: string) => {
             <Preview />
           </Container>
         </Pane>
-        <Pane size="25">
+        <Pane max-size="25" size="25">
           <Container title="Console">
             <Console />
           </Container>
