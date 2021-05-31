@@ -56,7 +56,6 @@ const onContentChanged = (source: string, content: string) => {
           <Pane>
             <Container title="Template" class="border-1 border-white" no-overflow>
               <Editor
-                class="h-10"
                 language="html"
                 :value="initialTemplateContent"
                 @change="content => onContentChanged('template', content)"
