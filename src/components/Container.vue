@@ -5,7 +5,7 @@ defineProps<{ title: string; noOverflow?: boolean; noRounding?: boolean }>()
 </script>
 
 <template>
-  <div class="h-full grid grid-rows-[min-content,auto]">
+  <div class="h-full grid grid-rows-[min-content,auto] border-1 border-light-900 dark:border-dark-400 shadow-lg" :class="noRounding ? 'border-t-0' : 'rounded-md'">
     <div class="text-xs bg-light-500 dark:text-light-900 dark:bg-dark-800 p-2 text-opacity-75 font-bold" :class="noRounding ? '' : 'rounded-t-md'">
       {{ title }}
     </div>
