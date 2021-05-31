@@ -11,7 +11,7 @@ provide('closeSettings', () => isOpen.value = false);
 <template>
   <!-- Scrim -->
   <div v-if="isOpen">
-    <div class="fixed z-500 inset-0 bg-white dark:bg-opacity-35 bg-opacity-75" @click="isOpen = false">
+    <div class="fixed z-500 inset-0 bg-white dark:bg-opacity-5 backdrop-blur-sm bg-opacity-50" @click="isOpen = false">
     </div>
     <div class="fixed inset-0 p-4 z-500 grid place-items-center pointer-events-none">
       <div class=" rounded w-full h-[50vh] max-w-screen-lg dark:text-light-100 shadow-xl grid grid-cols-[200px,auto] overflow-hidden pointer-events-auto">

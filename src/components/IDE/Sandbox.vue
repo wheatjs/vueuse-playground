@@ -37,12 +37,11 @@ const onContentChanged = (source: string, content: string) => {
   <Splitpanes class="default-theme">
     <Pane>
       <div class="h-full">
-        <div class="bg-dark-100 dark:bg-dark-800 text-light-200 rounded-t-md border-b dark:border-dark-900 flex flex-row items-center pr-2">
-          <Tab :name="file.filename" v-for="file in store.files" :key="file.filename">
+        <div class="bg-light-500 dark:bg-dark-800 rounded-t-md border-b dark:border-dark-900 flex flex-row items-center pr-2">
+          <Tab v-for="file in store.files" :key="file.filename" :name="file.filename">
             {{ file.filename }}
           </Tab>
-          <span class="flex-1" />
-          <!-- <carbon-add class="text-lg dark:text-light-900" /> -->
+          <carbon-add class="text-lg ml-2 block dark:text-light-900" />
         </div>
         <Splitpanes class="h-full default-theme" horizontal>
           <Pane>
@@ -67,7 +66,7 @@ const onContentChanged = (source: string, content: string) => {
       </div>
     </Pane>
     <Pane>
-      <Splitpanes horizontal>
+      <Splitpanes horizontal class="default-theme">
         <Pane>
           <Container title="Output">
             <Preview />

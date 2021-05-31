@@ -7,7 +7,7 @@ import { store } from '~/store'
     <Message
       v-for="message in store.errors"
       :key="message"
-      :message="message"
+      :message="message.toString()"
       type="error"
     />
     <!-- {{ store.errors }} -->

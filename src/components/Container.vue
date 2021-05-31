@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 
-defineProps<{ title: string; noOverflow: boolean; noRounding: boolean }>()
+defineProps<{ title: string; noOverflow?: boolean; noRounding?: boolean }>()
 </script>
 
 <template>

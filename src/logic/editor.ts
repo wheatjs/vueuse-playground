@@ -1,11 +1,12 @@
 import { getCurrentInstance, onMounted, watch } from 'vue'
 import * as monaco from 'monaco-editor'
 import { createSingletonPromise } from '@antfu/utils'
-import { store } from '~/store'
 /* __imports__ */
 
 import vueuseTypes from '@vueuse/core/dist/index.d.ts?raw'
 import vueTypes from '@vue/runtime-core/dist/runtime-core.d.ts?raw'
+
+import { store } from '~/store'
 
 const setup = createSingletonPromise(async() => {
   monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
@@ -56,7 +57,7 @@ const setup = createSingletonPromise(async() => {
         import('monaco-editor/esm/vs/editor/editor.worker?worker'),
         import('monaco-editor/esm/vs/language/json/json.worker?worker'),
         import('monaco-editor/esm/vs/language/css/css.worker?worker'),
-        import('monaco-editor/esm/vs/language/html/html.worker?worker'),
+        import('../monaco/languages/html/html.worker?worker'),
         import('monaco-editor/esm/vs/language/typescript/ts.worker?worker'),
       ])
 
