@@ -37,7 +37,7 @@ const onContentChanged = (source: string, content: string) => {
   <Splitpanes class="default-theme">
     <Pane>
       <div class="h-full">
-        <div class="bg-light-500 dark:border-dark-400 border-1 dark:bg-dark-800 rounded-t-md border-b flex flex-row items-center pr-2">
+        <div class="bg-light-500 border-light-900 dark:border-dark-400 border-1 dark:bg-dark-800 rounded-t-md border-b flex flex-row items-center pr-2">
           <Tab v-for="file in store.files" :key="file.filename" :name="file.filename">
             {{ file.filename }}
           </Tab>
