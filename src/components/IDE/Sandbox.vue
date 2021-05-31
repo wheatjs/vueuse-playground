@@ -36,16 +36,16 @@ const onContentChanged = (source: string, content: string) => {
 <template>
   <Splitpanes class="default-theme">
     <Pane>
-      <div class="h-full">
+      <div class="h-full flex flex-col">
         <div class="bg-light-500 border-light-900 dark:border-dark-400 border-1 dark:bg-dark-800 rounded-t-md border-b flex flex-row items-center pr-2">
           <Tab v-for="file in store.files" :key="file.filename" :name="file.filename">
             {{ file.filename }}
           </Tab>
           <carbon-add class="text-lg ml-2 block dark:text-light-900" />
         </div>
-        <Splitpanes class="h-full default-theme" horizontal>
+        <Splitpanes class="default-theme editors-height" horizontal>
           <Pane>
-            <Container title="Script Setup" no-overflow no-rounding>
+            <Container title="Script Setup" class="rounded-b-md" no-overflow no-rounding>
               <Editor
                 language="typescript"
                 :value="initialScriptContent"
@@ -54,8 +54,9 @@ const onContentChanged = (source: string, content: string) => {
             </Container>
           </Pane>
           <Pane>
-            <Container title="Template" no-overflow>
+            <Container title="Template" class="border-1 border-white" no-overflow>
               <Editor
+                class="h-10"
                 language="html"
                 :value="initialTemplateContent"
                 @change="content => onContentChanged('template', content)"
@@ -83,6 +84,10 @@ const onContentChanged = (source: string, content: string) => {
 </template>
 
 <style>
+.editors-height {
+  height: calc(100% - 2.5rem);
+}
+
 .splitpanes.default-theme .splitpanes__pane {
   @apply bg-transparent;
 }
