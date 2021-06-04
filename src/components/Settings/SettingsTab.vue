@@ -1,19 +1,37 @@
 <script setup lang="ts">
-import { inject, defineProps, onMounted } from 'vue'
-import type { Ref } from 'vue'
-const props = defineProps<{ name: string; active?: boolean }>()
-const activeTab = inject<any>('activeTab')
-const tabs = inject<Ref<string[]>>('tabs')
-if (tabs && tabs.value)
-  tabs.value = [...tabs.value, props.name]
-onMounted(() => {
-  if (props.active)
-    activeTab.value = props.name
-})
+import { defineProps } from 'vue'
+
+defineProps<{
+  badge?: any
+  active: boolean
+}>()
 </script>
 
 <template>
-  <div v-show="activeTab === name">
-    <slot />
+  <div
+    text="dark:(light-900 opacity-70)"
+    flex="~ row"
+    items="center"
+    p="x-4"
+    h="12"
+    cursor="pointer"
+    bg="hover:(dark:dark-300)"
+    :class="{ 'bg-light-600 dark:bg-dark-300': active }"
+  >
+    <div flex="~ row 1" space="x-2" items="center">
+      <slot />
+    </div>
+    <div
+      v-if="badge"
+      text="sm"
+      w="8"
+      h="8"
+      border="rounded-full"
+      flex="~"
+      place="items-center content-center"
+      bg="light-900 dark:dark-700"
+    >
+      {{ badge }}
+    </div>
   </div>
 </template>

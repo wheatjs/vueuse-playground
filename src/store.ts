@@ -1,111 +1,137 @@
-import { reactive, watchEffect, watch } from 'vue'
-import { compileFile } from './logic/compiler/sfcCompiler'
+// import { reactive, watchEffect, watch } from 'vue'
+// import * as defaultCompiler from '@vue/compiler-sfc'
+// import { compileFile } from './logic/compiler/sfcCompiler'
 
-const welcomeCode = `
-<script setup>
-</script>
-<template>
-</template>
-`.trim()
+// const demos = import.meta.glob('../demos/**/*.vue')
 
-export class File {
-  filename: string
-  code: string
-  compiled = {
-    js: '',
-    css: '',
-    ssr: '',
-  }
+// export class File {
+//   filename: string
+//   scriptContent: string
+//   templateContent: string
+//   compiled = {
+//     js: '',
+//     css: '',
+//     ssr: '',
+//   }
 
-  constructor(filename: string, code = '') {
-    this.filename = filename
-    this.code = code
-  }
-}
+//   constructor(filename: string, scriptContent: string, templateContent: string) {
+//     this.filename = filename
+//     this.scriptContent = scriptContent
+//     this.templateContent = templateContent
+//   }
 
-interface Package {
-  name: string
-  description: string
-  url: string
-}
+//   get code() {
+//     return `
+//       <script setup>${this.scriptContent}</script>
+//       <template>${this.templateContent}</template>
+//     `
+//   }
+// }
 
-interface Store {
-  packages: Package[]
-  files: Record<string, File>
-  scriptContent: string
-  templateContent: string
-  activeFilename: string
-  readonly activeFile: File
-  readonly importMap: string | undefined
-  errors: (string | Error)[]
-}
+// interface Package {
+//   name: string
+//   description: string
+//   url: string
+// }
 
-const files: any = {
-  'App.vue': new File('App.vue', welcomeCode),
-}
+// interface Store {
+//   packages: Package[]
+//   files: Record<string, File>
+//   scriptContent: string
+//   templateContent: string
+//   activeFilename: string
+//   readonly activeFile: File
+//   readonly importMap: string | undefined
+//   errors: (string | Error)[]
+// }
 
-let savedState = {}
+// const files: any = {
+//   'App.vue': new File('App.vue', '', ''),
+// }
 
-if (location.hash.slice(1))
-  savedState = JSON.parse(atob(location.hash.slice(1)))
+// let savedState = {}
 
-export const store: Store = reactive({
-  packages: [
-    {
-      name: 'vue-demi',
-      description: 'Vue Demi (half in French) is a developing utility allows you to write Universal Vue Libraries for Vue 2 & 3',
-      url: 'https://unpkg.com/vue-demi/lib/index.esm.js',
-    },
-    {
-      name: '@vueuse/shared',
-      description: 'Shared VueUse utilities.',
-      url: 'https://unpkg.com/@vueuse/shared/dist/index.esm.js',
-    },
-    {
-      name: '@vueuse/core',
-      description: 'Collection of essential Vue Composition Utilities',
-      url: 'https://unpkg.com/@vueuse/core/dist/index.esm.js',
-    },
-  ],
-  files,
-  scriptContent: '',
-  templateContent: '',
-  activeFilename: 'App.vue',
-  errors: [],
-  get activeFile() {
-    return store.files['App.vue']
-  },
-  get importMap() {
-    const imports = store.packages.map(({ name, url }) => `"${name}": "${url}"`)
+// if (location.hash.slice(1))
+//   savedState = JSON.parse(atob(location.hash.slice(1)))
 
-    return `
-      {
-        "imports": {
-          ${imports.join(',\n')}
-        }
-      }
-    `
-  },
-  ...savedState,
-})
+// export const store: Store = reactive({
+//   packages: [
+//     {
+//       name: 'vue-demi',
+//       description: 'Vue Demi (half in French) is a developing utility allows you to write Universal Vue Libraries for Vue 2 & 3',
+//       url: 'https://unpkg.com/vue-demi/lib/index.esm.js',
+//     },
+//     {
+//       name: '@vueuse/shared',
+//       description: 'Shared VueUse utilities.',
+//       url: 'https://unpkg.com/@vueuse/shared/dist/index.esm.js',
+//     },
+//     {
+//       name: '@vueuse/core',
+//       description: 'Collection of essential Vue Composition Utilities',
+//       url: 'https://unpkg.com/@vueuse/core/dist/index.esm.js',
+//     },
+//   ],
+//   files,
+//   scriptContent: '',
+//   templateContent: '',
+//   activeFilename: 'App.vue',
+//   errors: [],
+//   get activeFile() {
+//     return store.files['App.vue']
+//   },
+//   get importMap() {
+//     const imports = store.packages.map(({ name, url }) => `"${name}": "${url}"`)
 
-watch(() => [store.scriptContent, store.templateContent], () => {
-  store.activeFile.code = `
-    <script setup>
-      ${store.scriptContent}
-    </script>
-    <template>
-      ${store.templateContent}
-    </template>
-  `
-}, { immediate: true })
+//     return `
+//       {
+//         "imports": {
+//           ${imports.join(',\n')}
+//         }
+//       }
+//     `
+//   },
+//   ...savedState,
+// })
 
-export function exportState() {
-  return btoa(JSON.stringify({
-    packages: store.packages,
-    scriptContent: store.scriptContent,
-    templateContent: store.templateContent,
-  }))
-}
+// // watch(() => [store.scriptContent, store.templateContent], () => {
+// //   store.activeFile.templateContent = 
+// //   store.activeFile.code = `
+// //     <script setup>
+// //       ${store.scriptContent}
+// //     </script>
+// //     <template>
+// //       ${store.templateContent}
+// //     </template>
+// //   `
+// // }, { immediate: true })
 
-watchEffect(() => compileFile(store.activeFile))
+// export function exportState() {
+//   return btoa(JSON.stringify({
+//     packages: store.packages,
+//     scriptContent: store.scriptContent,
+//     templateContent: store.templateContent,
+//   }))
+// }
+
+// watchEffect(() => compileFile(store.activeFile))
+
+// // console.log(demos)
+
+// export async function loadDemo(demo: string) {
+//   const modules = (await Promise.all(Object.entries(demos)
+//     .filter(([path]) => path.split('demos/')[1].split('/')[0] === demo)
+//     .map(async([path]) => ([path, (await import(/* @vite-ignore */ `${path}?raw`)).default]))))
+//     .map(([path, content]) => {
+//       const { descriptor: { template, scriptSetup } } = defaultCompiler.parse(content)
+//       return {
+//         filename: path.split(`${demo}/`)[1],
+//         scriptContent: scriptSetup?.content,
+//         templateContent: template?.content,
+//       }
+//     })
+
+//   console.log(modules)
+// }
+
+// loadDemo('default')

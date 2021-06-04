@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, computed } from 'vue'
-import { store } from '~/store'
+import { orchestrator } from '~/orchestrator'
 
 const props = defineProps<{
   buildStatus?: string
@@ -15,16 +15,17 @@ const props = defineProps<{
   maintainers?: { name: string; email: string }[]
 }>()
 
-const isInstalled = computed(() => store.packages.find(({ name }) => name === props.name))
+const isInstalled = computed(() => orchestrator.packages.find(({ name }) => name === props.name))
 
 const install = () => {
   if (!isInstalled.value) {
-    store.packages = [
-      ...store.packages,
+    orchestrator.packages = [
+      ...orchestrator.packages,
       {
         name: props.name,
         description: props.description,
         url: `https://cdn.skypack.dev/${props.name}`,
+        version: '0',
       },
     ]
   }

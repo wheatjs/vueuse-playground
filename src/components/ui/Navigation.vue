@@ -2,15 +2,15 @@
 import { defineProps } from 'vue'
 import { useVModel, useClipboard } from '@vueuse/core'
 import { isDark, toggleDark } from '~/logic/dark'
-import { exportState } from '~/store'
+// import { exportState } from '~/store'
 
 const props = defineProps<{ modelValue: boolean }>()
 const isOpen = useVModel(props)
 const { copy } = useClipboard()
 
-const copyToClipboard = () => {
-  copy(`${location.host}/#${exportState()}`)
-}
+// const copyToClipboard = () => {
+//   copy(`${location.host}/#${exportState()}`)
+// }
 </script>
 
 <template>
@@ -22,9 +22,9 @@ const copyToClipboard = () => {
       <carbon-moon v-if="isDark" />
       <carbon-sun v-else />
     </IconButton>
-    <IconButton @click="copyToClipboard">
+    <!-- <IconButton @click="copyToClipboard">
       <carbon-share class="text-xl" />
-    </IconButton>
+    </IconButton> -->
     <IconButton @click="isOpen = true">
       <carbon-settings class="text-xl" />
     </IconButton>

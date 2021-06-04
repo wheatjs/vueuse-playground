@@ -1,40 +1,91 @@
 <script setup lang="ts">
-import { defineProps, provide } from 'vue'
+import { defineProps, ref } from 'vue'
 import { useVModel } from '@vueuse/core'
+import { orchestrator } from '~/orchestrator'
 
 const props = defineProps<{ modelValue: boolean }>()
 const isOpen = useVModel(props)
-
-provide('closeSettings', () => isOpen.value = false);
+const activeTab = ref('packages')
 </script>
 
 <template>
-  <!-- Scrim -->
-  <div v-if="isOpen">
-    <div class="fixed z-500 inset-0 bg-white dark:bg-opacity-5 backdrop-blur-sm bg-opacity-50" @click="isOpen = false">
-    </div>
-    <div class="fixed inset-0 p-4 z-500 grid place-items-center pointer-events-none">
-      <div class=" rounded w-full h-[50vh] max-w-screen-lg dark:text-light-100 shadow-xl grid grid-cols-[200px,auto] overflow-hidden pointer-events-auto">
-        <SettingsTabs>
-          <SettingsTab active name="Installed">
-            <InstalledPackages />
-          </SettingsTab>
-          <SettingsTab name="Packages">
-            <SkypackSearch />
-          </SettingsTab>
-          <SettingsTab name="Editor">
-            <div class="h-[50vh] grid place-content-center text-lg place-items-center">
-              Coming Soon
+  <Dialog
+    :open="isOpen"
+    position="fixed inset-0"
+    overflow="y-auto"
+    z="10"
+    @close="isOpen = false"
+  >
+    <div
+      position="relative"
+      grid="~"
+      place="items-center"
+      min-h="screen"
+      p="4"
+    >
+      <DialogOverlay
+        position="fixed inset-0"
+        backdrop="~ blur"
+        bg="dark:(black opacity-20)"
+      />
+
+      <div
+        position="relative"
+        border="rounded-md"
+        overflow="hidden"
+        bg="light-100 dark:dark-700"
+        shadow="lg"
+        max-w="screen-lg"
+        w="full"
+        max-h="[70vh]"
+        h="full"
+      >
+        <div h="full" grid="~ cols-4">
+          <div bg="light-100 dark:dark-500" border="r dark:dark-900">
+            <div
+              bg="light-500 dark:dark-800"
+              border="b light-900 dark:dark-900"
+              h="20"
+              text="dark:(light-900 opacity-80)"
+              flex="~ row"
+              items="center"
+              p="l-4 t-[1px] r-2"
+              space="x-2"
+            >
+              <carbon-settings />
+              <span flex="1">
+                Settings
+              </span>
+              <IconButton @click="isOpen = false">
+                <carbon-close />
+              </IconButton>
             </div>
-          </SettingsTab>
-        </SettingsTabs>
+
+            <!-- <SettingsTab m="t-2" :active="activeTab === 'editor'" @click="activeTab = 'editor'">
+              <carbon-code />
+              <span>Editor</span>
+            </SettingsTab> -->
+            <SettingsTab :badge="orchestrator.packages.length" :active="activeTab === 'packages'" @click="activeTab = 'packages'">
+              <mdi-package-variant />
+              <span>Packages</span>
+            </SettingsTab>
+            <SettingsTab :active="activeTab === 'install'" @click="activeTab = 'install'">
+              <mdi-package-variant-closed />
+              <span>Install</span>
+            </SettingsTab>
+            <!-- <SettingsTab :active="activeTab === 'windicss'" @click="activeTab = 'windicss'">
+              <mdi-tailwind />
+              <span>WindiCSS</span>
+            </SettingsTab> -->
+          </div>
+          <div grid="col-span-3" overflow="auto">
+            <EditorSettings v-if="activeTab === 'editor'" />
+            <InstallSettings v-else-if="activeTab === 'install'" />
+            <PackagesSettings v-else-if="activeTab === 'packages'" />
+            <WindiCSSSettings v-else-if="activeTab === 'windicss'" />
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </Dialog>
 </template>
-
-<style>
-.backdrop-blur-sm {
-  backdrop-filter: var(--tw-backdrop-blur);
-}
-</style>

@@ -6,6 +6,7 @@ export default defineConfig({
   darkMode: 'class',
   plugins: [
     typography(),
+    require('windicss/plugin/line-clamp'),
   ],
   attributify: true,
   theme: {

@@ -23,7 +23,12 @@ const { data } = useFetch(url, { refetch: true }).get().json()
         </span>
       </div>
       <template v-else-if="data && data.results">
-        <SkypackItem v-for="item in data.results" v-bind="item" :key="item.name" />
+        <PackageItem
+          v-for="item in data.results"
+          v-bind="item"
+          :key="item.name"
+        />
+        <!-- <SkypackItem v-for="item in data.results" v-bind="item" :key="item.name" /> -->
       </template>
     </div>
   </div>

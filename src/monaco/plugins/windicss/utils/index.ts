@@ -10,3 +10,16 @@ export function flatColors(colors: any, head?: string) {
   }
   return flatten
 }
+
+export function isAttrVariant(word: string, variants: any): boolean {
+  const lastKey = word.match(/[^:-]+$/)?.[0] || word
+  return lastKey in variants
+}
+
+export function isAttrUtility(word: string, attrs: any): string | undefined {
+  if (!word)
+    return
+
+  const lastKey = word.match(/[^:-]+$/)?.[0] || word
+  return lastKey in attrs ? lastKey : undefined
+}

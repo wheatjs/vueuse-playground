@@ -3,9 +3,9 @@ import { ref, onMounted, onUnmounted, watchEffect, watch } from 'vue'
 import type { WatchStopHandle } from 'vue'
 import srcdoc from '../template.html?raw'
 import { PreviewProxy } from '~/logic/PreviewProxy'
-import { MAIN_FILE, vueRuntimeUrl } from '~/logic/compiler/sfcCompiler'
-import { compileModulesForPreview } from '~/logic/compiler/moduleCompiler'
-import { store } from '~/store'
+import { MAIN_FILE, vueRuntimeUrl } from '~/compiler/sfcCompiler'
+import { compileModulesForPreview } from '~/compiler/moduleCompiler'
+import { orchestrator, orchestrator as store } from '~/orchestrator'
 import { isDark } from '~/logic/dark'
 
 const container = ref()
@@ -14,6 +14,10 @@ const runtimeWarning = ref()
 let sandbox: HTMLIFrameElement
 let proxy: PreviewProxy
 let stopUpdateWatcher: WatchStopHandle
+
+watch([runtimeError, runtimeWarning], () => {
+  orchestrator.runtimeErrors = [runtimeError.value, runtimeWarning.value].filter(x => x)
+})
 
 // create sandbox on mount
 onMounted(createSandbox)
@@ -55,9 +59,9 @@ onUnmounted(() => {
 })
 function createSandbox() {
   if (sandbox) {
-    // clear prev sandbox
     proxy.destroy()
-    stopUpdateWatcher()
+    if (stopUpdateWatcher)
+      stopUpdateWatcher()
     container.value.removeChild(sandbox)
   }
   sandbox = document.createElement('iframe')

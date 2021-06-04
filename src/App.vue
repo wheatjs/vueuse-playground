@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import Playground from './components/IDE/Playground.vue'
 
 const isOpen = ref(false)
 </script>
@@ -7,8 +8,7 @@ const isOpen = ref(false)
 <template>
   <div class="h-screen dark:bg-dark-900 p-4 dark:text-light-100 pl-18">
     <Navigation v-model="isOpen" />
-    <Sandbox />
+    <Playground />
   </div>
   <Settings v-model="isOpen" />
 </template>
-

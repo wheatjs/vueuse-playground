@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { store } from '~/store'
+import { orchestrator } from '~/orchestrator'
 
 const props = defineProps<{
   name: string
@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 const uninstall = () => {
-  store.packages = store.packages.filter(({ name }) => name !== props.name)
+  orchestrator.packages = orchestrator.packages.filter(({ name }) => name !== props.name)
 }
 </script>
 

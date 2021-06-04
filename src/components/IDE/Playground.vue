@@ -1,35 +1,27 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { Splitpanes, Pane } from 'splitpanes'
-import { store } from '~/store'
+import { orchestrator, onShouldUpdateContent } from '~/orchestrator'
 
-const initialScriptContent = store.scriptContent.length > 0
-  ? store.scriptContent
-  : `
-import { useMouse } from '@vueuse/core'
+const initialScript = ref('')
+const initialTemplate = ref('')
 
-const { x, y } = useMouse()
-`.trim()
-
-const initialTemplateContent = store.templateContent.length > 0
-  ? store.templateContent
-  : `
-<div class="h-screen grid place-items-center place-content-center grid-flow-col gap-4 font-mono">
-  <div class="dark:bg-dark-500 bg-light-500 flex flex-col text-center p-2 rounded">
-    <span class="text-4xl">{{ x }}</span>
-    <span class="text-sm dark:text-light-900  dark:text-opacity-50 mt-2">Mouse X</span>
-  </div>
-  <div class="dark:bg-dark-500 bg-light-500 flex flex-col text-center p-2 rounded">
-    <span class="text-4xl">{{ y }}</span>
-    <span class="text-sm dark:text-light-900 dark:text-opacity-50 mt-2">Mouse Y</span>
-  </div>
-</div>
-`.trim()
+onShouldUpdateContent(() => {
+  if (orchestrator.activeFile) {
+    initialScript.value = orchestrator.activeFile?.script
+    initialTemplate.value = orchestrator.activeFile?.template
+  }
+})
 
 const onContentChanged = (source: string, content: string) => {
-  if (source === 'script')
-    store.scriptContent = content
-  else if (source === 'template')
-    store.templateContent = content
+  console.log('Content Changed')
+
+  if (orchestrator.activeFile) {
+    if (source === 'script')
+      orchestrator.activeFile.script = content
+    else if (source === 'template')
+      orchestrator.activeFile.template = content
+  }
 }
 </script>
 
@@ -37,18 +29,13 @@ const onContentChanged = (source: string, content: string) => {
   <Splitpanes class="default-theme">
     <Pane>
       <div class="h-full flex flex-col">
-        <div class="bg-light-500 border-light-900 dark:border-dark-400 border-1 dark:bg-dark-800 rounded-t-md border-b flex flex-row items-center pr-2">
-          <Tab v-for="file in store.files" :key="file.filename" :name="file.filename">
-            {{ file.filename }}
-          </Tab>
-          <carbon-add class="text-lg ml-2 block dark:text-light-900" />
-        </div>
+        <TabBar />
         <Splitpanes class="default-theme editors-height" horizontal>
           <Pane>
             <Container title="Script Setup" class="rounded-b-md" no-overflow no-rounding>
               <Editor
-                language="typescript"
-                :value="initialScriptContent"
+                language="javascript"
+                :value="initialScript"
                 @change="content => onContentChanged('script', content)"
               />
             </Container>
@@ -57,7 +44,7 @@ const onContentChanged = (source: string, content: string) => {
             <Container title="Template" class="border-1 border-white" no-overflow>
               <Editor
                 language="html"
-                :value="initialTemplateContent"
+                :value="initialTemplate"
                 @change="content => onContentChanged('template', content)"
               />
             </Container>

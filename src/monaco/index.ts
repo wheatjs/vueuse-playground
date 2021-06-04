@@ -6,11 +6,11 @@ import { createSingletonPromise } from '@antfu/utils'
 import vueuseTypes from '@vueuse/core/dist/index.d.ts?raw'
 import vueTypes from '@vue/runtime-core/dist/runtime-core.d.ts?raw'
 
-import { store } from '~/store'
+import { orchestrator } from '~/orchestrator'
 
 const setup = createSingletonPromise(async() => {
-  monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-    ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
+  monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+    ...monaco.languages.typescript.javascriptDefaults.getCompilerOptions(),
     noUnusedLocals: false,
     noUnusedParameters: false,
     allowUnreachableCode: true,
@@ -21,21 +21,21 @@ const setup = createSingletonPromise(async() => {
 
   const registered: string[] = ['vue', '@vueuse/core']
 
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(`
+  monaco.languages.typescript.javascriptDefaults.addExtraLib(`
     declare module '@vueuse/core' { ${vueuseTypes} }
   `, 'ts:vueuse')
 
-  monaco.languages.typescript.typescriptDefaults.addExtraLib(`
+  monaco.languages.typescript.javascriptDefaults.addExtraLib(`
     declare module 'vue' { ${vueTypes} }
   `, 'ts:vue')
 
-  watch(() => store.packages, () => {
-    store.packages.forEach((pack) => {
+  watch(() => orchestrator.packages, () => {
+    orchestrator.packages.forEach((pack) => {
       if (registered.includes(pack.name))
         return
 
       registered.push(pack.name)
-      monaco.languages.typescript.typescriptDefaults.addExtraLib(`
+      monaco.languages.typescript.javascriptDefaults.addExtraLib(`
         declare module '${pack.name}' {
           let x: any;
           export = x;
@@ -57,7 +57,7 @@ const setup = createSingletonPromise(async() => {
         import('monaco-editor/esm/vs/editor/editor.worker?worker'),
         import('monaco-editor/esm/vs/language/json/json.worker?worker'),
         import('monaco-editor/esm/vs/language/css/css.worker?worker'),
-        import('../monaco/languages/html/html.worker?worker'),
+        import('./languages/html/html.worker?worker'),
         import('monaco-editor/esm/vs/language/typescript/ts.worker?worker'),
       ])
 

@@ -6,7 +6,7 @@ import {
 } from '@vue/compiler-sfc'
 import { babelParserDefaultPlugins } from '@vue/shared'
 import { ExportSpecifier, Identifier, Node, ObjectProperty } from '@babel/types'
-import { store, File } from '../../store'
+import {  orchestrator as store, OrchestratorFile as File } from '../orchestrator'
 import { MAIN_FILE } from './sfcCompiler'
 
 export function compileModulesForPreview() {

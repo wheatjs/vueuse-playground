@@ -1,12 +1,22 @@
-import { watch, Ref, unref } from 'vue'
-import { createEventHook, tryOnUnmounted } from '@vueuse/core'
+import { watch, Ref, unref, ref } from 'vue'
+import { until, createEventHook, tryOnUnmounted } from '@vueuse/core'
+
 import darktheme from 'theme-vitesse/themes/vitesse-dark.json'
 import lightTheme from 'theme-vitesse/themes/vitesse-light.json'
-import setupMonaco from '../logic/editor'
-import { isDark } from '../logic/dark'
+import type { editor as Editor } from 'monaco-editor'
+import setupMonaco from '~/monaco'
+import { isDark } from '~/logic/dark'
 
 export function useMonaco(target: Ref, options: any) {
   const changeEventHook = createEventHook<string>()
+  const isSetup = ref(false)
+  let editor: Editor.IStandaloneCodeEditor
+
+  const setContent = async(content: string) => {
+    await until(isSetup).toBeTruthy()
+    if (editor)
+      editor.setValue(content)
+  }
 
   const init = async() => {
     const { monaco } = await setupMonaco()
@@ -14,13 +24,13 @@ export function useMonaco(target: Ref, options: any) {
     monaco.editor.defineTheme('vitesse-dark', darktheme)
     // @ts-expect-error
     monaco.editor.defineTheme('vitesse-light', lightTheme)
-  
-    const stop = watch(target, () => {
+
+    watch(target, () => {
       const el = unref(target)
-  
+
       if (!el)
         return
-  
+
       const extension = () => {
         if (options.language === 'typescript')
           return 'ts'
@@ -31,7 +41,7 @@ export function useMonaco(target: Ref, options: any) {
       }
 
       const model = monaco.editor.createModel(options.code, options.language, monaco.Uri.parse(`file:///root/${Date.now()}.${extension()}`))
-      const editor = monaco.editor.create(el, {
+      editor = monaco.editor.create(el, {
         model,
         tabSize: 2,
         insertSpaces: true,
@@ -45,19 +55,20 @@ export function useMonaco(target: Ref, options: any) {
         },
       })
 
+      isSetup.value = true
+
       watch(isDark, () => {
         if (isDark.value)
           monaco.editor.setTheme('vitesse-dark')
         else
           monaco.editor.setTheme('vitesse-light')
       }, { immediate: true })
-  
-      editor.getModel()?.onDidChangeContent(e => changeEventHook.trigger(editor.getValue()))
+
+      editor.getModel()?.onDidChangeContent(() => changeEventHook.trigger(editor.getValue()))
     }, {
       flush: 'post',
       immediate: true,
     })
-
   }
 
   init()
@@ -66,5 +77,6 @@ export function useMonaco(target: Ref, options: any) {
 
   return {
     onChange: changeEventHook.on,
+    setContent,
   }
 }

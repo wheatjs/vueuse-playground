@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { store } from '~/store'
+import { orchestrator } from '~/orchestrator'
 </script>
 
 <template>
@@ -10,11 +10,11 @@ import { store } from '~/store'
         Installed Packages
       </span>
       <div class="bg-green-500 w-6 h-6 text-green-900 text-sm font-bold rounded flex place-items-center place-content-center">
-        {{ store.packages.length }}
+        {{ orchestrator.packages.length }}
       </div>
     </div>
     <div>
-      <InstalledItem v-for="pack in store.packages" :key="pack.url" :name="pack.name" :description="pack.description" />
+      <PackageItem v-for="pack in orchestrator.packages" :key="pack.url" :name="pack.name" :description="pack.description" />
     </div>
   </div>
 </template>

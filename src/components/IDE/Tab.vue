@@ -1,17 +1,44 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, computed } from 'vue'
+import { setActiveFile, orchestrator, removeFile } from '~/orchestrator'
 
-defineProps<{
-  name: string
+const props = defineProps<{
+  name?: string
+  active: boolean
 }>()
+
+const isActive = computed(() => orchestrator.activeFilename === props.name)
+
+const remove = () => {
+  if (props.name)
+    removeFile(props.name)
+}
 </script>
 
 <template>
-  <div class="px-4 py-2 text-sm h-10 inline-flex flex-row items-center space-x-2 border-r dark:border-dark-900">
+  <div
+    :class="{ '!pr-4': name === 'App.vue', 'dark:bg-dark-600 light-800': isActive }"
+    p="l-4 r-2"
+    cursor="pointer"
+    bg="hover:(light-800 dark:dark-600)"
+    text="sm"
+    h="10"
+    display="inline-flex"
+    flex="row"
+    place="items-center"
+    space="x-2"
+    border="r-1 light-900 dark:dark-400"
+    @click="setActiveFile(name)"
+  >
     <logos-vue />
-    <div class="dark:text-light-900 light:text-dark-900">
+    <div
+      :class="{ '!text-green-500': active }"
+      text="dark-900 dark:light-900"
+    >
       <slot />
     </div>
-    <carbon-close v-if="name !== 'App.vue'" class="" />
+    <IconButton v-if="name !== 'App.vue' && name" p="0" w="6" h="6" @click="remove()">
+      <carbon-close class="" />
+    </IconButton>
   </div>
 </template>
