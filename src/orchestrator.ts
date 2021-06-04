@@ -252,8 +252,8 @@ orchestrator.packages = [
 ]
 
 setTimeout(() => {
-  addFile(new OrchestratorFile('App.vue', appTemplate, appScript))
-  addFile(new OrchestratorFile('Coordinate.vue', coordinateTemplate, coordinateScript))
+  addFile(new OrchestratorFile('App.vue', appTemplate.trim(), appScript.trim()))
+  addFile(new OrchestratorFile('Coordinate.vue', coordinateTemplate.trim(), coordinateScript.trim()))
 
   setActiveFile('App.vue')
   shouldUpdateContent.trigger(null)
