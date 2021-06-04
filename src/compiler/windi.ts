@@ -68,7 +68,5 @@ export function generateStyles(html: string) {
     .extend(preflightSheet, APPEND)
     .build(MINIFY)
 
-  // console.log('Styles', styles)
-
   return styles
 }

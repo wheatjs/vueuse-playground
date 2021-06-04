@@ -14,8 +14,6 @@ onShouldUpdateContent(() => {
 })
 
 const onContentChanged = (source: string, content: string) => {
-  console.log('Content Changed')
-
   if (orchestrator.activeFile) {
     if (source === 'script')
       orchestrator.activeFile.script = content

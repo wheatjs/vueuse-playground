@@ -1,9 +1,9 @@
 import { reactive, watch, watchEffect } from 'vue'
-import { parse } from '@vue/compiler-sfc'
+// import { parse } from '@vue/compiler-sfc'
 import { createEventHook } from '@vueuse/core'
 import { compileFile } from './compiler/sfcCompiler'
 
-const demos = import.meta.glob('../demos/**/*.(vue|json)')
+// const demos = import.meta.glob('../demos/**/*.(vue|json)')
 
 const shouldUpdateContent = createEventHook()
 
@@ -142,39 +142,119 @@ export function removeAllFiles() {
  *
  * @param name Name of demo to open
  */
-export async function openDemo(name: string) {
-  // Get all modules from demo
-  const modules = (await Promise.all(Object.entries(demos)
-    .filter(([path]) => path.split('demos/')[1].split('/')[0] === name)
-    .filter(([path]) => path.includes('.vue') || path.includes('.json'))
-    .map(async([path]) => ([path, (await import(/* @vite-ignore */ `${path}${path.includes('.vue') ? '?raw' : ''}`)).default]))))
+// export async function openDemo(name: string) {
+//   // Get all modules from demo
+//   const modules = (await Promise.all(Object.entries(demos)
+//     .filter(([path]) => path.split('demos/')[1].split('/')[0] === name)
+//     .filter(([path]) => path.includes('.vue') || path.includes('.json'))
+//     .map(async([path]) => ([path, (await import(`${path}?raw`)).default]))))
 
-  // Load Packages
-  const packages = modules.find(([path]) => path.includes('packages.json'))
-  if (packages)
-    orchestrator.packages = packages[1]
+//   console.log(modules)
 
-  removeAllFiles()
+//   const packages = (await Promise.all(Object.entries(demos)
+//     .filter(([path]) => path.split('demos/')[1].split('/')[0] === name)
+//     .filter(([path]) => path.includes('.json'))
+//     .map(async([path, imp]) => ([path, (await imp()).default]))))
+//     .find(([path]) => path.includes('packages.json'))
 
-  // Load Vue Files
-  modules
-    .filter(([path]) => path.includes('.vue'))
-    .map(([path, content]) => {
-      const { descriptor: { template, scriptSetup } } = parse(content)
-      return {
-        filename: path.split(`${name}/`)[1],
-        script: scriptSetup?.content.trim(),
-        template: template?.content.trim(),
-      }
-    })
-    .forEach(({ filename, script, template }) => {
-      addFile(new OrchestratorFile(filename, template, script))
-    })
+//   if (packages)
+//     orchestrator.packages = packages[1]
 
-  setActiveFile('App.vue')
-  shouldUpdateContent.trigger(null)
-}
+//   removeAllFiles()
+
+//   // Load Vue Files
+//   modules
+//     .filter(([path]) => path.includes('.vue'))
+//     .map(([path, content]) => {
+//       const { descriptor: { template, scriptSetup } } = parse(content)
+//       return {
+//         filename: path.split(`${name}/`)[1],
+//         script: scriptSetup?.content.trim(),
+//         template: template?.content.trim(),
+//       }
+//     })
+//     .forEach(({ filename, script, template }) => {
+//       addFile(new OrchestratorFile(filename, template, script))
+//     })
+
+//   setActiveFile('App.vue')
+//   shouldUpdateContent.trigger(null)
+// }
 
 export const onShouldUpdateContent = shouldUpdateContent.on
 
-openDemo('default')
+// openDemo('default')
+
+// App.vue
+const appTemplate = `
+<div
+  grid="~ flow-col gap-4"
+  place="content-center items-center"
+  h="screen"
+  font="mono"
+  >
+  <Coordinate label="X" :value="x" />
+  <Coordinate label="Y" :value="y" />
+</div>
+`
+const appScript = `
+import { useMouse } from '@vueuse/core'
+import Coordinate from './Coordinate.vue'
+
+const { x, y } = useMouse()
+`
+
+// Coordinate.vue
+const coordinateTemplate = `
+<div
+  font="mono"
+  bg="light-500 dark:dark-500"
+  flex="~ col"
+  text="center"
+  p="2"
+  border="rounded"
+>
+  <span text="4xl">{{ value }}</span>
+  <span text="sm dark:light-900 dark:opacity-50" m="t-2">Mouse {{ label }}</span>
+</div>
+`
+
+const coordinateScript = `
+import { defineProps } from 'vue'
+
+defineProps({
+  label: String,
+  value: Number,
+})
+`
+
+removeAllFiles()
+
+orchestrator.packages = [
+  {
+    name: 'vue-demi',
+    source: 'unpkg',
+    description: 'Vue Demi (half in French) is a developing utility allows you to write Universal Vue Libraries for Vue 2 & 3',
+    url: 'https://unpkg.com/vue-demi/lib/index.esm.js',
+  },
+  {
+    name: '@vueuse/shared',
+    source: 'unpkg',
+    description: 'Shared VueUse utilities.',
+    url: 'https://unpkg.com/@vueuse/shared/dist/index.esm.js',
+  },
+  {
+    name: '@vueuse/core',
+    source: 'unpkg',
+    description: 'Collection of essential Vue Composition Utilities',
+    url: 'https://unpkg.com/@vueuse/core/dist/index.esm.js',
+  },
+]
+
+setTimeout(() => {
+  addFile(new OrchestratorFile('App.vue', appTemplate, appScript))
+  addFile(new OrchestratorFile('Coordinate.vue', coordinateTemplate, coordinateScript))
+
+  setActiveFile('App.vue')
+  shouldUpdateContent.trigger(null)
+}, 0)
