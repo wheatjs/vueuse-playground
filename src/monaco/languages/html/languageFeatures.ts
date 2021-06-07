@@ -1,7 +1,7 @@
 /* ---------------------------------------------------------------------------------------------
-  *  Copyright (c) Microsoft Corporation. All rights reserved.
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
-  *-------------------------------------------------------------------------------------------- */
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
+*-------------------------------------------------------------------------------------------- */
 
 import * as htmlService from 'vscode-html-languageservice'
 import { InsertReplaceEdit, TextEdit } from 'vscode-html-languageservice'
@@ -177,7 +177,7 @@ function toRange(range: htmlService.Range): Range {
 function isInsertReplaceEdit(edit: TextEdit | InsertReplaceEdit): edit is InsertReplaceEdit {
   return (
     typeof (<InsertReplaceEdit>edit).insert !== 'undefined'
-    && typeof (<InsertReplaceEdit>edit).replace !== 'undefined'
+  && typeof (<InsertReplaceEdit>edit).replace !== 'undefined'
   )
 }
 
@@ -357,8 +357,8 @@ export class CompletionAdapter implements languages.CompletionItemProvider {
 function isMarkupContent(thing: any): thing is htmlService.MarkupContent {
   return (
     thing
-    && typeof thing === 'object'
-    && typeof (<htmlService.MarkupContent>thing).kind === 'string'
+  && typeof thing === 'object'
+  && typeof (<htmlService.MarkupContent>thing).kind === 'string'
   )
 }
 

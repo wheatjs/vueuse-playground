@@ -35,3 +35,20 @@ html.dark {
 ::-webkit-resizer {
   padding: 1rem;
 } 
+
+.editor-windicss-color-block {
+  width: 0.8em;
+  height: 0.8em;
+  content: '';
+  display: inline-block;
+  margin: 0.1em 0.2em 0;
+  border-radius: 0.125em;
+}
+
+.editor-windicss-color-block-light {
+  border: 1px solid #000000;
+}
+
+.editor-windicss-color-block-dark {
+  border: 1px solid #eeeeee;
+}
