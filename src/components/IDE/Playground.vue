@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import { Splitpanes, Pane } from 'splitpanes'
 import { orchestrator, onShouldUpdateContent } from '~/orchestrator'
+import ScreenSizeSimulator from '../ui/ScreenSizeSimulator.vue'
 
 const initialScript = ref('')
 const initialTemplate = ref('')
@@ -31,30 +32,44 @@ const onContentChanged = (source: string, content: string) => {
         <Splitpanes class="default-theme editors-height" horizontal>
           <Pane>
             <Container title="Script Setup" class="rounded-b-md" no-overflow no-rounding>
-              <Editor
-                language="javascript"
-                :value="initialScript"
-                @change="content => onContentChanged('script', content)"
-              />
+              <template #controls></template>
+              <template #default>
+                <Editor
+                  language="javascript"
+                  :value="initialScript"
+                  @change="content => onContentChanged('script', content)"
+                />
+              </template>
             </Container>
           </Pane>
           <Pane>
             <Container title="Template" class="border-1 border-white" no-overflow>
-              <Editor
-                language="html"
-                :value="initialTemplate"
-                @change="content => onContentChanged('template', content)"
-              />
+              <template #controls></template>
+              <template #default>
+                <Editor
+                  language="html"
+                  :value="initialTemplate"
+                  @change="content => onContentChanged('template', content)"
+                />
+              </template>
             </Container>
           </Pane>
         </Splitpanes>
       </div>
     </Pane>
     <Pane>
-      <Splitpanes horizontal class="default-theme">
+      <Splitpanes @resize="" horizontal class="default-theme">
         <Pane>
           <Container title="Output">
-            <Preview />
+            <template #controls>
+              <!-- <button p="x-2" h="8" border="l-1 dark-300">
+                <carbon-camera m="t-1" />
+              </button>
+              <ScreenSizeSimulator /> -->
+            </template>
+            <template #default>
+              <Preview />
+            </template>
           </Container>
         </Pane>
         <Pane size="25">
@@ -69,7 +84,7 @@ const onContentChanged = (source: string, content: string) => {
 
 <style>
 .editors-height {
-  height: calc(100% - 2.5rem);
+  height: calc(100% - 2rem);
 }
 
 .splitpanes.default-theme .splitpanes__pane {

@@ -102,6 +102,13 @@ watch(() => orchestrator.activeFilename, () => {
   shouldUpdateContent.trigger(null)
 })
 
+export function exportState() {
+  return btoa(JSON.stringify({
+    packages: orchestrator.packages,
+    files: orchestrator.files,
+  }))
+}
+
 /**
  * Add a file to the orchestrator
  *
@@ -228,9 +235,7 @@ defineProps({
 })
 `
 
-removeAllFiles()
-
-orchestrator.packages = [
+const initialPackages = [
   {
     name: 'vue-demi',
     source: 'unpkg',
@@ -241,20 +246,36 @@ orchestrator.packages = [
     name: '@vueuse/shared',
     source: 'unpkg',
     description: 'Shared VueUse utilities.',
-    url: 'https://unpkg.com/@vueuse/shared/dist/index.esm.js',
+    url: 'https://unpkg.com/@vueuse/shared@5.0.1/index.esm.js',
   },
   {
     name: '@vueuse/core',
     source: 'unpkg',
     description: 'Collection of essential Vue Composition Utilities',
-    url: 'https://unpkg.com/@vueuse/core/dist/index.esm.js',
+    url: 'https://unpkg.com/@vueuse/core@5.0.1/index.esm.js',
   },
 ]
 
-setTimeout(() => {
-  addFile(new OrchestratorFile('App.vue', appTemplate.trim(), appScript.trim()))
-  addFile(new OrchestratorFile('Coordinate.vue', coordinateTemplate.trim(), coordinateScript.trim()))
+function loadInitialState() {
+  removeAllFiles()
 
-  setActiveFile('App.vue')
-  shouldUpdateContent.trigger(null)
+  if (location.hash.slice(1)) {
+    const { files, packages } = JSON.parse(atob(location.hash.slice(1)))
+
+    if (files && packages) {
+      orchestrator.packages = packages
+      orchestrator.files = files
+    }
+  }
+  else {
+    orchestrator.packages = initialPackages
+    addFile(new OrchestratorFile('App.vue', appTemplate.trim(), appScript.trim()))
+    addFile(new OrchestratorFile('Coordinate.vue', coordinateTemplate.trim(), coordinateScript.trim()))
+    setActiveFile('App.vue')
+    shouldUpdateContent.trigger(null)
+  }
+}
+
+setTimeout(() => {
+  loadInitialState()
 }, 0)

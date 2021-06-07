@@ -22,7 +22,7 @@ const remove = () => {
     cursor="pointer"
     bg="hover:(light-800 dark:dark-600)"
     text="sm"
-    h="10"
+    h="8"
     display="inline-flex"
     flex="row"
     place="items-center"
@@ -33,7 +33,7 @@ const remove = () => {
     <logos-vue />
     <div
       :class="{ '!text-green-500': active }"
-      text="dark-900 dark:light-900"
+      text="dark-900 dark:light-900 xs"
     >
       <slot />
     </div>
