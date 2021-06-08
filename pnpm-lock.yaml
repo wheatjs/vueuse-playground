@@ -1,25 +1,26 @@
 dependencies:
   '@antfu/utils': 0.1.6
-  '@headlessui/vue': 1.2.0_vue@3.0.11
+  '@headlessui/vue': 1.2.0_vue@3.1.1
   '@types/splitpanes': 2.2.0
   '@vue/runtime-core': 3.0.11
   '@vue/runtime-dom': 3.0.11
   '@vue/shared': 3.0.11
-  '@vueuse/core': 4.11.1_vue@3.0.11
+  '@vueuse/core': 5.0.1_vue@3.1.1
+  '@vueuse/shared': 5.0.1_vue@3.1.1
   html2canvas: 1.0.0-rc.7
   monaco-editor: 0.24.0
   monaco-editor-core: 0.24.0
   splitpanes: 3.0.4
   theme-vitesse: 0.1.11
   vscode-html-languageservice: 4.0.3
-  vue: 3.0.11
+  vue: 3.1.1
   vue-hako: 0.0.1
 devDependencies:
   '@antfu/eslint-config': 0.6.5_eslint@7.27.0+typescript@4.3.2
   '@iconify/json': 1.1.349
   '@types/node': 15.6.1
   '@vitejs/plugin-vue': 1.2.2_@vue+compiler-sfc@3.0.11
-  '@vue/compiler-sfc': 3.0.11_vue@3.0.11
+  '@vue/compiler-sfc': 3.0.11_vue@3.1.1
   eslint: 7.27.0
   typescript: 4.3.2
   vite: 2.3.4
@@ -261,6 +262,7 @@ packages:
     resolution:
       integrity: sha512-YSCOwxvTYEIMSGaBQb5kDDsCopDdiUGsqpatp3fOlI4+2HQSkTmEVWnVuySdAC5EWCqSWWTv0ib63RjR7dTBdg==
   /@babel/parser/7.14.3:
+    dev: true
     engines:
       node: '>=6.0.0'
     hasBin: true
@@ -297,6 +299,7 @@ packages:
     dependencies:
       '@babel/helper-validator-identifier': 7.14.0
       to-fast-properties: 2.0.0
+    dev: true
     resolution:
       integrity: sha512-SdjAG/3DikRHpUOjxZgnkbR11xUlyDMUFJdvnIgZEE16mqmY0BINMmc4//JMJglEmn6i7sq6p+mGrFWyZ98EEw==
   /@babel/types/7.14.4:
@@ -321,9 +324,9 @@ packages:
       node: ^10.12.0 || >=12.0.0
     resolution:
       integrity: sha512-5v7TDE9plVhvxQeWLXDTvFvJBdH6pEsdnl2g/dAptmuFEPedQ4Erq5rsDsX+mvAM610IhNaO2W5V1dOOnDKxkQ==
-  /@headlessui/vue/1.2.0_vue@3.0.11:
+  /@headlessui/vue/1.2.0_vue@3.1.1:
     dependencies:
-      vue: 3.0.11
+      vue: 3.1.1
     dev: false
     engines:
       node: '>=10'
@@ -492,7 +495,7 @@ packages:
       integrity: sha512-AmkqV9dDJVKP/TcZrbf6s6i1zYXt5Hl8qOLrRDTFfRNae4+LB8A4N3i+FLZPW85zIxRy39BgeWOfMS3HoH5ngg==
   /@vitejs/plugin-vue/1.2.2_@vue+compiler-sfc@3.0.11:
     dependencies:
-      '@vue/compiler-sfc': 3.0.11_vue@3.0.11
+      '@vue/compiler-sfc': 3.0.11_vue@3.1.1
     dev: true
     engines:
       node: '>=12.0.0'
@@ -507,6 +510,7 @@ packages:
       '@vue/shared': 3.0.11
       estree-walker: 2.0.2
       source-map: 0.6.1
+    dev: true
     resolution:
       integrity: sha512-6sFj6TBac1y2cWCvYCA8YzHJEbsVkX7zdRs/3yK/n1ilvRqcn983XvpBbnN3v4mZ1UiQycTvOiajJmOgN9EVgw==
   /@vue/compiler-core/3.1.1:
@@ -523,6 +527,7 @@ packages:
     dependencies:
       '@vue/compiler-core': 3.0.11
       '@vue/shared': 3.0.11
+    dev: true
     resolution:
       integrity: sha512-+3xB50uGeY5Fv9eMKVJs2WSRULfgwaTJsy23OIltKgMrynnIj8hTYY2UL97HCoz78aDw1VDXdrBQ4qepWjnQcw==
   /@vue/compiler-dom/3.1.1:
@@ -532,7 +537,7 @@ packages:
     dev: false
     resolution:
       integrity: sha512-nobRIo0t5ibzg+q8nC31m+aJhbq8FbWUoKvk6h3Vs1EqTDJaj6lBTcVTq5or8AYht7FbSpdAJ81isbJ1rWNX7A==
-  /@vue/compiler-sfc/3.0.11_vue@3.0.11:
+  /@vue/compiler-sfc/3.0.11_vue@3.1.1:
     dependencies:
       '@babel/parser': 7.14.3
       '@babel/types': 7.14.2
@@ -550,7 +555,7 @@ packages:
       postcss-modules: 4.0.0_postcss@8.3.0
       postcss-selector-parser: 6.0.6
       source-map: 0.6.1
-      vue: 3.0.11
+      vue: 3.1.1
     dev: true
     peerDependencies:
       vue: 3.0.11
@@ -612,15 +617,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-g+4pzAw7PYSjARtLBoDq6DmcblX8i9KJHSCnyM5VDDFFifUaUT9iHbFpOF/KOizQ9f7QAqU2JH3Y6aXjzUMhVA==
-  /@vueuse/core/4.11.1_vue@3.0.11:
-    dependencies:
-      '@vueuse/shared': 4.11.1_vue@3.0.11
-      vue-demi: 0.9.0_vue@3.0.11
-    dev: false
-    peerDependencies:
-      vue: '*'
-    resolution:
-      integrity: sha512-69PdXDVLqZgmjFLbhqN+3Yp/29BRjKtk83UoeVv6csPIPB0DG7SFfsmZbnuSouEetgHXyFSKzty7+4S8GwEyWA==
   /@vueuse/core/5.0.1_vue@3.1.1:
     dependencies:
       '@vueuse/shared': 5.0.1_vue@3.1.1
@@ -630,14 +626,6 @@ packages:
       vue: '*'
     resolution:
       integrity: sha512-hzcyYNvW1p9ZEwm+oBaWrHgGx6S93pJBiXLZUj2pgCNiJZjaedoePT9xzesi1SBxeKcYxwToaTISLeKdE4VKeg==
-  /@vueuse/shared/4.11.1_vue@3.0.11:
-    dependencies:
-      vue-demi: 0.9.0_vue@3.0.11
-    dev: false
-    peerDependencies:
-      vue: '*'
-    resolution:
-      integrity: sha512-9ye1Y6AwjAsbbPSVoWvOVFbObPcEe5ZFV2eU560+Ii+LGhvP8NhH+lyReuuhTzjVL8kEYR6mWRCRqK3rQc7dag==
   /@vueuse/shared/5.0.1_vue@3.1.1:
     dependencies:
       vue-demi: 0.9.1_vue@3.1.1
@@ -3093,7 +3081,7 @@ packages:
     dependencies:
       '@iconify/json': 1.1.349
       '@iconify/json-tools': 1.0.10
-      '@vue/compiler-sfc': 3.0.11_vue@3.0.11
+      '@vue/compiler-sfc': 3.0.11_vue@3.1.1
       vue-template-es2015-compiler: 1.9.1
     dev: true
     peerDependencies:
@@ -3153,20 +3141,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-jkjy6pjU1fxUvI51P+gCsxg1u2n8LSt0W6KrCNQceaziKzff74GoWmjVG46KieVzybO1sttPQmYfrwSHey7GUA==
-  /vue-demi/0.9.0_vue@3.0.11:
-    dependencies:
-      vue: 3.0.11
-    dev: false
-    hasBin: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-beta.1
-      vue: ^2.6.0 || >=3.0.0-rc.1
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    requiresBuild: true
-    resolution:
-      integrity: sha512-f8vVUpC726YXv99fF/3zHaw5CUYbP5H/DVWBN+pncXM8P2Uz88kkffwj9yD7MukuVzPICDHNrgS3VC2ursaP7g==
   /vue-demi/0.9.1_vue@3.1.1:
     dependencies:
       vue: 3.1.1
@@ -3219,14 +3193,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
-  /vue/3.0.11:
-    dependencies:
-      '@vue/compiler-dom': 3.0.11
-      '@vue/runtime-dom': 3.0.11
-      '@vue/shared': 3.0.11
-    dev: false
-    resolution:
-      integrity: sha512-3/eUi4InQz8MPzruHYSTQPxtM3LdZ1/S/BvaU021zBnZi0laRUyH6pfuE4wtUeLvI8wmUNwj5wrZFvbHUXL9dw==
   /vue/3.1.1:
     dependencies:
       '@vue/compiler-dom': 3.1.1
@@ -3305,7 +3271,8 @@ specifiers:
   '@vue/runtime-core': ^3.0.11
   '@vue/runtime-dom': ^3.0.11
   '@vue/shared': ^3.0.11
-  '@vueuse/core': ^4.11.1
+  '@vueuse/core': 5.0.1
+  '@vueuse/shared': 5.0.1
   eslint: ^7.27.0
   html2canvas: ^1.0.0-rc.7
   monaco-editor: 0.24.0
@@ -3318,7 +3285,7 @@ specifiers:
   vite-plugin-icons: ^0.5.1
   vite-plugin-windicss: ^0.16.7
   vscode-html-languageservice: ^4.0.3
-  vue: ^3.0.5
+  vue: ^3.1.1
   vue-hako: ^0.0.1
   vue-tsc: ^0.0.24
   windicss: ^3.0.12

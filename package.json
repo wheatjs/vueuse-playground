@@ -20,14 +20,15 @@
     "@vue/runtime-core": "^3.0.11",
     "@vue/runtime-dom": "^3.0.11",
     "@vue/shared": "^3.0.11",
-    "@vueuse/core": "^4.11.1",
+    "@vueuse/core": "5.0.1",
+    "@vueuse/shared": "5.0.1",
     "html2canvas": "^1.0.0-rc.7",
     "monaco-editor": "0.24.0",
     "monaco-editor-core": "^0.24.0",
     "splitpanes": "^3.0.4",
     "theme-vitesse": "^0.1.11",
     "vscode-html-languageservice": "^4.0.3",
-    "vue": "^3.0.5",
+    "vue": "^3.1.1",
     "vue-hako": "^0.0.1"
   },
   "devDependencies": {

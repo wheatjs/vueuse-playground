@@ -3,7 +3,7 @@ import * as monaco from 'monaco-editor'
 import { createSingletonPromise } from '@antfu/utils'
 /* __imports__ */
 
-import vueuseTypes from '@vueuse/core/dist/index.d.ts?raw'
+import vueuseTypes from '@vueuse/core/index.d.ts?raw'
 import vueTypes from '@vue/runtime-core/dist/runtime-core.d.ts?raw'
 
 import { orchestrator } from '~/orchestrator'
