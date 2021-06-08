@@ -1,26 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, defineProps } from 'vue'
+import { useVModel } from '@vueuse/core'
+import sizes from '~/data/screen-sizes.json'
 
-const sizes = {
-  'Moto 4G': [360, 640],
-  'Galaxy S5': [360, 640],
-  'Pixel 2': [411, 731],
-  'Pixel 2 XL': [411, 823],
-  'iPhone 5/SE': [320, 568],
-  'iPhone 6/7/8': [375, 667],
-  'iPhone 6/7/8 Plus': [414, 736],
-  'iPhone X': [375, 812],
-  'iPad': [768, 1024],
-  'iPad Pro': [1024, 1366],
-  'Surface Duo': [540, 720],
-  'Galaxy Fold': [280, 653],
-}
+const props = defineProps<{
+  modelValue: string
+}>()
 
-const selected = ref('Default')
+const value = useVModel(props)
 </script>
 
 <template>
-  <Listbox v-model="selected">
+  <Listbox v-model="value">
     <div position="relative">
       <ListboxButton
         outline="focus:none"
@@ -34,25 +25,36 @@ const selected = ref('Default')
       >
         <carbon-devices />
         <span>
-          {{ selected }}
+          {{ value }}
         </span>
         <carbon-chevron-down />
       </ListboxButton>
       <ListboxOptions
         position="absolute top-5 right-0"
-        bg="dark:dark-900"
+        bg="dark:dark-900 light-300"
+        shadow="~ lg"
         border="rounded-b rounded-tl"
+        overflow="hidden"
         list="none"
+        outline="focus:none"
         p="0"
+        z="5000"
       >
-        <ListboxOption v-for="(size, index) in sizes" :key="index" :value="index">
+        <ListboxOption v-for="(size, index) in sizes" v-slot="{ active, selected }" :key="index" :value="index">
           <div
+            :class="{ 'bg-light-900 dark:bg-dark-400': active, 'bg-light-900 dark:bg-dark-400': selected }"
             p="x-4 y-2"
             cursor="pointer"
-            bg="hover:dark:(dark-500)"
+            bg="hover:(dark:dark-500 light-800)"
             class="whitespace-nowrap"
+            flex="~"
+            space="x-2"
+            items="center"
           >
-            {{ index }}
+            <span flex="1">
+              {{ index }}
+            </span>
+            <carbon-checkmark v-if="selected" />
           </div>
         </ListboxOption>
       </ListboxOptions>

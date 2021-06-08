@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { Splitpanes, Pane } from 'splitpanes'
+import { Hako } from 'vue-hako'
 import { orchestrator, onShouldUpdateContent } from '~/orchestrator'
-import ScreenSizeSimulator from '../ui/ScreenSizeSimulator.vue'
+import sizes from '~/data/screen-sizes.json'
 
 const initialScript = ref('')
 const initialTemplate = ref('')
+const size = ref('Default')
+const enabled = computed(() => size.value === 'Default')
+const width = computed(() => sizes[size.value][0])
+const height = computed(() => sizes[size.value][1])
 
 onShouldUpdateContent(() => {
   if (orchestrator.activeFile) {
@@ -37,7 +42,7 @@ const onContentChanged = (source: string, content: string) => {
                 <Editor
                   language="javascript"
                   :value="initialScript"
-                  @change="content => onContentChanged('script', content)"
+                  @change="(content) => onContentChanged('script', content)"
                 />
               </template>
             </Container>
@@ -49,7 +54,7 @@ const onContentChanged = (source: string, content: string) => {
                 <Editor
                   language="html"
                   :value="initialTemplate"
-                  @change="content => onContentChanged('template', content)"
+                  @change="(content) => onContentChanged('template', content)"
                 />
               </template>
             </Container>
@@ -58,17 +63,27 @@ const onContentChanged = (source: string, content: string) => {
       </div>
     </Pane>
     <Pane>
-      <Splitpanes @resize="" horizontal class="default-theme">
+      <Splitpanes horizontal class="default-theme">
         <Pane>
           <Container title="Output">
             <template #controls>
-              <!-- <button p="x-2" h="8" border="l-1 dark-300">
+              <!-- <button p="x-2" h="8" border="l-1 light-900 dark:dark-300">
                 <carbon-camera m="t-1" />
-              </button>
-              <ScreenSizeSimulator /> -->
+              </button> -->
+              <ScreenSizeSimulator v-model="size" />
             </template>
             <template #default>
-              <Preview />
+              <div h="full" :class="{ 'p-8 bg-light-700 dark:bg-dark-300': !enabled }">
+                <Hako
+                  h="full"
+                  w="full"
+                  :width="width"
+                  :height="height"
+                  :disable-scaling="enabled"
+                >
+                  <Preview shadow="lg" bg="dark:dark-700 light-100" />
+                </Hako>
+              </div>
             </template>
           </Container>
         </Pane>

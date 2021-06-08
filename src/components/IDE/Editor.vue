@@ -2,7 +2,7 @@
 import { defineProps, defineEmit, ref, watch } from 'vue'
 import { useMonaco } from '~/logic/useMonaco'
 
-const emit = defineEmit(['change'])
+const emit = defineEmit<(e: 'change', content: string) => void>()
 const props = defineProps<{ language: string; value: string }>()
 
 const target = ref()
@@ -11,14 +11,8 @@ const { onChange, setContent } = useMonaco(target, {
   code: props.value,
 })
 
-watch(() => props.value, () => {
-  setContent(props.value)
-})
-
-onChange((content) => {
-  emit('change', content)
-})
-
+watch(() => props.value, () => setContent(props.value))
+onChange(content => emit('change', content))
 emit('change', props.value)
 </script>
 

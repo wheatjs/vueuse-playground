@@ -30,7 +30,13 @@ defineProps<{ title: string; noOverflow?: boolean; noRounding?: boolean }>()
         <slot name="controls" />
       </div>
     </div>
-    <div bg="dark:dark-800 light-300" border="rounded-b-md" w="full" :class="noOverflow ? 'overflow-hidden' : 'overflow-auto'">
+    <div
+      bg="dark:dark-800 light-300"
+      position="relative"
+      border="rounded-b-md"
+      w="full"
+      :class="noOverflow ? 'overflow-hidden' : 'overflow-auto'"
+    >
       <slot />
     </div>
   </div>

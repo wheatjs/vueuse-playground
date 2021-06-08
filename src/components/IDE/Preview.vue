@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watchEffect, watch } from 'vue'
 import type { WatchStopHandle } from 'vue'
+// import { useElementSize, useCssVar } from '@vueuse/core'
 import srcdoc from '../template.html?raw'
 import { PreviewProxy } from '~/logic/PreviewProxy'
 import { MAIN_FILE, vueRuntimeUrl } from '~/compiler/sfcCompiler'
@@ -176,15 +177,27 @@ async function updatePreview() {
 </script>
 
 <template>
-  <div ref="container" class="preview-container"></div>
+  <div
+    ref="container"
+    w="full"
+    h="full"
+    flex="~"
+    class="preview-container"
+    place="items-center content-center"
+  ></div>
 </template>
 
 <style>
+.preview-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 .preview-container,
 iframe {
   width: 100%;
   height: 100%;
   border: none;
-  background-color: transparent;
 }
 </style>
