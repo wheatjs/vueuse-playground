@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Playground from './components/IDE/Playground.vue'
+import Playground from './components/playground/Playground.vue'
+import ReloadPrompt from './components/ReloadPrompt.vue';
 
 const isOpen = ref(false)
 </script>
@@ -11,4 +12,5 @@ const isOpen = ref(false)
     <Playground />
   </div>
   <Settings v-model="isOpen" />
+  <ReloadPrompt />
 </template>

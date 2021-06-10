@@ -285,7 +285,7 @@ export class CompletionAdapter implements languages.CompletionItemProvider {
   constructor(private _worker: WorkerAccessor) {}
 
   public get triggerCharacters(): string[] {
-    return ['.', ':', '<', '"', '=', '/']
+    return ['.', ':', '<', '"', '=', '/', '@']
   }
 
   provideCompletionItems(

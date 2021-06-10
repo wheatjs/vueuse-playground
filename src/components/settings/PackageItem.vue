@@ -46,7 +46,7 @@ const install = () => orchestrator.packages = [...orchestrator.packages, {
     <div flex="~ row" m="t-2">
       <span flex="1"></span>
       <div flex="~" space="x-[1px]" bg="light-900 dark:dark-900" border="~ rounded dark:dark-900">
-        <PackageVersion v-model="version" v-if="source === 'skypack'" :name="name" />
+        <!-- <PackageVersion v-model="version" v-if="source === 'skypack'" :name="name" /> -->
         <Button v-if="isInstalled" border="rounded-r" :class="{'rounded': source !== 'skypack'}" @click="uninstall()">
           <carbon-delete />
           <span>

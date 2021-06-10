@@ -14,7 +14,7 @@ const pkgs = computed(() => {
 <template>
   <div>
     <div h="20" flex="~ row" items="center" p="x-4">
-      <SearchBox v-model="filter" placeholder="Filter Packages" />
+      <Textfield v-model="filter" placeholder="Filter Packages" />
     </div>
     <div p="x-4 y-2" space="y-4">
       <PackageItem

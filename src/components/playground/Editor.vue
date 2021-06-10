@@ -17,6 +17,5 @@ emit('change', props.value)
 </script>
 
 <template>
-  <div ref="target" class="h-full w-full">
-  </div>
+  <div ref="target" class="h-full w-full"></div>
 </template>

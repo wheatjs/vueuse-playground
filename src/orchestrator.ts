@@ -1,8 +1,8 @@
 import { reactive, watch, watchEffect } from 'vue'
 // import { parse } from '@vue/compiler-sfc'
 import { createEventHook } from '@vueuse/core'
+import lz from 'lz-string'
 import { compileFile } from './compiler/sfcCompiler'
-
 // const demos = import.meta.glob('../demos/**/*.(vue|json)')
 
 const shouldUpdateContent = createEventHook()
@@ -103,11 +103,17 @@ watch(() => orchestrator.activeFilename, () => {
 })
 
 export function exportState() {
-  return btoa(JSON.stringify({
+  const files = Object.entries(orchestrator.files).reduce((acc, [name, { template, script }]) => {
+    acc[name] = { template, script }
+    return acc
+  }, {})
+
+  return lz.compressToEncodedURIComponent(JSON.stringify({
     packages: orchestrator.packages,
-    files: orchestrator.files,
+    files,
   }))
 }
+
 
 /**
  * Add a file to the orchestrator
@@ -260,11 +266,19 @@ function loadInitialState() {
   removeAllFiles()
 
   if (location.hash.slice(1)) {
-    const { files, packages } = JSON.parse(atob(location.hash.slice(1)))
+    const { files, packages } = JSON.parse(lz.decompressFromEncodedURIComponent(location.hash.slice(1)))
+
+    console.log(files, packages)
 
     if (files && packages) {
       orchestrator.packages = packages
-      orchestrator.files = files
+
+      for (const f in files) {
+        console.log(f)
+        addFile(new OrchestratorFile(f, files[f].template, files[f].script))
+      }
+      setActiveFile('App.vue')
+      shouldUpdateContent.trigger(null)
     }
   }
   else {

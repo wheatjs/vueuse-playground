@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue'
 import WindiCSS from 'vite-plugin-windicss'
 import ViteComponents, { HeadlessUiResolver } from 'vite-plugin-components'
 import Icons, { ViteIconsResolver } from 'vite-plugin-icons'
+import { VitePWA } from 'vite-plugin-pwa'
 import { copyVuePlugin } from './plugins/copy-vue'
 
 const prefix = 'monaco-editor/esm/vs'
@@ -14,8 +15,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          // jsonWorker: [`${prefix}/language/json/json.worker`],
-          // cssWorker: [`${prefix}/language/css/css.worker`],
           htmlWorker: ['./src/monaco/languages/html/html.worker'],
           tsWorker: [`${prefix}/language/typescript/ts.worker`],
           editorWorker: [`${prefix}/editor/editor.worker`],
@@ -36,6 +35,9 @@ export default defineConfig({
       ],
     }),
     Icons(),
+    // VitePWA({
+    //   base: '/',
+    // }),
   ],
   resolve: {
     alias: {

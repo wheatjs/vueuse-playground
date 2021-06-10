@@ -6,7 +6,7 @@ import PackageItem from './PackageItem.vue'
 const query = ref('')
 const thorttledQuery = useThrottle(query, 1000)
 const url = computed(() => `https://api.skypack.dev/v1/search?q=${thorttledQuery.value}`)
-const { data } = useFetch(url, { refetch: true }).get().json()
+const { data } = useFetch(url, { refetch: true }).json().get()
 
 const isOpen = ref(false)
 </script>

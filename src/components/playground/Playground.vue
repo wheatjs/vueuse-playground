@@ -7,7 +7,7 @@ import sizes from '~/data/screen-sizes.json'
 
 const initialScript = ref('')
 const initialTemplate = ref('')
-const size = ref('Default')
+const size = ref<keyof typeof sizes>('Default')
 const enabled = computed(() => size.value === 'Default')
 const width = computed(() => sizes[size.value][0])
 const height = computed(() => sizes[size.value][1])
@@ -37,24 +37,22 @@ const onContentChanged = (source: string, content: string) => {
         <Splitpanes class="default-theme editors-height" horizontal>
           <Pane>
             <Container title="Script Setup" class="rounded-b-md" no-overflow no-rounding>
-              <template #controls></template>
               <template #default>
                 <Editor
                   language="javascript"
                   :value="initialScript"
-                  @change="(content) => onContentChanged('script', content)"
+                  @change="content => onContentChanged('script', content)"
                 />
               </template>
             </Container>
           </Pane>
           <Pane>
             <Container title="Template" class="border-1 border-white" no-overflow>
-              <template #controls></template>
               <template #default>
                 <Editor
                   language="html"
                   :value="initialTemplate"
-                  @change="(content) => onContentChanged('template', content)"
+                  @change="content => onContentChanged('template', content)"
                 />
               </template>
             </Container>
@@ -67,10 +65,19 @@ const onContentChanged = (source: string, content: string) => {
         <Pane>
           <Container title="Output">
             <template #controls>
-              <!-- <button p="x-2" h="8" border="l-1 light-900 dark:dark-300">
-                <carbon-camera m="t-1" />
-              </button> -->
-              <ScreenSizeSimulator v-model="size" />
+              <Select v-model="size">
+                <template #default="{ value }">
+                  <carbon-devices />
+                  <span>
+                    {{ value }}
+                  </span>
+                </template>
+                <template #items>
+                  <SelectItem v-for="(_, index) in sizes" :key="index" :value="index">
+                    {{ index }}
+                  </SelectItem>
+                </template>
+              </Select>
             </template>
             <template #default>
               <div h="full" :class="{ 'p-8 bg-light-700 dark:bg-dark-300': !enabled }">
@@ -96,36 +103,3 @@ const onContentChanged = (source: string, content: string) => {
     </Pane>
   </Splitpanes>
 </template>
-
-<style>
-.editors-height {
-  height: calc(100% - 2rem);
-}
-
-.splitpanes.default-theme .splitpanes__pane {
-  @apply bg-transparent;
-}
-.splitpanes.default-theme .splitpanes__splitter {
-  @apply bg-transparent border-transparent min-w-4 min-h-4;
-}
-
-.splitpanes.default-theme .splitpanes__splitter::before,
-.splitpanes.default-theme .splitpanes__splitter::after {
-  @apply bg-dark-100 bg-opacity-50;
-}
-
-.splitpanes.default-theme .splitpanes__splitter:hover::before,
-.splitpanes.default-theme .splitpanes__splitter:hover::after {
-  @apply bg-light-100 bg-opacity-50;
-}
-
-.dark .splitpanes.default-theme .splitpanes__splitter::before,
-.dark .splitpanes.default-theme .splitpanes__splitter::after {
-  @apply bg-dark-100;
-}
-
-.dark .splitpanes.default-theme .splitpanes__splitter:hover::before,
-.dark .splitpanes.default-theme .splitpanes__splitter:hover::after {
-  @apply bg-dark-100;
-}
-</style>

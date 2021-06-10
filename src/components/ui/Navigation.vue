@@ -2,36 +2,59 @@
 import { defineProps } from 'vue'
 import { useVModel, useClipboard } from '@vueuse/core'
 import { isDark, toggleDark } from '~/logic/dark'
-// import { exportState } from '~/store'
+import { exportState } from '~/orchestrator'
 
 const props = defineProps<{ modelValue: boolean }>()
 const isOpen = useVModel(props)
 const { copy } = useClipboard()
 
-// const copyToClipboard = () => {
-//   copy(`${location.host}/#${exportState()}`)
-// }
+const share = () => {
+  const state = exportState()
+  window.location.hash = state
+  copy(window.location.href)
+}
 </script>
 
 <template>
-  <div class="fixed left-0 top-0 bottom-0 py-4 px-2 w-14 m-r-2 flex flex-col items-center space-y-2">
-    <!-- <logos-vue class="text-4xl"/> -->
+  <div
+    position="fixed left-0 top-0 bottom-0"
+    p="y-4 x-2"
+    w="18"
+    flex="~ col"
+    items="center"
+    spcae="y-2"
+  >
     <img src="/vueuse.svg" class="w-12" />
     <span class="flex-1"></span>
-    <IconButton @click="toggleDark">
+    <Button
+      icon
+      text="base"
+      @click="toggleDark"
+    >
       <carbon-moon v-if="isDark" />
       <carbon-sun v-else />
-    </IconButton>
-    <!-- <IconButton @click="copyToClipboard">
-      <carbon-share class="text-xl" />
-    </IconButton> -->
-    <IconButton @click="isOpen = true">
-      <carbon-settings class="text-xl" />
-    </IconButton>
+    </Button>
+    <Button
+      icon
+      text="base"
+      @click="share()"
+    >
+      <carbon-share />
+    </Button>
+    <Button
+      icon
+      text="base"
+      @click="isOpen = true"
+    >
+      <carbon-settings />
+    </Button>
     <a href="https://github.com/wheatjs/vueuse-playground" target="_blank">
-      <IconButton>
-        <mdi-github class="text-xl" />
-      </IconButton>
+      <Button
+        icon
+        text="base"
+      >
+        <mdi-github />
+      </Button>
     </a>
   </div>
 </template>

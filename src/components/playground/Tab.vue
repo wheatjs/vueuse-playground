@@ -8,6 +8,7 @@ const props = defineProps<{
 }>()
 
 const isActive = computed(() => orchestrator.activeFilename === props.name)
+const isProtectedFile = computed(() => props.name === 'App.vue')
 
 const remove = () => {
   if (props.name)
@@ -37,8 +38,8 @@ const remove = () => {
     >
       <slot />
     </div>
-    <IconButton v-if="name !== 'App.vue' && name" p="0" w="6" h="6" @click="remove()">
-      <carbon-close class="" />
-    </IconButton>
+    <Button v-if="!isProtectedFile" icon p="0" small @click="remove()">
+      <carbon-close />
+    </Button>
   </div>
 </template>

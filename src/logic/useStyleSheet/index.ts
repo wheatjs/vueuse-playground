@@ -11,7 +11,7 @@ export function useStyleSheet(name: string) {
   const rules = ref<StyleSheetRules>({})
   const stylesheet: CSSStyleSheet | undefined = Object.values(document.styleSheets).find(({ title }) => title === name)
 
-  watch(rules, (newStyles, oldStyles) => {
+  watch(rules, (styles) => {
     if (!stylesheet)
       return
 
@@ -19,8 +19,8 @@ export function useStyleSheet(name: string) {
       stylesheet.deleteRule(i)
 
     // Determine which styles to add
-    Object.keys(newStyles)
-      .forEach(selector => stylesheet.insertRule(`${selector} { ${newStyles[selector]} }`))
+    Object.keys(styles)
+      .forEach(selector => stylesheet.insertRule(`${selector} { ${styles[selector]} }`))
   })
 
   return {

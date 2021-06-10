@@ -56,9 +56,9 @@ const activeTab = ref('packages')
               <span flex="1">
                 Settings
               </span>
-              <IconButton @click="isOpen = false">
+              <Button icon @click="isOpen = false">
                 <carbon-close />
-              </IconButton>
+              </Button>
             </div>
 
             <!-- <SettingsTab m="t-2" :active="activeTab === 'editor'" @click="activeTab = 'editor'">

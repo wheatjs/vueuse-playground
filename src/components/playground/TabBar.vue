@@ -59,8 +59,8 @@ const addTab = () => {
         >
       </Tab>
     </div>
-    <IconButton w="6" h="6" p="0" m="l-2" @click="addTab()">
-      <carbon-add class="text-xl block dark:text-light-900" />
-    </IconButton>
+    <Button small m="l-2" icon @click="addTab()">
+      <carbon-add class="text-base" />
+    </Button>
   </div>
 </template>

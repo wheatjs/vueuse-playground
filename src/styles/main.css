@@ -52,3 +52,34 @@ html.dark {
 .editor-windicss-color-block-dark {
   border: 1px solid #eeeeee;
 }
+
+.editors-height {
+  height: calc(100% - 2rem);
+}
+
+.splitpanes.default-theme .splitpanes__pane {
+  @apply bg-transparent;
+}
+.splitpanes.default-theme .splitpanes__splitter {
+  @apply bg-transparent border-transparent min-w-4 min-h-4;
+}
+
+.splitpanes.default-theme .splitpanes__splitter::before,
+.splitpanes.default-theme .splitpanes__splitter::after {
+  @apply bg-dark-100 bg-opacity-50;
+}
+
+.splitpanes.default-theme .splitpanes__splitter:hover::before,
+.splitpanes.default-theme .splitpanes__splitter:hover::after {
+  @apply bg-light-100 bg-opacity-50;
+}
+
+.dark .splitpanes.default-theme .splitpanes__splitter::before,
+.dark .splitpanes.default-theme .splitpanes__splitter::after {
+  @apply bg-dark-100;
+}
+
+.dark .splitpanes.default-theme .splitpanes__splitter:hover::before,
+.dark .splitpanes.default-theme .splitpanes__splitter:hover::after {
+  @apply bg-dark-100;
+}
