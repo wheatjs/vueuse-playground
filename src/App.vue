@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Playground from './components/playground/Playground.vue'
 
 const isOpen = ref(false)
 </script>

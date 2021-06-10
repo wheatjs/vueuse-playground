@@ -23,6 +23,8 @@
     "@vueuse/core": "5.0.1",
     "@vueuse/integrations": "^5.0.1",
     "@vueuse/shared": "5.0.1",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.6.0",
     "lz-string": "^1.4.4",
     "monaco-editor": "0.24.0",
     "monaco-editor-core": "^0.24.0",
@@ -35,6 +37,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^0.6.5",
     "@iconify/json": "^1.1.349",
+    "@types/file-saver": "^2.0.2",
     "@types/node": "^15.6.1",
     "@vitejs/plugin-vue": "^1.2.2",
     "@vue/compiler-sfc": "^3.1.1",

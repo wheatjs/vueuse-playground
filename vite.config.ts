@@ -4,7 +4,6 @@ import vue from '@vitejs/plugin-vue'
 import WindiCSS from 'vite-plugin-windicss'
 import ViteComponents, { HeadlessUiResolver } from 'vite-plugin-components'
 import Icons, { ViteIconsResolver } from 'vite-plugin-icons'
-import { VitePWA } from 'vite-plugin-pwa'
 import { copyVuePlugin } from './plugins/copy-vue'
 
 const prefix = 'monaco-editor/esm/vs'
@@ -25,8 +24,13 @@ export default defineConfig({
   plugins: [
     vue(),
     copyVuePlugin(),
-    WindiCSS(),
+    WindiCSS({
+      scan: {
+        include: ['src/**/*.{vue,html,jsx,tsx}', 'index.html'],
+      },
+    }),
     ViteComponents({
+      globalComponentsDeclaration: true,
       customComponentResolvers: [
         ViteIconsResolver({
           componentPrefix: '',
