@@ -11,14 +11,12 @@ const { copy } = useClipboard()
 const share = () => {
   const state = exportState()
   window.location.hash = state
-  copy(window.location.href)
+  return copy(window.location.href)
 }
 
 useEventListener('keydown', (ev) => {
-  if (ev.ctrlKey && ev.code === 'KeyS' && !ev.shiftKey) {
-    share()
-    alert('URL copied to clipboard')
-  }
+  if (ev.ctrlKey && ev.code === 'KeyS' && !ev.shiftKey)
+    share().then(() => alert('URL copied to clipboard'))
 })
 </script>
 
