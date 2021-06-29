@@ -15,8 +15,10 @@ const share = () => {
 }
 
 useEventListener('keydown', (ev) => {
-  if (ev.ctrlKey && ev.code === 'KeyS' && !ev.shiftKey)
+  if (ev.ctrlKey && ev.code === 'KeyS' && !ev.shiftKey) {
+    ev.preventDefault()
     share().then(() => alert('URL copied to clipboard'))
+  }
 })
 </script>
 
