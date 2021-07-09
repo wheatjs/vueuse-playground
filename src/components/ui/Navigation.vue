@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { useVModel, useClipboard } from '@vueuse/core'
+import { useVModel, useClipboard, useEventListener } from '@vueuse/core'
 import { isDark, toggleDark } from '~/logic/dark'
 import { exportState } from '~/orchestrator'
 
@@ -11,8 +11,15 @@ const { copy } = useClipboard()
 const share = () => {
   const state = exportState()
   window.location.hash = state
-  copy(window.location.href)
+  return copy(window.location.href)
 }
+
+useEventListener('keydown', (ev) => {
+  if (ev.ctrlKey && ev.code === 'KeyS' && !ev.shiftKey) {
+    ev.preventDefault()
+    share().then(() => alert('URL copied to clipboard'))
+  }
+})
 </script>
 
 <template>
