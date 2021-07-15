@@ -246,7 +246,7 @@ const initialPackages = [
     name: 'vue-demi',
     source: 'unpkg',
     description: 'Vue Demi (half in French) is a developing utility allows you to write Universal Vue Libraries for Vue 2 & 3',
-    url: 'https://unpkg.com/vue-demi/lib/index.esm.js',
+    url: 'https://unpkg.com/vue-demi/lib/index.mjs',
   },
   {
     name: '@vueuse/shared',
