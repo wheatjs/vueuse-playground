@@ -1,0 +1,15 @@
+{
+  "unocss": {
+    "enabled": true,
+    "transformCSS": true,
+    "transformers": {
+      "transformerDirectives": true,
+      "transformerVariantGroup": true
+    },
+    "presets": {
+      "presetUno": true,
+      "presetAttributify": true,
+      "presetIcons": true
+    }
+  }
+}

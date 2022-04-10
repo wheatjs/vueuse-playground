@@ -1,0 +1,38 @@
+html,
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  @apply bg-light-100;
+}
+
+html.dark {
+  @apply bg-dark-800 text-light-500;
+  color-scheme: dark;
+}
+
+.splitpanes__splitter {
+  @apply relative;
+}
+
+.splitpanes__splitter:before {
+  content: '';
+  transition: opacity 0.4s;
+  background-color: rgba(125,125,125,0.1);
+  @apply absolute z-1 top-0 left-0 op-0;
+}
+
+.splitpanes__splitter:hover:before {
+  @apply op-100;
+}
+
+.splitpanes--vertical > .splitpanes__splitter:before {
+  @apply h-full -right-10px;
+}
+
+.splitpanes--horizontal > .splitpanes__splitter:before {
+  @apply w-full -bottom-10px;
+}
