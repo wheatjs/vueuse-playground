@@ -5,6 +5,7 @@
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Button: typeof import('./components/ui/Button.vue')['default']
+    Dialog: typeof import('./components/ui/Dialog.vue')['default']
     Editor: typeof import('./modules/editor/Editor.vue')['default']
     EditorGroup: typeof import('./components/groups/EditorGroup.vue')['default']
     EditorTab: typeof import('./components/editor/EditorTab.vue')['default']
@@ -17,8 +18,13 @@ declare module '@vue/runtime-core' {
     MenuItem: typeof import('./components/ui/menu/MenuItem.vue')['default']
     Navigation: typeof import('./components/Navigation.vue')['default']
     Preview: typeof import('./modules/preview/Preview.vue')['default']
+    ProjectSettings: typeof import('./modules/project/ProjectSettings.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
+    Settings: typeof import('./modules/project/Settings.vue')['default']
     Spinner: typeof import('./components/ui/Spinner.vue')['default']
     Statusbar: typeof import('./modules/statusbar/Statusbar.vue')['default']
+    StatusbarButton: typeof import('./modules/statusbar/StatusbarButton.vue')['default']
     StatusbarItemSelect: typeof import('./modules/statusbar/StatusbarItemSelect.vue')['default']
     StatusbarItemText: typeof import('./modules/statusbar/StatusbarItemText.vue')['default']
     Terminal: typeof import('./modules/terminal/Terminal.vue')['default']

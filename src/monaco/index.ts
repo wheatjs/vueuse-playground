@@ -5,13 +5,14 @@ import { createWorkers, useMonacoImport } from './setup'
 import { isDark } from '~/modules/shared'
 import { fs } from '~/modules/filesystem'
 import { usePackages } from '~/modules/packages'
+export * from './plugins'
 
 export * from './setup'
 
 /**
  * Creates and returns a configured monaco instance.
  */
-export const createMonacoInstance = createSingletonPromise(async () => {
+export const createMonacoInstance = createSingletonPromise(async() => {
   await createWorkers()
   const { emmetHTML } = await import('emmet-monaco-es')
   const monaco = await useMonacoImport()

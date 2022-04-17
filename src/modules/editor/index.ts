@@ -3,6 +3,7 @@ import { StatusbarAlignment, createStatusbarSelectItem, createStatusbarTextItem 
 
 export * from './types'
 export * from './state'
+export * from './groups'
 export * from './useEditor'
 
 /**

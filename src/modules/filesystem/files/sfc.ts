@@ -59,10 +59,9 @@ export class SFCFile extends BaseFile {
   }
 
   public override toString() {
-    return `
-      <script setup>\n${this.script.text}\n</script>
-      <template>\n${this.template.text}\n</template>
-      <style>\n${this.style.text}\n</style>
+    return `<script setup>\n${this.script.text}\n</script>\n
+<template>\n${this.template.text}\n</template>\n
+<style>\n${this.style.text}\n</style>
     `
   }
 }

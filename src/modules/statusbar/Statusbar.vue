@@ -23,12 +23,33 @@ const itemsAlignedRight = computed(() => {
 <template>
   <Titlebar border-b-0>
     <!-- Left -->
-    <div flex-1>
+    <div
+      flex
+      flex-1
+      flex-row
+      h-full
+      items-center
+      divide="x-1 dark:dark-900 light-900"
+    >
       <template
         v-for="item in itemsAlignedLeft"
         :key="item.id"
       >
-        Hey - {{ item.type }}
+        <StatusbarItemText
+          v-if="item.type === StatusbarItemType.Text"
+          :item="item"
+        />
+        <StatusbarItemSelect
+          v-else-if="item.type === StatusbarItemType.Select"
+          v-model="item.value"
+          :item="item"
+          h-full
+          b-y-0
+        />
+        <StatusbarButton
+          v-else-if="item.type === StatusbarItemType.Button"
+          :item="item"
+        />
       </template>
     </div>
 
@@ -38,6 +59,7 @@ const itemsAlignedRight = computed(() => {
       flex-row
       h-full
       items-center
+      divide="x-1 dark:dark-900 light-900"
     >
       <template
         v-for="item in itemsAlignedRight"
@@ -53,6 +75,10 @@ const itemsAlignedRight = computed(() => {
           :item="item"
           h-full
           b-y-0
+        />
+        <StatusbarButton
+          v-else-if="item.type === StatusbarItemType.Button"
+          :item="item"
         />
       </template>
     </div>

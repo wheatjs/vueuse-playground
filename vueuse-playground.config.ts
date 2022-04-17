@@ -3,6 +3,20 @@ import VitesseLight from 'theme-vitesse/themes/vitesse-light.json'
 import { defineConfig } from './src/types'
 
 export default defineConfig({
+  firebase: {
+    enabled: true,
+    recaptcahV3Key: '6Ldgs3ofAAAAABsIdCGGzUfTNy8k8wIejRe2X5wl',
+    options: {
+      apiKey: 'AIzaSyA1yn7BKau98jHu8dUJJDX-UHsbFzXwGMg',
+      authDomain: 'vueuse-playground.firebaseapp.com',
+      databaseURL: 'https://vueuse-playground-default-rtdb.firebaseio.com',
+      projectId: 'vueuse-playground',
+      storageBucket: 'vueuse-playground.appspot.com',
+      messagingSenderId: '401675707884',
+      appId: '1:401675707884:web:b26ace090bad27a2dc8cc9',
+    },
+  },
+
   packages: {
     cdn: 'https://unpkg.com/',
     defaultPackages: {

@@ -1,3 +1,4 @@
+import { customAlphabet } from 'nanoid'
 import type { PacakgeVersions, PackageMetadata, PlaygroundPackage } from './types'
 import { getDefault } from './defaults'
 
@@ -65,7 +66,10 @@ export async function resolvePackage(name: string, version?: string) {
 
     packages.push(
       {
+        id: customAlphabet('abcdefghijklmnopqrstuvwxyz', 10)(),
         name: metadata.name,
+        description: metadata.description,
+        homepage: metadata.homepage,
         version: metadata.version,
         entry: _default.entry || metadata.module || metadata.main,
         types,

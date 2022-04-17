@@ -17,7 +17,8 @@ packages.addPackage('@vueuse/core')
       flex-1
       bg-light-900
       dark:bg-dark-900
-      grid grid-rows="[min-content_auto_min-content]"
+      grid
+      grid-rows="[min-content_auto_min-content]"
     >
       <Titlebar
         px="!0"
@@ -53,8 +54,7 @@ packages.addPackage('@vueuse/core')
             <Splitpanes horizontal>
               <Pane
                 flex
-                flex-col
-                size="75"
+                flex-col size="75"
               >
                 <Titlebar
                   flex-shrink-0
@@ -62,8 +62,7 @@ packages.addPackage('@vueuse/core')
                 >
                   <i
                     i="carbon-chevron-down"
-                    mr-1
-                    text-base
+                    mr-1 text-base
                   />
                   Preview
                 </Titlebar>
@@ -76,10 +75,9 @@ packages.addPackage('@vueuse/core')
                 <Titlebar>
                   <i
                     i="carbon-chevron-down"
-                    mr-1
-                    text-base
+                    mr-1 text-base
                   />
-                  Console
+                  Terminal
                 </Titlebar>
                 <Terminal />
               </Pane>
@@ -90,4 +88,5 @@ packages.addPackage('@vueuse/core')
       <Statusbar />
     </main>
   </div>
+  <ProjectSettings />
 </template>

@@ -36,3 +36,32 @@ html.dark {
 .splitpanes--horizontal > .splitpanes__splitter:before {
   @apply w-full -bottom-10px;
 }
+.splitpanes .splitpanes__pane {transition: none;}
+
+.editor-decoration-package {
+  @apply pl-1.5;
+}
+
+.editor-decoration-package::after {
+  content: 'Install';
+  font-size: 0.8em;
+  @apply bg-dark-500 text-light-900/50 px-1 py-0.25 rounded cursor-pointer hover:bg-red-500;
+}
+
+.editor-decoration-package:hover::after {
+  @apply bg-green-500/10 text-green-500;
+}
+
+.editor-decoration-package-version {
+  @apply pl-1.5;
+}
+
+.editor-decoration-package-version::after {
+  /* content: 'Install'; */
+  font-size: 0.8em;
+  @apply bg-dark-500 text-light-900/50 px-1 py-0.25 rounded cursor-pointer hover:bg-red-500;
+}
+
+.editor-decoration-package-version:hover::after {
+  @apply bg-green-500/10 text-green-500;
+}

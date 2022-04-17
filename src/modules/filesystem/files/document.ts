@@ -22,6 +22,7 @@ export class Document {
 
   constructor(name: string, options: DocumentOptions) {
     this.name = name
+
     this.doc = automerge.from({ text: new automerge.Text(options.initialContent) })
     this.onUpdate = options.onUpdate
 
@@ -38,7 +39,12 @@ export class Document {
 
         createWorkers()
           .then(() => {
-            this.model = monaco.editor.createModel(options.initialContent || '', options.language, monaco.Uri.parse(`file://${this.name}`))
+            if (monaco.editor.getModel(monaco.Uri.parse(`file://${this.name}`))) {
+              this.model = monaco.editor.getModel(monaco.Uri.parse(`file://${this.name}`))
+              this.doc = automerge.from({ text: new automerge.Text(this.model?.getValue()) })
+            }
+            else { this.model = monaco.editor.createModel(options.initialContent || '', options.language, monaco.Uri.parse(`file://${this.name}`)) }
+
             this.hasModelLoaded.value = true
             this.bindModel()
           })
@@ -170,7 +176,11 @@ export class Document {
     return new Blob(automerge.getAllChanges(this.doc))
   }
 
-  public async import(data: any) {
+  /**
+   * Imports automerge changes.
+   * Leave in for possible collab editing features.
+   */
+  public async importChanges(data: any) {
     data = await new Response(data).arrayBuffer()
     data = new Uint8Array(data)
 
@@ -182,5 +192,10 @@ export class Document {
     this.shouldIgnoreModelUpdate = true
     this.model!.setValue(this.text)
     this.shouldIgnoreModelUpdate = false
+  }
+
+  public async import(data: string) {
+    // this.doc = automerge.from({ text: new automerge.Text(data) })
+    this.model?.setValue(data)
   }
 }

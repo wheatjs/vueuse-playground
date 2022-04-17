@@ -37,7 +37,13 @@ export default defineConfig({
       presets: [
         presetUno(),
         presetAttributify(),
-        presetIcons(),
+        presetIcons({
+          collections: {
+            custom: {
+              stackblitz: '<svg viewBox="0 0 28 28"><path d="M12.747 16.273h-7.46L18.925 1.5l-3.671 10.227h7.46L9.075 26.5l3.671-10.227z"></path></svg>',
+            },
+          },
+        }),
         presetTypography(),
         presetWebFonts({
           fonts: {
@@ -45,6 +51,19 @@ export default defineConfig({
             mono: 'JetBrains Mono',
           },
         }),
+      ],
+      safelist: [
+        'i-vscode-icons-default-file',
+        'i-vscode-icons-file-type-vue',
+        'i-carbon-color-palette',
+        'i-carbon-application',
+        'i-vscode-icons-file-type-typescript',
+        'i-vscode-icons-file-type-js',
+        'i-vscode-icons-file-type-json',
+        'i-vscode-icons-file-type-css',
+        'i-mdi-content-save',
+        'i-custom-stackblitz',
+        'i-custom-stackblitz?mask',
       ],
     }),
 

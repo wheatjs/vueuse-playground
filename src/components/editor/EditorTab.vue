@@ -1,67 +1,74 @@
 <script setup lang="ts">
+import { groups } from '~/modules/editor'
 import { filesystem, fs } from '~/modules/filesystem'
+import type { BaseFile } from '~/modules/filesystem/files'
 
-const props = defineProps<{ name: string; noIcon?: boolean; isProtected?: boolean }>()
-const canDelete = computed(() => !fs.files.find(({ filename }) => filename === props.name)?.isProtected && !props.isProtected)
-const isActive = computed(() => fs.currentFilename === props.name)
+const props = defineProps<{ file?: BaseFile }>()
 
-const setActive = () => filesystem.currentFile = props.name
-const removeFile = () => filesystem.deleteFile(props.name)
+const group = computed(() => {
+  const file = props.file
+
+  if (!file)
+    return null
+
+  return groups
+    .find((group) => {
+      if (typeof group.match === 'string' && group.match === (file!).filename)
+        return group
+      else if (typeof group.match === 'function' && group.match(file!))
+        return group
+
+      return null
+    })
+})
+
+const isActive = computed(() => {
+  if (group.value && props.file)
+    return group.value.isActive(props.file, fs.currentFilename)
+})
+
+const icon = computed(() => {
+  const file = props.file
+
+  if (!group.value || !file)
+    return 'vscode-icons-default-file'
+
+  if (typeof group.value.icon === 'string')
+    return group.value.icon
+
+  if (typeof group.value.icon === 'function')
+    return group.value.icon(file)
+
+  return 'vscode-icons-default-file'
+})
+
+const activate = () => {
+  if (props.file)
+    filesystem.currentFile = props.file.filename
+}
 </script>
 
 <template>
   <div
-    pl-2
-    h-full
-    text-base
     flex
     flex-row
     items-center
+    px-2
     cursor-pointer
     select-none
-    :draggable="false"
-    bg="dark:(hover:dark-300)"
     border="r-1 light-900 dark:dark-900"
+    bg="light-500 dark:dark-600"
     :class="{
-      'pr-1': noIcon,
-      'pr-2': !canDelete && !noIcon,
-      '!dark:(bg-green-500/5)': isActive
+      'text-green-500 !bg-green-500/5': isActive
     }"
-    @click="setActive"
+    @click="activate"
   >
-    <template v-if="!noIcon">
-      <template v-if="$slots.icon">
-        <slot name="icon" />
-      </template>
-      <i v-else-if="name.endsWith('vue')" i-vscode-icons-file-type-vue />
-      <i v-else-if="name.endsWith('js')" i-vscode-icons-file-type-json />
-      <i v-else-if="name.endsWith('json')" i-vscode-icons-file-type-json />
-      <i v-else-if="name.endsWith('css')" i-vscode-icons-file-type-css />
-      <i v-else i-vscode-icons-default-file />
-    </template>
     <div
-      text="xs dark:(light-900 opacity-70)"
-      font-sans
-      font-100
-      :class="{
-        'ml-2': !noIcon,
-        'pr-1': !canDelete,
-        '!dark:(text-green-300)': isActive
-      }"
-    >
+      w-4
+      h-4 :class="[`i-${icon}`, group?.hideName ? '' : 'mr-1']"
+    />
+    <span v-if="!group?.hideName">
       <slot />
-    </div>
-    <button
-      v-if="canDelete"
-      mx-1
-      :class="{
-        '!dark:(text-green-100 text-opacity-0 hover:text-opacity-10)': isActive
-      }"
-      @click.stop="removeFile()"
-    >
-      <div i-carbon-close text-base :class="{
-        'text-green-500': isActive
-      }" />
-    </button>
+    </span>
   </div>
 </template>

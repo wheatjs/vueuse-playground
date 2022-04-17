@@ -27,9 +27,6 @@ export default {
     <Listbox v-model="value">
       <ListboxButton
         v-bind="$attrs"
-        border-1
-        border-light-900
-        dark:border-dark-900
         px-2
         h-full
         text-xs

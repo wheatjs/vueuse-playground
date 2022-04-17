@@ -4,8 +4,11 @@ export interface PacakgesConfig {
 }
 
 export interface PlaygroundPackage {
+  id: string
   name: string
   version: string
+  description?: string
+  homepage?: string
   types: string
   entry: string
 }
@@ -16,6 +19,8 @@ export interface PackageMetadata {
   main: string
   types: string
   module: string
+  description?: string
+  homepage?: string
   dependencies: Record<string, string>
 }
 

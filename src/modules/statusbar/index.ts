@@ -18,6 +18,10 @@ export interface CreateStatusbarItemOptions {
 }
 
 export interface CreateStatusbarItemButtonOptions extends CreateStatusbarItemOptions {
+  text: MaybeRef<string>
+  icon: MaybeRef<string>
+  foreground: MaybeRef<string>
+  background: MaybeRef<string>
   onClick: () => void
 }
 
@@ -43,7 +47,11 @@ export interface StatusbarItemButton {
   id: number
   type: StatusbarItemType.Button
   alignment: StatusbarAlignment
+  icon: StatusbarAlignment
   priority: number
+  text: MaybeRef<string>
+  foreground: MaybeRef<string>
+  background: MaybeRef<string>
   onClick: () => void
 }
 
@@ -113,6 +121,14 @@ export function createStatusbarButtonItem(options: CreateStatusbarItemButtonOpti
     alignment: options.alignment,
     priority: options.priority,
     onClick: options.onClick,
+    // @ts-expect-error Leave me alone plz
+    icon: options.icon,
+    // @ts-expect-error Leave me alone plz
+    text: options.text,
+    // @ts-expect-error Leave me alone plz
+    foreground: options.foreground,
+    // @ts-expect-error Leave me alone plz
+    background: options.background,
   })
 
   return dispose

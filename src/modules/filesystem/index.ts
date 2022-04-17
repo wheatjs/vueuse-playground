@@ -94,7 +94,6 @@ class Filesystem {
   private currentFilename = 'App.vue'
 
   constructor() {
-    // this.onUpdate('main.ts')
     this.compileAllFiles()
     this.currentFile = 'App.vue'
   }
@@ -187,10 +186,14 @@ class Filesystem {
   }
 
   public getFileDocuments(file: BaseFile) {
-    if (file instanceof SFCFile) return [file.script, file.style, file.template]
-    if (file instanceof ScriptFile) return [file.script]
-    if (file instanceof CssFile) return [file.css]
-    if (file instanceof JsonFile) return [file.json]
+    if (file instanceof SFCFile)
+      return [file.script, file.style, file.template]
+    if (file instanceof ScriptFile)
+      return [file.script]
+    if (file instanceof CssFile)
+      return [file.css]
+    if (file instanceof JsonFile)
+      return [file.json]
 
     return []
   }
@@ -272,3 +275,9 @@ export const forceUpdatePreview = shouldUpdatePreviewHook.trigger
 
 export const onFileCreated = onFileCreatedHook.on
 export const onFileDeleted = onFileDeletedHook.on
+
+if (import.meta.hot) {
+  import.meta.hot.accept(() => {
+    // filesystem.files = {}
+  })
+}
