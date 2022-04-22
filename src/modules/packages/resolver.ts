@@ -28,10 +28,12 @@ export async function resolvePackageMetadata(name: string, version: string): Pro
  * @param metadata
  */
 export async function resolvePackageTypes(metadata: PackageMetadata): Promise<string> {
-  if (!metadata.types)
+  const types = metadata.types || metadata.typings
+
+  if (!types)
     return ''
 
-  const response = await fetch(url(`${metadata.name}@${metadata.version}/${metadata.types}`))
+  const response = await fetch(url(`${metadata.name}@${metadata.version}/${types}`))
 
   if (!response.ok)
     return ''

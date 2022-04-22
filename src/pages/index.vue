@@ -88,5 +88,6 @@ packages.addPackage('@vueuse/core')
       <Statusbar />
     </main>
   </div>
-  <ProjectSettings />
+  <Settings />
+  <!-- <ProjectSettings /> -->
 </template>

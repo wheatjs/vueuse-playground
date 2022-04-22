@@ -29,7 +29,7 @@ export default defineConfig({
     autoClosingBrackets: 'always',
     autoClosingQuotes: 'always',
     folding: false,
-    fontFamily: 'JetBrains Mono',
+    fontFamily: 'JetBrains Mono, Consolas, \'Courier New\', monospace',
     fontLigatures: true,
     fontSize: 14,
     insertSpaces: true,

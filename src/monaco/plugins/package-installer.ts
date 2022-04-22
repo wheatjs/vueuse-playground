@@ -2,7 +2,7 @@ import { init, parse } from 'es-module-lexer'
 import type { editor as Editor } from 'monaco-editor'
 import { createMonacoInstance } from '..'
 import type { EditorPlugin } from './types'
-import { usePackages } from '~/modules/packages'
+import { onPackageAdded, onPackageRemoved, usePackages } from '~/modules/packages'
 
 interface State {
   decorations: string[]
@@ -70,10 +70,13 @@ export const PackageInstallerPlugin: EditorPlugin = {
           const index = packageIndex.split('-')[2] as unknown as number
           const pkg = packageNames[index]
 
-          console.log('Install', pkg)
+          packages.addPackage(pkg)
         }
       }
     })
+
+    onPackageAdded(() => doDecorations(editor))
+    onPackageRemoved(() => doDecorations(editor))
   },
 
   /**

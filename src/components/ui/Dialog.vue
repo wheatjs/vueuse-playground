@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Dialog, DialogDescription, DialogOverlay, DialogTitle } from '@headlessui/vue'
+import { DialogOverlay, Dialog as UDialog } from '@headlessui/vue'
 
 const props = defineProps<{ modelValue: boolean }>()
 const isOpen = useVModel(props)
@@ -12,7 +12,7 @@ export default {
 </script>
 
 <template>
-  <Dialog
+  <UDialog
     fixed
     z-9000 top-0
     w-full h-full
@@ -24,22 +24,25 @@ export default {
     <DialogOverlay
       absolute
       inset-0
-      bg="dark:dark-900/80"
+      bg="dark:dark-900/80 light-500/50"
+      @click="isOpen = false"
     />
     <div
+      pointer-events-none
       absolute
       inset-0 grid place-items-center
     >
       <div
+        pointer-events-auto
         w-full
         relative
         rounded
         shadow-xl
-        bg="dark:dark-700"
+        bg="dark:dark-700 light-200"
         v-bind="$attrs"
       >
         <slot />
       </div>
     </div>
-  </Dialog>
+  </UDialog>
 </template>

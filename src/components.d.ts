@@ -4,6 +4,7 @@
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AppSetting: typeof import('./modules/app/AppSetting.vue')['default']
     Button: typeof import('./components/ui/Button.vue')['default']
     Dialog: typeof import('./components/ui/Dialog.vue')['default']
     Editor: typeof import('./modules/editor/Editor.vue')['default']
@@ -21,7 +22,7 @@ declare module '@vue/runtime-core' {
     ProjectSettings: typeof import('./modules/project/ProjectSettings.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Settings: typeof import('./modules/project/Settings.vue')['default']
+    Settings: typeof import('./modules/app/Settings.vue')['default']
     Spinner: typeof import('./components/ui/Spinner.vue')['default']
     Statusbar: typeof import('./modules/statusbar/Statusbar.vue')['default']
     StatusbarButton: typeof import('./modules/statusbar/StatusbarButton.vue')['default']

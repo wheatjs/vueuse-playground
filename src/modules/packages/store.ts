@@ -122,3 +122,6 @@ export const usePackages = defineStore('packages', () => {
     resolveVersions,
   }
 })
+
+export const onPackageAdded = addPackageHook.on
+export const onPackageRemoved = removePackageHook.on

@@ -7,6 +7,8 @@ const isOpen = ref(true)
     v-model="isOpen"
     prose
   >
+    <div />
+
     <div px-4>
       Hello World
     </div>

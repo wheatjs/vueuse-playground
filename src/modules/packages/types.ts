@@ -18,6 +18,7 @@ export interface PackageMetadata {
   version: string
   main: string
   types: string
+  typings?: string
   module: string
   description?: string
   homepage?: string
