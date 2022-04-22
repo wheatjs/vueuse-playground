@@ -59,6 +59,7 @@ const itemsAlignedRight = computed(() => {
       flex-row
       h-full
       items-center
+      border="l-1 dark:dark-900 light-900"
       divide="x-1 dark:dark-900 light-900"
     >
       <template
