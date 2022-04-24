@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
-import { usePackages } from '~/modules/packages'
+import DefaultProject from '../../presets/default'
+import { useProjectStore } from '~/modules/project'
+import { preventCtrlS } from '~/modules/app'
 
-const packages = usePackages()
-packages.addPackage('@vueuse/core')
+useEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 's' && preventCtrlS.value)
+    e.preventDefault()
+})
+
+const view = ref('output')
+
+const project = useProjectStore()
+project.importProject(DefaultProject)
 </script>
 
 <template>
@@ -59,12 +68,21 @@ packages.addPackage('@vueuse/core')
                 <Titlebar
                   flex-shrink-0
                   border-t-0
+                  pr-2
                 >
                   <i
                     i="carbon-chevron-down"
                     mr-1 text-base
                   />
-                  Preview
+                  <span flex-1>
+                    Preview
+                  </span>
+                  <button>
+                    <div
+                      i-carbon-maximize
+                      w-4 h-4
+                    />
+                  </button>
                 </Titlebar>
                 <Preview flex-1 />
               </Pane>
@@ -72,14 +90,32 @@ packages.addPackage('@vueuse/core')
                 size="25"
                 flex flex-col
               >
-                <Titlebar>
+                <Titlebar flex-shrink-0>
                   <i
                     i="carbon-chevron-down"
                     mr-1 text-base
                   />
-                  Terminal
+                  <TitlebarTabs>
+                    <TitlebarTab
+                      :is-selected="view === 'output'"
+                      @click="view = 'output'"
+                    >
+                      Status
+                    </TitlebarTab>
+                    <TitlebarTab
+                      :is-selected="view === 'terminal'"
+                      @click="view = 'terminal'"
+                    >
+                      Terminal
+                    </TitlebarTab>
+                  </TitlebarTabs>
                 </Titlebar>
-                <Terminal />
+                <div h="[calc(100%-32px)]">
+                  <div v-show="view === 'output'">
+                    Hi this is output
+                  </div>
+                  <Terminal v-show="view === 'terminal'" />
+                </div>
               </Pane>
             </Splitpanes>
           </Pane>

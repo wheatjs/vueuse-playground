@@ -8,7 +8,7 @@ import {
   walkIdentifiers,
 } from '@vue/compiler-sfc'
 import type { ExportSpecifier, Identifier, Node } from '@babel/types'
-import type { BaseFile, SFCFile, ScriptFile } from '~/modules/filesystem/files'
+import type { BaseFile, ScriptFile } from '~/modules/project'
 
 const modulesKey = '__modules__'
 const exportKey = '__export__'
@@ -17,12 +17,10 @@ const moduleKey = '__module__'
 
 export interface CompileFilesAsModulesOptions {
   main: ScriptFile
-  rootComponent: SFCFile
 }
 
 export function compileFilesAsModules({ main }: CompileFilesAsModulesOptions, files: Record<string, BaseFile>) {
   const mainImports = processFile(main, files)
-
   const postImports = new Set([...mainImports.reverse()])
 
   return [
@@ -183,7 +181,8 @@ function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new
 
   // 3. convert references to import bindings
   for (const node of ast) {
-    if (node.type === 'ImportDeclaration') continue
+    if (node.type === 'ImportDeclaration')
+      continue
     walkIdentifiers(node, (id, parent, parentStack) => {
       const binding = idToImportMap.get(id.name)
       if (!binding)

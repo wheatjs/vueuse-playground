@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRouteQuery } from '@vueuse/router'
-import { isDark } from '~/modules/shared'
 import { useFirebaseStore } from '~/modules/firebase'
 import { useAppStore } from '~/modules/app'
 
@@ -45,7 +44,7 @@ onMounted(async() => {
     </IconButton>
 
     <span flex-1 />
-    <IconButton @click="isDark = !isDark">
+    <IconButton @click="app.isDark = !app.isDark">
       <i i="carbon-sun dark:carbon-moon" />
     </IconButton>
     <IconButton @click="app.settingsOpen = true">

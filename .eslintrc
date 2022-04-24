@@ -5,7 +5,7 @@
       "error",
       {
         "multiline": {
-          "max": 3
+          "max": 5
         }
       }
     ]

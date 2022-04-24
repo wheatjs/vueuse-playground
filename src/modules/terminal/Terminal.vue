@@ -1,30 +1,39 @@
 <script setup lang="ts">
-import { FitAddon } from 'xterm-addon-fit'
 import { useTerminal } from '.'
 
 const target = ref<HTMLElement>()
 const container = ref<HTMLElement>()
-const { terminal } = useTerminal(target)
+const { fit } = useTerminal(target)
 const { width, height } = useElementBounding(container)
-
-const fitAddon = new FitAddon()
-terminal.loadAddon(fitAddon)
 
 watchDebounced([width, height], () => {
   if (target.value)
-    fitAddon.fit()
+    fit()
 }, { debounce: 100 })
 </script>
 
 <template>
   <div
-    ref="target"
-    flex-1
-  />
+    ref="container"
+    h-full
+    relative
+    w-full
+  >
+    <div
+      ref="target"
+      relative
+      flex-1
+      pt-1
+      pl-1
+      h-full
+      overflow-hidden
+    />
+  </div>
 </template>
 
 <style>
 .xterm {
+  @apply h-full;
   position: relative;
   user-select: none;
   -ms-user-select: none;

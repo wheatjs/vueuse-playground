@@ -3,7 +3,6 @@ import { get, getDatabase, ref, set } from 'firebase/database'
 import { ReCaptchaV3Provider, initializeAppCheck } from 'firebase/app-check'
 import config from '@playground/config'
 import { nanoid } from 'nanoid'
-import { filesystem } from '../filesystem'
 
 export * from './types'
 
@@ -22,25 +21,23 @@ initializeAppCheck(app, {
 
 export const useFirebaseStore = defineStore('firebase', () => {
   const saveProject = async() => {
-    const id = nanoid(9)
+    // const id = nanoid(9)
 
-    await set(ref(database, `projects/${id}`), {
-      files: filesystem.exportFiles(true),
-      // packages,
-    })
+    // await set(ref(database, `projects/${id}`), {
+    //   files: filesystem.exportFiles(true),
+    //   // packages,
+    // })
 
-    return id
+    // return id
   }
 
   const loadProject = async(id: string) => {
-    const project = await get(ref(database, `projects/${id}`))
+    // const project = await get(ref(database, `projects/${id}`))
 
-    if (project.exists()) {
-      console.log(project.toJSON())
-      filesystem.importFiles(Object.values(project.toJSON().files))
-    }
+    // if (project.exists() && 'files' in project.toJSON())
+    //   filesystem.importFiles(Object.values(project.toJSON().files) as ExportedFile[])
 
-    return project.toJSON()
+    // return project.toJSON()
   }
 
   return {

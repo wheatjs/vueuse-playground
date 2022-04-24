@@ -3,9 +3,9 @@ import type { Ref } from 'vue'
 import type { MaybeRef } from '@vueuse/core'
 import config from '@playground/config'
 import type { IDisposable } from 'xterm'
-import { currentEditorColumn, currentEditorLine, editorTabSize } from './state'
+import { useAppStore } from '../app'
+import { currentEditorColumn, currentEditorLine, editorAutoClosingBrackets, editorAutoClosingQuotes, editorFontFamily, editorFontLigatures, editorFontSize, editorInsertSpaces, editorTabSize, editorWordWrap } from './state'
 import { Plugins, createMonacoInstance } from '~/monaco'
-import { isDark } from '~/modules/shared'
 
 const editorState: { index: number; editors: Editor.ICodeEditor[] } = {
   index: 0,
@@ -17,6 +17,7 @@ export interface UseMonacoOptions {
 }
 
 export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMonacoOptions) {
+  const app = useAppStore()
   let editor: Editor.IStandaloneCodeEditor
 
   // const cycleEditor = () => {
@@ -42,19 +43,24 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
 
     editor = monaco.editor.create(el, {
       tabSize: editorTabSize.value,
-      insertSpaces: config.editor.insertSpaces,
-      autoClosingBrackets: config.editor.autoClosingBrackets,
-      autoClosingQuotes: config.editor.autoClosingQuotes,
+      insertSpaces: editorInsertSpaces.value,
+      autoClosingBrackets: editorAutoClosingBrackets.value,
+      autoClosingQuotes: editorAutoClosingQuotes.value,
       folding: config.editor.folding,
-      fontFamily: config.editor.fontFamily,
-      fontLigatures: config.editor.fontLigatures,
-      fontSize: config.editor.fontSize,
-      theme: isDark.value ? 'Dark' : 'Light',
+      fontFamily: editorFontFamily.value,
+      fontLigatures: editorFontLigatures.value,
+      fontSize: editorFontSize.value,
+      theme: app.isDark ? 'Dark' : 'Light',
       quickSuggestions: true,
       quickSuggestionsDelay: 0,
       minimap: config.editor.minimap,
       automaticLayout: true,
+      bracketPairColorization: {
+        enabled: true,
+      },
+      smoothScrolling: true,
       model: unref(options.model),
+      wordWrap: editorWordWrap.value,
     })
 
     editorState.editors.push(editor)
@@ -96,9 +102,24 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
     mountEditorPlugins()
   }
 
-  watch(editorTabSize, () => {
+  watch([
+    editorTabSize,
+    editorInsertSpaces,
+    editorAutoClosingBrackets,
+    editorAutoClosingQuotes,
+    editorFontFamily,
+    editorFontSize,
+    editorWordWrap,
+    editorFontLigatures], () => {
     editor.updateOptions({
+      insertSpaces: editorInsertSpaces.value,
       tabSize: editorTabSize.value,
+      fontFamily: editorFontFamily.value,
+      fontLigatures: editorFontLigatures.value,
+      fontSize: editorFontSize.value,
+      autoClosingBrackets: editorAutoClosingBrackets.value,
+      autoClosingQuotes: editorAutoClosingQuotes.value,
+      wordWrap: editorWordWrap.value,
     })
   })
 

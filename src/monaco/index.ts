@@ -2,11 +2,10 @@ import { createSingletonPromise } from '@vueuse/core'
 import config from '@playground/config'
 import { MonacoThemes } from './themes'
 import { createWorkers, useMonacoImport } from './setup'
-import { isDark } from '~/modules/shared'
-import { fs } from '~/modules/filesystem'
-import { usePackages } from '~/modules/packages'
-export * from './plugins'
+import { useAppStore } from '~/modules/app'
+import { useProjectStore } from '~/modules/project'
 
+export * from './plugins'
 export * from './setup'
 
 /**
@@ -16,6 +15,8 @@ export const createMonacoInstance = createSingletonPromise(async() => {
   await createWorkers()
   const { emmetHTML } = await import('emmet-monaco-es')
   const monaco = await useMonacoImport()
+
+  const app = useAppStore()
 
   // Setup defaults themes for monaco
   Object.entries(MonacoThemes).forEach(([name, theme]) => {
@@ -29,8 +30,8 @@ export const createMonacoInstance = createSingletonPromise(async() => {
   }
 
   // Watch for theme changes
-  watch(isDark, () => {
-    if (isDark.value)
+  watch(() => app.isDark, () => {
+    if (app.isDark)
       monaco?.editor.setTheme('Dark')
     else
       monaco?.editor.setTheme('Light')
@@ -84,11 +85,11 @@ export const createMonacoInstance = createSingletonPromise(async() => {
 
   monaco!.languages.typescript.typescriptDefaults.setExtraLibs([...builtinLibs])
 
-  const packages = usePackages()
+  const project = useProjectStore()
   const globalModules = ['vue-global-api']
 
-  watch(() => [fs.filenames, packages.packages], () => {
-    const _packages = packages.packages
+  watch(() => [project.files, project.packages], () => {
+    const _packages = project.packages
       .filter(({ types }) => types)
       .map(({ name, types }) => {
         if (globalModules.includes(name)) {
@@ -102,10 +103,10 @@ export const createMonacoInstance = createSingletonPromise(async() => {
         }
       })
 
-    const _vueFiles = fs.filenames
-      .filter(filename => filename !== 'App.vue')
-      .filter(filename => filename.endsWith('.vue'))
-      .map((filename) => {
+    const _vueFiles = Object.values(project.files)
+      .filter(({ filename }) => filename !== 'App.vue')
+      .filter(({ filename }) => filename.endsWith('.vue'))
+      .map(({ filename }) => {
         return {
           content: `declare module './${filename}' {
           import { DefineComponent } from 'vue'
@@ -115,10 +116,10 @@ export const createMonacoInstance = createSingletonPromise(async() => {
         }
       })
 
-    const _scriptFiles = fs.filenames
-      .filter(filename => filename !== 'main.ts')
-      .filter(filename => filename.endsWith('.ts') || filename.endsWith('.js'))
-      .map((filename) => {
+    const _scriptFiles = Object.values(project.files)
+      .filter(({ filename }) => filename !== 'main.ts')
+      .filter(({ filename }) => filename.endsWith('.ts') || filename.endsWith('.js'))
+      .map(({ filename }) => {
         return {
           content: `declare module './${filename}' {}`,
         }

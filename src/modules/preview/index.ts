@@ -1,7 +1,8 @@
-import { previewStatus, previewUpdateDelay } from './usePreview'
-import { StatusbarAlignment, createStatusbarSelectItem, createStatusbarTextItem } from '~/modules/statusbar'
+import { previewUpdateDelay } from './usePreview'
+import { StatusbarAlignment, createStatusbarSelectItem } from '~/modules/statusbar'
 
 export * from './usePreview'
+export * from './store'
 
 const subscriptions = [
   createStatusbarSelectItem({
@@ -11,18 +12,6 @@ const subscriptions = [
     priority: 1,
     options: Array(7).fill(1).map((value, index) => ({ label: index === 0 ? 'Immediate' : `${index * 100}ms`, value: index * 100 })).reverse(),
   }),
-  // createStatusbarTextItem({
-  //   alignment: StatusbarAlignment.Right,
-  //   priority: 2,
-  //   text: computed(() => {
-  //     if (previewStatus.value.isCompiling)
-  //       return 'Compiling...'
-  //     else if (previewStatus.value.hasErrors)
-  //       return 'Errors occurred'
-  //     else if (previewStatus.value.didCompileSuccessfully)
-  //       return 'Compiled successfully'
-  //   }),
-  // }),
 ]
 
 if (import.meta.hot) {

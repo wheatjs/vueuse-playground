@@ -1,14 +1,14 @@
 import type { Ref, WatchStopHandle } from 'vue'
 import type { MaybeRef } from '@vueuse/core'
 import TailwindReset from '@unocss/reset/tailwind.css?raw'
+import { useAppStore } from '../app'
 import SourceTemplate from './template.html?raw'
 import { PreviewProxy } from './PreviewProxy'
 import type { PreviewProxyHandlers } from './PreviewProxy'
-import { isDark } from '~/modules/shared'
-import { usePackages } from '~/modules/packages'
-import { filesystem, shouldUpdatePreview } from '~/modules/filesystem'
+import { useProjectStore } from '~/modules/project'
 import { compileFilesAsModules, vueRuntimeUrl } from '~/modules/compiler'
-import type { SFCFile, ScriptFile } from '~/modules/filesystem/files'
+import { TerminalCommandType, sendTerminalCommand } from '~/modules/terminal'
+import type { BaseFile, ScriptFile } from '~/modules/project/filesystem'
 
 const forcePreivewUpdateHook = createEventHook()
 export const forcePreviewUpdate = forcePreivewUpdateHook.trigger
@@ -21,12 +21,14 @@ export const previewStatus = ref({
   hasErrors: false,
 })
 
-const rootComponent = filesystem.files['App.vue'] as SFCFile
-const mainFile = filesystem.files['main.ts'] as ScriptFile
+// const mainFile = filesystem.files['main.ts'] as ScriptFile
 
 const defaultHandlers: PreviewProxyHandlers = {
-  onError: () => {
-    previewStatus.value.hasErrors = true
+  onError: (error) => {
+    sendTerminalCommand({
+      type: TerminalCommandType.ERROR,
+      payload: `[App] ${error.value}`,
+    })
   },
   onFetchProgress: () => { },
   onConsole: () => { },
@@ -44,7 +46,8 @@ export interface UsePreviewOptions {
 }
 
 export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePreviewOptions = {}) {
-  const packages = usePackages()
+  const app = useAppStore()
+  const project = useProjectStore()
 
   const {
     handlers = defaultHandlers,
@@ -52,7 +55,7 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
     importMap = computed(() => {
       return {
         imports: {
-          ...(JSON.parse(packages.importMap).imports || {}),
+          ...project.packageImportMap,
           vue: vueRuntimeUrl.value,
         },
       }
@@ -66,11 +69,10 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
 
   const updatePreview = useDebounceFn(async() => {
     try {
+      const mainFile = project.files['main.ts'] as ScriptFile
+
       previewStatus.value.isCompiling = true
-      const modules = compileFilesAsModules({
-        main: mainFile,
-        rootComponent,
-      }, filesystem.files)
+      const modules = compileFilesAsModules({ main: mainFile }, project.files as Record<string, BaseFile>)
       previewStatus.value.isCompiling = false
       previewStatus.value.didCompileSuccessfully = true
       previewStatus.value.hasErrors = false
@@ -84,7 +86,7 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
             document.getElementById('app').innerHTML = ''
           }
         `,
-        isDark.value ? 'document.querySelector("html").classList.add("dark")' : 'document.querySelector("html").classList.remove("dark")',
+        app.isDark ? 'document.querySelector("html").classList.add("dark")' : 'document.querySelector("html").classList.remove("dark")',
         ...modules,
         `
           const mainApp = __modules__['${mainFile.filename}']
@@ -98,9 +100,12 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
       ])
     }
     catch (error) {
-      previewStatus.value.isCompiling = false
-      previewStatus.value.hasErrors = true
-      previewStatus.value.didCompileSuccessfully = false
+      if (error instanceof Error) {
+        sendTerminalCommand({
+          type: TerminalCommandType.ERROR,
+          payload: [`[Compiler]: ${error.message}`],
+        })
+      }
     }
   }, previewUpdateDelay)
 
@@ -121,7 +126,7 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
 
     sandbox = document.createElement('iframe')
     sandbox.srcdoc = srcTemplate
-      .replace(/<html>/, isDark.value ? '<html class="dark">' : '<html>')
+      .replace(/<html>/, app.isDark ? '<html class="dark">' : '<html>')
       .replace(/<!--IMPORT_MAP-->/, JSON.stringify(unref(importMap)))
       .replace(/<!--INJECT_STYLES-->/, `<style>${unref(styles)}</style>`)
 
@@ -142,7 +147,7 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
     sandbox.addEventListener('load', () => {
       proxy.handle_links()
 
-      ;({ off: stopUpdateWatcher } = shouldUpdatePreview(() => {
+      ;({ off: stopUpdateWatcher } = project.onFilesCompiled(() => {
         updatePreview()
       }))
 
@@ -151,20 +156,10 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
 
     if (target.value)
       target.value.appendChild(sandbox)
-
-    // updatePreview()
   }
 
-  // onForcePreviewUpdate(() => {
-  //   updatePreview()
-  // })
-
   watch(() => [unref(target), unref(importMap), unref(styles)], () => createSandbox())
-  watch([isDark], updatePreview)
-
-  // watch(() => [unref(target), unref(importMap), unref(styles)], () => {
-  //   createSandbox()
-  // })
+  watch(() => [app.isDark], updatePreview)
 
   return {
     createSandbox,

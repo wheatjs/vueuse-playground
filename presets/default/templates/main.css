@@ -1,0 +1,8 @@
+html {
+  @apply bg-light-500;
+}
+
+html.dark {
+  @apply bg-dark-700 text-light-900;
+  color-scheme: dark;
+}

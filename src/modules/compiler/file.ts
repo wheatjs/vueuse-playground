@@ -1,10 +1,9 @@
 import * as defaultCompiler from '@vue/compiler-sfc'
 import type { BindingMetadata, SFCDescriptor } from '@vue/compiler-sfc'
-// import { shouldTransformRef, transformRef } from '@vue/compiler-sfc'
 import type { CSSProcessorOptions } from './plugins/types'
 import { plugins } from './plugins'
-import type { BaseFile } from '~/modules/filesystem/files'
-import { CssFile, SFCFile, ScriptFile } from '~/modules/filesystem/files'
+import type { BaseFile } from '~/modules/project'
+import { CssFile, SFCFile, ScriptFile } from '~/modules/project'
 
 export const COMP_IDENTIFIER = '__sfc__'
 

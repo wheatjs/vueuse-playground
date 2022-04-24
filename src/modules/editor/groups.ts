@@ -1,35 +1,26 @@
-import { filesystem } from '../filesystem'
-import { EditorGroupType, defineEditorGroups } from './types'
-import type { CssFile, JsonFile, SFCFile, ScriptFile } from '~/modules/filesystem/files'
+import { defineEditorGroups } from './types'
+import type { CssFile, JsonFile, SFCFile, ScriptFile } from '~/modules/project'
 
 export const groups = defineEditorGroups([
   {
-    type: EditorGroupType.PREDEFINED,
-    hideName: true,
+    pinned: true,
+    iconOnly: true,
     name: 'Entry',
-    file: filesystem.files['main.ts'],
     icon: 'carbon-application',
     match: file => file.filename === 'main.ts',
-    isActive: (file, currentFilename) => currentFilename === 'main.ts',
     editors: [
       {
         name: 'Script',
         model: (file, files) => (files['main.ts'] as ScriptFile).script.model!,
       },
-      {
-        name: 'Settings',
-        model: (file, files) => (files['settings.json'] as JsonFile).json.model!,
-      },
     ],
   },
   {
-    type: EditorGroupType.PREDEFINED,
+    pinned: true,
+    iconOnly: true,
     name: 'Styles',
-    file: filesystem.files['main.css'],
-    hideName: true,
     icon: 'carbon-color-palette',
     match: file => file.filename === 'main.css',
-    isActive: (file, currentFilename) => currentFilename === 'main.css',
     editors: [
       {
         name: 'CSS',
@@ -38,11 +29,9 @@ export const groups = defineEditorGroups([
     ],
   },
   {
-    type: EditorGroupType.AUTOMATIC,
     icon: 'vscode-icons-file-type-vue',
     name: file => file.filename,
     match: file => file.filename.endsWith('.vue'),
-    isActive: (file, currentFilename) => file.filename === currentFilename,
     editors: [
       {
         name: 'Script Setup',
@@ -55,12 +44,9 @@ export const groups = defineEditorGroups([
     ],
   },
   {
-    type: EditorGroupType.AUTOMATIC,
     icon: file => file.filename.endsWith('.ts') ? 'vscode-icons-file-type-typescript' : 'vscode-icons-file-type-js',
     name: file => file.filename,
-    match: file => file.filename.endsWith('.ts') || file.filename.endsWith('.js'),
-    isActive: (file, currentFilename) => file.filename === currentFilename,
-    exclude: ['main.ts'],
+    match: file => (file.filename.endsWith('.ts') || file.filename.endsWith('.js')) && !['main.ts', 'main.js'].includes(file.filename),
     editors: [
       {
         name: 'Script',
@@ -69,12 +55,9 @@ export const groups = defineEditorGroups([
     ],
   },
   {
-    type: EditorGroupType.AUTOMATIC,
     icon: 'vscode-icons-file-type-json',
     name: file => file.filename,
     match: file => file.filename.endsWith('.json'),
-    isActive: (file, currentFilename) => file.filename === currentFilename,
-    exclude: ['settings.json'],
     editors: [
       {
         name: 'JSON',
@@ -83,12 +66,9 @@ export const groups = defineEditorGroups([
     ],
   },
   {
-    type: EditorGroupType.AUTOMATIC,
     icon: 'vscode-icons-file-type-css',
     name: file => file.filename,
-    match: file => file.filename.endsWith('.css'),
-    isActive: (file, currentFilename) => file.filename === currentFilename,
-    exclude: ['main.css'],
+    match: file => file.filename.endsWith('.css') && !['main.css'].includes(file.filename),
     editors: [
       {
         name: 'CSS',

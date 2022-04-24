@@ -1,10 +1,11 @@
 import { currentEditorColumn, currentEditorLine, editorAutoClosingBrackets, editorAutoClosingQuotes, editorFontFamily, editorFontLigatures, editorFontSize, editorInsertSpaces, editorTabSize, editorWordWrap } from './state'
 import { createAppSettings } from '~/modules/app'
-import { StatusbarAlignment, createStatusbarSelectItem, createStatusbarTextItem } from '~/modules/statusbar'
+import { StatusbarAlignment, createStatusbarTextItem } from '~/modules/statusbar'
 
 export * from './types'
 export * from './state'
 export * from './groups'
+export * from './store'
 export * from './useEditor'
 
 /**
@@ -27,15 +28,10 @@ createAppSettings('Editor', [
   {
     name: 'Word Wrap',
     description: 'Controls how lines should wrap.',
-    type: 'boolean',
+    type: 'string',
+    enum: ['off', 'on', 'wordWrapColumn', 'bounded'],
     value: editorWordWrap,
   },
-  // {
-  //   name: 'Minimap',
-  //   description: 'Controls weather the minimap is shown.',
-  //   type: 'boolean',
-  //   value: editorMinimap,
-  // },
   {
     name: 'Font Family',
     description: 'Controls weather the minimap is shown.',
@@ -57,13 +53,15 @@ createAppSettings('Editor', [
   {
     name: 'Auto Closing Brackets',
     description: 'Controls weather the minimap is shown.',
-    type: 'boolean',
+    type: 'string',
+    enum: ['always', 'beforeWhitespace', 'languageDefined', 'never'],
     value: editorAutoClosingBrackets,
   },
   {
     name: 'Auto Closing Quotes',
     description: 'Controls weather the minimap is shown.',
-    type: 'boolean',
+    type: 'string',
+    enum: ['always', 'beforeWhitespace', 'languageDefined', 'never'],
     value: editorAutoClosingQuotes,
   },
 
@@ -79,14 +77,6 @@ const subscriptions = [
     priority: 1,
     text: computed(() => `Ln ${currentEditorLine.value}, Col ${currentEditorColumn.value}`),
   }),
-
-  // createStatusbarSelectItem({
-  //   alignment: StatusbarAlignment.Right,
-  //   priority: 1,
-  //   options: ['1', '2', '3', '4', '5', '6', '7', '8'].reverse().map(value => ({ label: value, value })),
-  //   value: editorTabSize,
-  //   label: computed(() => `Spaces: ${editorTabSize.value}`),
-  // }),
 ]
 
 if (import.meta.hot) {

@@ -2,7 +2,7 @@ import { init, parse } from 'es-module-lexer'
 import type { editor as Editor } from 'monaco-editor'
 import { createMonacoInstance } from '..'
 import type { EditorPlugin } from './types'
-import { onPackageAdded, onPackageRemoved, usePackages } from '~/modules/packages'
+import { useProjectStore } from '~/modules/project'
 
 interface State {
   decorations: string[]
@@ -21,7 +21,7 @@ const doDecorations = async(editor: Editor.IStandaloneCodeEditor) => {
   const { monaco } = await createMonacoInstance()
   const model = editor.getModel()
   const [imports] = parse(editor.getValue())
-  const packages = usePackages()
+  const project = useProjectStore()
 
   if (!model || !imports)
     return
@@ -33,7 +33,7 @@ const doDecorations = async(editor: Editor.IStandaloneCodeEditor) => {
     .filter(({ n }) => !n?.startsWith('./') && !n?.startsWith('../') && !n?.startsWith('/'))
     .forEach((i) => {
       const startPosition = model.getPositionAt(i.se)
-      const pkg = packages.packages.find(p => p.name === i.n)
+      const pkg = project.packages.find(p => p.name === i.n)
 
       decorations.push({
         id: i.n || '',
@@ -53,7 +53,8 @@ export const PackageInstallerPlugin: EditorPlugin = {
   init: (editor) => {
     doDecorations(editor)
 
-    const packages = usePackages()
+    // const packages = usePackages()
+    const project = useProjectStore()
 
     editor.onMouseUp((e) => {
       if (e.target.element?.classList.contains('editor-decoration-package')) {
@@ -62,21 +63,19 @@ export const PackageInstallerPlugin: EditorPlugin = {
 
         if (packageVersionId) {
           const id = packageVersionId.split('-')[2]
-          const pkg = packages.packages.find(p => p.id === id)
-
-          console.log('Open settings for', pkg.name)
+          const pkg = Object.values(project.packages).find(p => p.id === id)
         }
         else if (packageIndex) {
           const index = packageIndex.split('-')[2] as unknown as number
           const pkg = packageNames[index]
 
-          packages.addPackage(pkg)
+          project.addPackage(pkg)
         }
       }
     })
 
-    onPackageAdded(() => doDecorations(editor))
-    onPackageRemoved(() => doDecorations(editor))
+    project.onPackageAdded(() => doDecorations(editor))
+    project.onPackageRemoved(() => doDecorations(editor))
   },
 
   /**
