@@ -1,7 +1,6 @@
 import type { Ref } from 'vue'
+import { useAppStore } from './store'
 export * from './store'
-
-export const preventCtrlS = useLocalStorage('app:preventCtrlS', true)
 
 export interface AppSettings {
   name: string
@@ -28,11 +27,22 @@ export function createAppSettings(group: string, settings: AppSettings[]) {
   }
 }
 
-createAppSettings('General', [
-  {
-    name: 'Override Ctrl+S default behavior',
-    description: 'Prevent the page from trying to save as HTML file when Ctrl+S is pressed',
-    type: 'boolean',
-    value: preventCtrlS,
-  },
-])
+export default function init() {
+  const app = useAppStore()
+  const { warnBeforeDeletingFile, preventCtrlS } = storeToRefs(app)
+
+  createAppSettings('General', [
+    {
+      name: 'Override Ctrl+S default behavior',
+      description: 'Prevent the page from trying to save as HTML file when Ctrl+S is pressed',
+      type: 'boolean',
+      value: preventCtrlS,
+    },
+    {
+      name: 'Warn before deleting file',
+      description: 'Show a warning before deleting a file',
+      type: 'boolean',
+      value: warnBeforeDeletingFile,
+    },
+  ])
+}

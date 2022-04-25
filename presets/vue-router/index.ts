@@ -1,7 +1,7 @@
 import { definePreset } from '../types'
 import mainStyle from '../default/templates/main.css?raw'
 import mainTemplate from './templates/main.ts?raw'
-import { CssFile, SFCFile, ScriptFile } from '~/modules/project/filesystem/files'
+import { CssFile, SFCFile, ScriptFile } from '~/modules/project/files'
 
 export default definePreset({
   name: 'vue-router',

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
-import type { BaseFile } from '~/modules/project/filesystem'
+import { createWorkers, useMonacoImport } from '../monaco'
+import type { BaseFile } from '~/modules/project'
 import { useProjectStore } from '~/modules/project'
 import { groups, useEditorStore } from '~/modules/editor'
-import { createWorkers, useMonacoImport } from '~/monaco'
 
 await useMonacoImport()
 await createWorkers()
@@ -48,6 +48,7 @@ const group = computed(() => {
         </Titlebar>
         <Editor
           flex-1
+          h="[calc(100%-32px)]"
           :model="e.model(currentFile as BaseFile, project.files)"
         />
       </Pane>

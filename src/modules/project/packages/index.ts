@@ -5,7 +5,7 @@ import { compare } from 'semver'
 import type { Package } from './types'
 
 const VERSION_DATA_URL = 'https://data.jsdelivr.com/v1/package/npm/'
-const url = (path: string) => `${config.packages.cdn}${path}`
+const url = (path: string) => `${config.project.packages.cdn}${path}`
 const version = (path: string) => `${VERSION_DATA_URL}${path}`
 
 export async function resolvePackageJson(name: string, version?: string): Promise<PackageJson> {

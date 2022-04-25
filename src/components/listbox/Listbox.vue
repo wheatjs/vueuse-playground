@@ -5,9 +5,12 @@ import {
   ListboxOptions,
 } from '@headlessui/vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   modelValue: any
-}>()
+  direction: 'up' | 'down'
+}>(), {
+  direction: 'down',
+})
 
 const value = useVModel(props)
 </script>
@@ -46,14 +49,19 @@ export default {
         <i
           ml-2
           text-base
-          i-carbon-chevron-up
+          :class="{
+            'i-carbon-chevron-down': direction === 'down',
+            'i-carbon-chevron-up': direction === 'up',
+          }"
         />
       </ListboxButton>
       <ListboxOptions
         absolute
-        bottom-8
+        :class="{
+          'top-8 border-t-0': direction === 'down',
+          'bottom-8 border-b-0': direction === 'up',
+        }"
         right-0
-        border-b-0
         dark:bg-dark-700
         border-1
         border-light-900

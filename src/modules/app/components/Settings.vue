@@ -31,16 +31,17 @@ const filtered = computed(() => {
     >
       <div
         border="r-1 dark:dark-900 light-900"
-        py-2
+        p-4
       >
         <button
           v-for="group in Object.keys(appSettings)"
           :key="group"
           :class="{
-            'bg-green-500 !text-green-900': selected === group,
+            'bg-green-500 !text-green-900 !border-green-400 font-bold': selected === group,
           }"
           text="hover:(green-500)"
-          font-mono
+          rounded
+          border="1 transparent"
           text-sm
           text-left
           px-4
@@ -91,7 +92,12 @@ const filtered = computed(() => {
           <AppSetting
             v-for="setting in filtered"
             :key="setting.name"
-            :setting="setting"
+            v-model="setting.value"
+            :name="setting.name"
+            :type="setting.type"
+            :description="setting.description"
+            :enum-values="setting.enum"
+            :enum-descriptions="setting.enumDescriptions"
           />
         </div>
       </div>

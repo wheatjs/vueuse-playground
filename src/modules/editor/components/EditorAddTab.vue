@@ -1,26 +1,30 @@
 <script setup lang="ts">
 import { onKeyDown, onKeyUp } from '@vueuse/core'
 import { BaseFile, CssFile, JsonFile, SFCFile, ScriptFile, useProjectStore } from '~/modules/project'
-import { groups } from '~/modules/editor'
+import { groups, useEditorStore } from '~/modules/editor'
 
 const project = useProjectStore()
+const editor = useEditorStore()
 
 const filename = ref('')
-const show = ref(false)
 const target = ref<HTMLElement>()
 const input = ref<HTMLInputElement>()
 
-const showInput = () => {
-  show.value = true
+watch(() => editor.shouldShowAddFile, () => {
+  if (editor.shouldShowAddFile) {
+    setTimeout(() => {
+      if (input.value)
+        input.value.focus()
+    }, 0)
+  }
+})
 
-  setTimeout(() => {
-    if (input.value)
-      input.value.focus()
-  }, 0)
+const showInput = () => {
+  editor.shouldShowAddFile = true
 }
 
 const hideInput = () => {
-  show.value = false
+  editor.shouldShowAddFile = false
   filename.value = ''
 }
 
@@ -79,7 +83,7 @@ const icon = computed(() => {
     flex flex-row items-center
   >
     <div
-      v-show="show"
+      v-show="editor.shouldShowAddFile"
       ref="target"
       flex
       flex-row

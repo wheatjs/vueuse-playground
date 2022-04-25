@@ -1,7 +1,7 @@
 import type { editor as Editor } from 'monaco-editor'
 import automerge from 'automerge'
 import { createEventHook, until } from '@vueuse/core'
-import { createWorkers, useMonacoImport } from '~/monaco/setup'
+import { createWorkers, useMonacoImport } from '~/modules/editor/monaco/setup'
 
 interface DocumentOptions {
   onUpdate?: () => void

@@ -1,21 +1,19 @@
-import { previewUpdateDelay } from './usePreview'
+import { usePreviewStore } from './store'
 import { StatusbarAlignment, createStatusbarSelectItem } from '~/modules/statusbar'
 
 export * from './usePreview'
 export * from './store'
+export * from './types'
 
-const subscriptions = [
+export default function init() {
+  const preview = usePreviewStore()
+  const { previewUpdateDelay } = storeToRefs(preview)
+
   createStatusbarSelectItem({
     label: computed(() => `Update: ${previewUpdateDelay.value === 0 ? 'Immediate' : `${previewUpdateDelay.value}ms`}`),
     value: previewUpdateDelay,
     alignment: StatusbarAlignment.Right,
     priority: 1,
-    options: Array(7).fill(1).map((value, index) => ({ label: index === 0 ? 'Immediate' : `${index * 100}ms`, value: index * 100 })).reverse(),
-  }),
-]
-
-if (import.meta.hot) {
-  import.meta.hot.accept(() => {
-    subscriptions.forEach(dispose => dispose())
+    options: Array(7).fill(1).map((_, index) => ({ label: index === 0 ? 'Immediate' : `${index * 100}ms`, value: index * 100 })).reverse(),
   })
 }

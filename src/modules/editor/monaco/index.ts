@@ -71,7 +71,7 @@ export const createMonacoInstance = createSingletonPromise(async() => {
     import('@vue/runtime-dom/dist/runtime-dom.d.ts?raw'),
     import('@vue/runtime-core/dist/runtime-core.d.ts?raw'),
     import('@vue/reactivity/dist/reactivity.d.ts?raw'),
-    import('../env.d.ts?raw'),
+    import('../../../env.d.ts?raw'),
   ])
 
   const builtinLibs = [

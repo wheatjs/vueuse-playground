@@ -2,7 +2,7 @@
 import Draggable from 'vuedraggable'
 import { useProjectStore } from '~/modules/project'
 import type { EditorGroup } from '~/modules/editor'
-import { groups } from '~/modules/editor'
+import { groups, useEditorStore } from '~/modules/editor'
 import type { BaseFile } from '~/modules/project'
 
 interface TabGroup {
@@ -11,6 +11,7 @@ interface TabGroup {
 }
 
 const project = useProjectStore()
+const editor = useEditorStore()
 const files = ref<string[]>([])
 
 project.onFileCreated(() => {
@@ -57,11 +58,13 @@ const onScroll = (e: WheelEvent) => {
   <div
     relative
     h-full flex-shrink-0
+    flex-1
   >
     <Draggable
       v-model="files"
-      :component-data="{ 'onWheel': onScroll, class: 'flex h-full overflow-x-auto overflow-y-hidden small-scrollbar' }"
+      :component-data="{ 'onWheel': onScroll, class: 'flex h-full overflow-x-auto overflow-y-hidden small-scrollbar cursor-grab' }"
       item-key="filename"
+      @dblclick.self="editor.shouldShowAddFile = true"
     >
       <template #header>
         <EditorTab

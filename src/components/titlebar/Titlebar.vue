@@ -13,6 +13,7 @@
     border="y-1 light-900 dark:dark-900"
     text="xs dark-50 dark:light-900/50"
     font-mono
+    select-none
   >
     <slot />
   </div>

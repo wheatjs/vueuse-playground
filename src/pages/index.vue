@@ -2,14 +2,14 @@
 import { Pane, Splitpanes } from 'splitpanes'
 import DefaultProject from '../../presets/default'
 import { useProjectStore } from '~/modules/project'
-import { preventCtrlS } from '~/modules/app'
+import { useAppStore } from '~/modules/app'
+
+const app = useAppStore()
 
 useEventListener('keydown', (e) => {
-  if (e.ctrlKey && e.key === 's' && preventCtrlS.value)
+  if (e.ctrlKey && e.key === 's' && app.preventCtrlS)
     e.preventDefault()
 })
-
-const view = ref('output')
 
 const project = useProjectStore()
 project.importProject(DefaultProject)
@@ -77,12 +77,7 @@ project.importProject(DefaultProject)
                   <span flex-1>
                     Preview
                   </span>
-                  <button>
-                    <div
-                      i-carbon-maximize
-                      w-4 h-4
-                    />
-                  </button>
+                  <PreviewControls />
                 </Titlebar>
                 <Preview flex-1 />
               </Pane>
@@ -95,26 +90,10 @@ project.importProject(DefaultProject)
                     i="carbon-chevron-down"
                     mr-1 text-base
                   />
-                  <TitlebarTabs>
-                    <TitlebarTab
-                      :is-selected="view === 'output'"
-                      @click="view = 'output'"
-                    >
-                      Status
-                    </TitlebarTab>
-                    <TitlebarTab
-                      :is-selected="view === 'terminal'"
-                      @click="view = 'terminal'"
-                    >
-                      Terminal
-                    </TitlebarTab>
-                  </TitlebarTabs>
+                  Terminal
                 </Titlebar>
                 <div h="[calc(100%-32px)]">
-                  <div v-show="view === 'output'">
-                    Hi this is output
-                  </div>
-                  <Terminal v-show="view === 'terminal'" />
+                  <Terminal />
                 </div>
               </Pane>
             </Splitpanes>
@@ -125,5 +104,4 @@ project.importProject(DefaultProject)
     </main>
   </div>
   <Settings />
-  <!-- <ProjectSettings /> -->
 </template>

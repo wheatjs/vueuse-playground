@@ -1,7 +1,7 @@
 import { definePreset } from '../types'
 import mainTemplate from './templates/main.ts?raw'
 import mainStyle from './templates/main.css?raw'
-import { CssFile, SFCFile, ScriptFile } from '~/modules/project/filesystem/files'
+import { CssFile, SFCFile, ScriptFile } from '~/modules/project/files'
 
 export default definePreset({
   name: 'default',

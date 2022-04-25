@@ -6,7 +6,10 @@ const value = useVModel(props)
 </script>
 
 <template>
-  <Listbox v-model="value">
+  <Listbox
+    v-model="value"
+    direction="up"
+  >
     <template #label>
       {{ item.label }}
     </template>

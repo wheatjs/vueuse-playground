@@ -19,6 +19,7 @@ defineProps<{
       flex-row
       items-center
       cursor-pointer
+      whitespace-nowrap
       :class="{ 'bg-light-900 dark:bg-dark-400': active, 'text-green-500': selected }"
     >
       <slot />

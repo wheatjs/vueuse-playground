@@ -4,8 +4,8 @@ import type { MaybeRef } from '@vueuse/core'
 import config from '@playground/config'
 import type { IDisposable } from 'xterm'
 import { useAppStore } from '../app'
-import { currentEditorColumn, currentEditorLine, editorAutoClosingBrackets, editorAutoClosingQuotes, editorFontFamily, editorFontLigatures, editorFontSize, editorInsertSpaces, editorTabSize, editorWordWrap } from './state'
-import { Plugins, createMonacoInstance } from '~/monaco'
+import { useEditorStore } from './store'
+import { Plugins, createMonacoInstance } from '~/modules/editor/monaco'
 
 const editorState: { index: number; editors: Editor.ICodeEditor[] } = {
   index: 0,
@@ -18,14 +18,21 @@ export interface UseMonacoOptions {
 
 export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMonacoOptions) {
   const app = useAppStore()
-  let editor: Editor.IStandaloneCodeEditor
+  const editorStore = useEditorStore()
+  const {
+    editorTabSize,
+    editorInsertSpaces,
+    editorWordWrap,
+    editorFontFamily,
+    editorFontSize,
+    editorFontLigatures,
+    editorAutoClosingBrackets,
+    editorAutoClosingQuotes,
 
-  // const cycleEditor = () => {
-  //   editorState.index = editorState.editors.length - 1 > editorState.index ? editorState.index + 1 : 0
-  //   editorState.editors[editorState.index].focus()
-  //   currentEditorLine.value = editorState.editors[editorState.index].getPosition()?.lineNumber ?? 0
-  //   currentEditorColumn.value = editorState.editors[editorState.index].getPosition()?.column ?? 0
-  // }
+    currentEditorColumn,
+    currentEditorLine,
+  } = storeToRefs(editorStore)
+  let editor: Editor.IStandaloneCodeEditor
 
   watch(options.model, () => {
     const model = unref(options.model)

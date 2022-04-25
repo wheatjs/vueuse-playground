@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import type { AppSettings } from '..'
-
-defineProps<{
-  setting: AppSettings
+const props = defineProps<{
+  name: string
+  description: string
+  type: string
+  enumValues?: string[]
+  enumDescriptions?: string[]
+  modelValue: any
 }>()
+
+const value = useVModel(props)
 </script>
 
 <template>
@@ -16,24 +21,24 @@ defineProps<{
       flex
       flex-col
     >
-      <span>{{ setting.name }}</span>
+      <span>{{ name }}</span>
       <label text="sm dark:light-900/50">
-        <template v-if="setting.type === 'boolean'">
+        <template v-if="type === 'boolean'">
           <input
-            v-model="setting.value"
+            v-model="value"
             type="checkbox"
             mr-1
           >
         </template>
         <span select-none>
-          {{ setting.description }}
+          {{ description }}
         </span>
       </label>
     </div>
     <div mt-1>
-      <template v-if="setting.type === 'string'">
+      <template v-if="type === 'string'">
         <div
-          v-if="setting.enum"
+          v-if="enumValues"
           flex flex-row
           relative
           max-w-100
@@ -41,7 +46,7 @@ defineProps<{
           items-center
         >
           <select
-            v-model="setting.value"
+            v-model="value"
             max-w-100
             w-full
             bg="dark:dark-800"
@@ -54,7 +59,7 @@ defineProps<{
             px-2
           >
             <option
-              v-for="option in setting.enum"
+              v-for="option in enumValues"
               :key="option" :value="option"
             >
               {{ option }}
@@ -69,7 +74,7 @@ defineProps<{
         </div>
         <template v-else>
           <input
-            v-model="setting.value"
+            v-model="value"
             max-w-100
             w-full
             bg="dark:dark-800"
@@ -82,9 +87,9 @@ defineProps<{
           >
         </template>
       </template>
-      <template v-else-if="setting.type === 'number'">
+      <template v-else-if="type === 'number'">
         <input
-          v-model.number="setting.value"
+          v-model.number="value"
           type="number"
           max-w-100
           w-full

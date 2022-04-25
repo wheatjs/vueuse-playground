@@ -5,10 +5,11 @@ import { useAppStore } from '../app'
 import SourceTemplate from './template.html?raw'
 import { PreviewProxy } from './PreviewProxy'
 import type { PreviewProxyHandlers } from './PreviewProxy'
+import { usePreviewStore } from './store'
 import { useProjectStore } from '~/modules/project'
 import { compileFilesAsModules, vueRuntimeUrl } from '~/modules/compiler'
 import { TerminalCommandType, sendTerminalCommand } from '~/modules/terminal'
-import type { BaseFile, ScriptFile } from '~/modules/project/filesystem'
+import type { BaseFile, ScriptFile } from '~/modules/project'
 
 const forcePreivewUpdateHook = createEventHook()
 export const forcePreviewUpdate = forcePreivewUpdateHook.trigger
@@ -20,8 +21,6 @@ export const previewStatus = ref({
   didCompileSuccessfully: false,
   hasErrors: false,
 })
-
-// const mainFile = filesystem.files['main.ts'] as ScriptFile
 
 const defaultHandlers: PreviewProxyHandlers = {
   onError: (error) => {
@@ -48,6 +47,9 @@ export interface UsePreviewOptions {
 export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePreviewOptions = {}) {
   const app = useAppStore()
   const project = useProjectStore()
+  const preview = usePreviewStore()
+
+  const { previewUpdateDelay } = storeToRefs(preview)
 
   const {
     handlers = defaultHandlers,
