@@ -17,21 +17,30 @@ export function createAppSettings(group: string, settings: AppSettings[]) {
   if (group in appSettings.value) {
     const currentSettings: AppSettings[] = appSettings.value[group]!
 
-    appSettings.value[group] = {
-      ...currentSettings,
-      ...settings,
+    appSettings.value = {
+      ...appSettings.value,
+      [group]: [...currentSettings, ...settings],
     }
   }
   else {
-    appSettings.value[group] = settings
+    appSettings.value = {
+      ...appSettings.value,
+      [group]: settings,
+    }
   }
 }
 
 export default function init() {
   const app = useAppStore()
-  const { warnBeforeDeletingFile, preventCtrlS } = storeToRefs(app)
+  const { warnBeforeDeletingFile, preventCtrlS, showWelcome } = storeToRefs(app)
 
   createAppSettings('General', [
+    {
+      name: 'Show "Welcome" on startup',
+      description: 'Show the welcome screen on startup',
+      type: 'boolean',
+      value: showWelcome,
+    },
     {
       name: 'Override Ctrl+S default behavior',
       description: 'Prevent the page from trying to save as HTML file when Ctrl+S is pressed',

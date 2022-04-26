@@ -13,12 +13,13 @@ export class ScriptFile extends BaseFile {
   public compiled = {
     js: '',
     css: '',
+    dts: '',
   }
 
   constructor(options: ScriptFileOptions) {
     super(options)
 
-    this.script = new Document(`${this.filename}:script`, {
+    this.script = new Document(`${this.filename}`, {
       onUpdate: () => this.onUpdate(),
       language: 'typescript',
       initialContent: options.initialScriptContent,

@@ -23,17 +23,17 @@ export class SFCFile extends BaseFile {
   constructor(options: SFCFileOptions) {
     super(options)
 
-    this.template = new Document(`${this.filename}:template`, {
+    this.template = new Document(this.filename.replace('.vue', '_template.html'), {
       onUpdate: () => this.onUpdate(),
       language: 'html',
       initialContent: options.initialTemplateContent,
     })
-    this.script = new Document(`${this.filename}:script`, {
+    this.script = new Document(this.filename.replace('.vue', '_script.ts'), {
       onUpdate: () => this.onUpdate(),
       language: 'typescript',
       initialContent: options.initialScriptContent,
     })
-    this.style = new Document(`${this.filename}:style`, {
+    this.style = new Document(this.filename.replace('.vue', '_style.css'), {
       onUpdate: () => this.onUpdate(),
       language: 'css',
       initialContent: options.initialStyleContent,
@@ -65,7 +65,7 @@ export class SFCFile extends BaseFile {
   }
 
   public override toString() {
-    return `<script setup>\n${this.script.text}\n</script>\n
+    return `<script setup lang="ts">\n${this.script.text}\n</script>\n
 <template>\n${this.template.text}\n</template>\n
 <style>\n${this.style.text}\n</style>
     `

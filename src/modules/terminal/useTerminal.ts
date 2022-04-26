@@ -2,7 +2,7 @@ import type { Ref } from 'vue'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import config from '@playground/config'
-import { options, red } from 'kolorist'
+import { options, red, yellow } from 'kolorist'
 
 options.enabled = true
 options.supportLevel = 1
@@ -48,7 +48,8 @@ export function useTerminal(target: Ref<HTMLElement | undefined>) {
     if (type === TerminalCommandType.ERROR)
       terminal.writeln(red(payload.toString()))
 
-    // Handle Terminal Command
+    if (type === TerminalCommandType.WARN)
+      terminal.writeln(yellow(payload.toString()))
   })
 
   const fit = () => {

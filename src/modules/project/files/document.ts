@@ -1,3 +1,4 @@
+import { customAlphabet } from 'nanoid'
 import type { editor as Editor } from 'monaco-editor'
 import automerge from 'automerge'
 import { createEventHook, until } from '@vueuse/core'
@@ -10,6 +11,7 @@ interface DocumentOptions {
 }
 
 export class Document {
+  private id: string
   public name: string
   public model: Editor.ITextModel | null = null
   public doc: any
@@ -21,6 +23,7 @@ export class Document {
   public onDocumentChange = this.onDocumentChangeHook.on
 
   constructor(name: string, options: DocumentOptions) {
+    this.id = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 10)()
     this.name = name
 
     this.doc = automerge.from({ text: new automerge.Text(options.initialContent) })
@@ -39,12 +42,15 @@ export class Document {
 
         createWorkers()
           .then(() => {
-            if (monaco.editor.getModel(monaco.Uri.parse(`file://${this.name}`))) {
-              this.model = monaco.editor.getModel(monaco.Uri.parse(`file://${this.name}`))
-              this.doc = automerge.from({ text: new automerge.Text(this.model?.getValue()) })
-            }
-            else { this.model = monaco.editor.createModel(options.initialContent || '', options.language, monaco.Uri.parse(`file://${this.name}`)) }
+            if (monaco.editor.getModel(monaco.Uri.file(this.name))) {
+              this.model = monaco.editor.getModel(monaco.Uri.file(this.name))
 
+              if (options.initialContent)
+                this.model?.setValue(options.initialContent)
+
+              this.doc = automerge.from({ text: new automerge.Text(options.initialContent || this.model?.getValue()) })
+            }
+            else { this.model = monaco.editor.createModel(options.initialContent || '', options.language, monaco.Uri.file(this.name)) }
             this.hasModelLoaded.value = true
             this.bindModel()
           })
@@ -197,5 +203,9 @@ export class Document {
   public async import(data: string) {
     // this.doc = automerge.from({ text: new automerge.Text(data) })
     this.model?.setValue(data)
+  }
+
+  public destroy() {
+    this.model?.dispose()
   }
 }

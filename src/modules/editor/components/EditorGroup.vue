@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
-import { createWorkers, useMonacoImport } from '../monaco'
-import type { BaseFile } from '~/modules/project'
+import { createMonacoInstance, createWorkers, useMonacoImport } from '../monaco'
+// import { generateTypescriptDefinition } from '../monaco/typescript'
+import type { BaseFile, ScriptFile } from '~/modules/project'
 import { useProjectStore } from '~/modules/project'
 import { groups, useEditorStore } from '~/modules/editor'
 
 await useMonacoImport()
 await createWorkers()
+
+const { monaco } = await createMonacoInstance()
 
 const project = useProjectStore()
 const editor = useEditorStore()
@@ -16,10 +19,29 @@ const group = computed(() => {
   if (currentFile.value)
     return groups.find(group => group.match(currentFile.value as BaseFile))
 })
+
+const doDTS = async() => {
+  // if (editor.currentFilename.endsWith('.ts')) {
+  //   if (project.files[editor.currentFilename]) {
+  //     const file = project.files[editor.currentFilename] as ScriptFile
+  //     const model = file.script.model!
+
+  //     console.log('Using model to generate dts')
+  //     console.log(await generateTypescriptDefinition(monaco, model))
+  //   }
+  // }
+  // else {
+  //   console.log('Not a typescript file')
+  // }
+}
 </script>
 
 <template>
-  <div h-full>
+  <div
+    h-full
+    relative
+    z-500
+  >
     <div
       v-if="!currentFile"
       h-full flex place-content-center
@@ -44,7 +66,15 @@ const group = computed(() => {
             i="carbon-chevron-down"
             mr-1 text-base
           />
-          {{ e.name }}
+          <span flex-1>
+            {{ e.name }}
+          </span>
+          <button
+            px-4
+            @click="doDTS"
+          >
+            DTS
+          </button>
         </Titlebar>
         <Editor
           flex-1

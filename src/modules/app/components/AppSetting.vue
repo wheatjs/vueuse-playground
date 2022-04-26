@@ -12,6 +12,64 @@ const value = useVModel(props)
 </script>
 
 <template>
+  <FocusContainer
+    px-4
+    py-2
+  >
+    <Item>
+      <template #default>
+        {{ name }}
+      </template>
+      <template #subtitle>
+        <Checkbox
+          v-if="type === 'boolean'"
+          v-model="value"
+        >
+          {{ description }}
+        </Checkbox>
+        <template v-else>
+          {{ description }}
+        </template>
+      </template>
+      <template #description>
+        <template v-if="type === 'string' && enumValues">
+          <Select v-model="value">
+            <option
+              v-for="option in enumValues"
+              :key="option"
+            >
+              {{ option }}
+            </option>
+          </Select>
+        </template>
+        <template v-else-if="type === 'string'">
+          <Textfield v-model="value" />
+        </template>
+        <template v-else-if="type === 'number'">
+          <Textfield
+            v-model.number="value"
+            type="number"
+          />
+        </template>
+      </template>
+    </Item>
+  </FocusContainer>
+</template>
+
+<!-- <script setup lang="ts">
+const props = defineProps<{
+  name: string
+  description: string
+  type: string
+  enumValues?: string[]
+  enumDescriptions?: string[]
+  modelValue: any
+}>()
+
+const value = useVModel(props)
+</script>
+
+<template>
   <div
     px-4
     py-4
@@ -132,4 +190,4 @@ input[type="checkbox"]:checked {
 .dark input[type="checkbox"]:checked {
   background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='rgba(255,255,255,.72)' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
 }
-</style>
+</style> -->

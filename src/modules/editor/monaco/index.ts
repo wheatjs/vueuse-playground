@@ -1,9 +1,14 @@
 import { createSingletonPromise } from '@vueuse/core'
 import config from '@playground/config'
+import { setupTypeAcquisition } from '@typescript/ata'
+import ts from 'typescript'
+import { useEditorStore } from '../store'
 import { MonacoThemes } from './themes'
 import { createWorkers, useMonacoImport } from './setup'
 import { useAppStore } from '~/modules/app'
+import type { ScriptFile } from '~/modules/project'
 import { useProjectStore } from '~/modules/project'
+import 'monaco-editor/esm/vs/editor/editor.all'
 
 export * from './plugins'
 export * from './setup'
@@ -39,99 +44,114 @@ export const createMonacoInstance = createSingletonPromise(async() => {
 
   // Configure monaco typescript
   monaco?.languages.typescript.typescriptDefaults.setCompilerOptions({
-    ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
+    // ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
+    strict: true,
+
+    noImplicitAny: true,
+    strictNullChecks: true,
+    strictFunctionTypes: true,
+    strictPropertyInitialization: true,
+    strictBindCallApply: true,
+    noImplicitThis: true,
+    noImplicitReturns: true,
+    noUncheckedIndexedAccess: false,
+
+    useDefineForClassFields: false,
+
+    alwaysStrict: true,
+    allowUnreachableCode: false,
+    allowUnusedLabels: false,
+
+    downlevelIteration: false,
+    noEmitHelpers: false,
+    noLib: false,
+    noStrictGenericChecks: false,
     noUnusedLocals: false,
     noUnusedParameters: false,
-    allowUnreachableCode: true,
+
+    esModuleInterop: true,
+    preserveConstEnums: false,
+    removeComments: false,
+    skipLibCheck: false,
+
+    checkJs: false,
+    allowJs: true,
+    declaration: true,
+    // emitDeclarationOnly: true,
+
+    importHelpers: false,
+
+    experimentalDecorators: true,
+    emitDecoratorMetadata: true,
     moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-    allowUnusedLabels: true,
-    strict: false,
-    importHelpers: true,
-    isolatedModules: true,
-    noImplicitUseStrict: false,
+
     target: monaco.languages.typescript.ScriptTarget.ESNext,
+    module: monaco.languages.typescript.ModuleKind.ESNext,
+
+    isolatedModules: true,
   })
+
+  const project = useProjectStore()
+  const editorStore = useEditorStore()
+  const defaults = monaco?.languages.typescript.typescriptDefaults
 
   // Ignore specific diagnostic codes.
   monaco?.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
     diagnosticCodesToIgnore: [6133, 6198, 8006, 8010, 1208, 2451],
   })
 
-  // Setup package types
-  const [
-    { default: vueTypes },
-    { default: vueSharedTypes },
-    { default: vueRuntimeDomTypes },
-    { default: vueRuntimeCoreTypes },
-    { default: vueReactivityTypes },
-    { default: localShims },
-  ] = await Promise.all([
-    import('vue/dist/vue.d.ts?raw'),
-    import('@vue/shared/dist/shared.d.ts?raw'),
-    import('@vue/runtime-dom/dist/runtime-dom.d.ts?raw'),
-    import('@vue/runtime-core/dist/runtime-core.d.ts?raw'),
-    import('@vue/reactivity/dist/reactivity.d.ts?raw'),
-    import('../../../env.d.ts?raw'),
-  ])
+  let acquiredTypes: Record<string, string> = {}
 
-  const builtinLibs = [
-    { content: `declare module '@vue/shared' { ${vueSharedTypes} }` },
-    { content: `declare module '@vue/runtime-core' { ${vueRuntimeCoreTypes} }` },
-    { content: `declare module '@vue/runtime-dom' { ${vueRuntimeDomTypes} }` },
-    { content: `declare module '@vue/reactivity' { ${vueReactivityTypes} }` },
-    { content: `declare module 'vue' { ${vueTypes} }` },
-    { content: localShims },
-  ]
+  const updateTypeDefinitions = async() => {
+    const localScriptFiles = Object.values(project.files)
+      .filter((f): f is ScriptFile => f.filename.endsWith('.ts'))
+      .map(f => ({ content: `declare module './${f.filename}' { ${f.compiled.dts} }` }))
 
-  monaco!.languages.typescript.typescriptDefaults.setExtraLibs([...builtinLibs])
-
-  const project = useProjectStore()
-  const globalModules = ['vue-global-api']
-
-  watch(() => [project.files, project.packages], () => {
-    const _packages = project.packages
-      .filter(({ types }) => types)
-      .map(({ name, types }) => {
-        if (globalModules.includes(name)) {
-          return {
-            content: types!,
-          }
-        }
-
-        return {
-          content: `declare module '${name}' { ${types} }`,
-        }
-      })
-
-    const _vueFiles = Object.values(project.files)
-      .filter(({ filename }) => filename !== 'App.vue')
-      .filter(({ filename }) => filename.endsWith('.vue'))
-      .map(({ filename }) => {
-        return {
-          content: `declare module './${filename}' {
+    const localVueFiles = Object.values(project.files)
+      .filter((f): f is ScriptFile => f.filename.endsWith('.vue'))
+      .map(f => ({
+        content: `
+        declare module './${f.filename}' 
           import { DefineComponent } from 'vue'
           const component: DefineComponent<{}, {}, any>
-          export default component
+          export default component    
         }`,
-        }
-      })
+      }))
 
-    const _scriptFiles = Object.values(project.files)
-      .filter(({ filename }) => filename !== 'main.ts')
-      .filter(({ filename }) => filename.endsWith('.ts') || filename.endsWith('.js'))
-      .map(({ filename }) => {
-        return {
-          content: `declare module './${filename}' {}`,
-        }
-      })
+    const extraLibs = Object.entries(acquiredTypes).map(([name, content]) => ({ filePath: `file://${name}`, content }))
 
-    monaco!.languages.typescript.typescriptDefaults.setExtraLibs([
-      ...builtinLibs,
-      ..._packages,
-      ..._vueFiles,
-      ..._scriptFiles,
+    defaults?.setExtraLibs([
+      ...extraLibs,
+      ...localScriptFiles,
+      ...localVueFiles,
     ])
-  }, { immediate: true })
+  }
+
+  watch(() => editorStore.currentFilename, () => {
+    updateTypeDefinitions()
+  })
+
+  const ata = setupTypeAcquisition({
+    projectName: 'VueUse Playground',
+    typescript: ts,
+    logger: console,
+    delegate: {
+      // receivedFile: addLibraryToRuntime,
+      started() {
+        editorStore.isAcquiringTypeDefinitions = true
+      },
+      finished(files) {
+        acquiredTypes = { ...acquiredTypes, ...Object.fromEntries(files) }
+        updateTypeDefinitions()
+        editorStore.isAcquiringTypeDefinitions = false
+      },
+    },
+  })
+
+  project.onPackageAdded((pkgs) => {
+    const code = pkgs.map(pkg => `import {} from '${pkg}'`).join('\n')
+    ata(code)
+  })
 
   // Setup monaco emmet
   emmetHTML(monaco)

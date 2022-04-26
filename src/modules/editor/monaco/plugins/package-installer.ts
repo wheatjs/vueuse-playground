@@ -4,6 +4,19 @@ import { createMonacoInstance } from '..'
 import type { EditorPlugin } from './types'
 import { useProjectStore } from '~/modules/project'
 
+const { css } = useStyleTag('')
+
+function generateStyles() {
+  let style = ''
+  const project = useProjectStore()
+
+  project.packages.forEach((pkg) => {
+    style += `.editor-decoration-package.package-version-${pkg.id}:after {content: 'v${pkg.version}' !important;} `
+  })
+
+  css.value = style
+}
+
 interface State {
   decorations: string[]
   possiblePackages: Record<string, string>
@@ -51,6 +64,7 @@ const doDecorations = async(editor: Editor.IStandaloneCodeEditor) => {
 export const PackageInstallerPlugin: EditorPlugin = {
   language: 'typescript',
   init: (editor) => {
+    generateStyles()
     doDecorations(editor)
 
     // const packages = usePackages()
@@ -69,13 +83,24 @@ export const PackageInstallerPlugin: EditorPlugin = {
           const index = packageIndex.split('-')[2] as unknown as number
           const pkg = packageNames[index]
 
-          project.addPackage(pkg)
+          console.log(pkg)
+
+          project.addPackage([{
+            name: pkg,
+            version: 'latest',
+          }])
         }
       }
     })
 
-    project.onPackageAdded(() => doDecorations(editor))
-    project.onPackageRemoved(() => doDecorations(editor))
+    project.onPackageAdded(() => {
+      generateStyles()
+      doDecorations(editor)
+    })
+    project.onPackageRemoved(() => {
+      generateStyles()
+      doDecorations(editor)
+    })
   },
 
   /**

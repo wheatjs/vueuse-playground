@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
 import { appSettings, useAppStore } from '..'
 
 const filter = ref('')
 const app = useAppStore()
-const selected = ref('General')
+const selectedTab = ref('General')
 
 const filtered = computed(() => {
   if (filter.value === '')
-    return appSettings.value[selected.value]
+    return appSettings.value[selectedTab.value]
 
-  return appSettings.value[selected.value].filter((item) => {
+  return appSettings.value[selectedTab.value].filter((item) => {
     return item.name.toLowerCase().includes(filter.value.toLowerCase())
   })
 })
@@ -31,26 +32,26 @@ const filtered = computed(() => {
     >
       <div
         border="r-1 dark:dark-900 light-900"
-        p-4
+        px-2
+        py-4
       >
-        <button
-          v-for="group in Object.keys(appSettings)"
-          :key="group"
-          :class="{
-            'bg-green-500 !text-green-900 !border-green-400 font-bold': selected === group,
-          }"
-          text="hover:(green-500)"
-          rounded
-          border="1 transparent"
-          text-sm
-          text-left
-          px-4
-          h-8
-          w-full
-          @click="selected = group"
-        >
-          {{ group }}
-        </button>
+        <RadioGroup v-model="selectedTab">
+          <RadioGroupOption
+            v-for="option in Object.keys(appSettings)"
+            :key="option"
+            v-slot="{ checked }"
+            :value="option"
+          >
+            <Item
+              :selected="checked"
+              px-2
+              h-10
+              cursor-pointer
+            >
+              {{ option }}
+            </Item>
+          </RadioGroupOption>
+        </RadioGroup>
       </div>
       <div
         h-full
@@ -63,27 +64,15 @@ const filtered = computed(() => {
           py-4
           border="b-1 dark:dark-900 light-900"
         >
-          <div
-            flex
-            flex-row
-            items-center
-            bg="dark:dark-800"
-            rounded
-            border="1 dark:dark-900 light-900 focus-within:green-500"
-            pl-2
+          <Textfield
+            v-model="filter"
+            placeholder="Search Settings"
+            w-full
           >
-            <div i-carbon-search />
-            <input
-              v-model="filter"
-              h-8
-              px-2
-              w-full
-              bg-transparent
-              border-0
-              outline="focus:none"
-              type="text" placeholder="Search Settings"
-            >
-          </div>
+            <template #icon>
+              <div i-carbon-search />
+            </template>
+          </Textfield>
         </div>
         <div
           flex-1
@@ -108,10 +97,7 @@ const filtered = computed(() => {
       flex-row justify-end
       border="t-1 dark:dark-900 light-900"
     >
-      <Button
-        bg="dark:dark-900 light-900"
-        @click="app.settingsOpen = false"
-      >
+      <Button @click="app.settingsOpen = false">
         Close
       </Button>
     </div>

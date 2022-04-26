@@ -5,5 +5,4 @@ export interface Package {
   name: string
   version: string
   metadata: PackageJson
-  types?: string
 }

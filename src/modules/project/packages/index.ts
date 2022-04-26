@@ -17,25 +17,10 @@ export async function resolvePackageJson(name: string, version?: string): Promis
   return await response.json()
 }
 
-export async function resolvePackageTypes(pkg: PackageJson): Promise<string | undefined> {
-  const types = pkg.types || pkg.typings
-
-  if (!types)
-    return undefined
-
-  const response = await fetch(url(`${pkg.name}@${pkg.version}/${types}`))
-
-  if (!response.ok)
-    return undefined
-
-  return await response.text()
-}
-
 export async function resolvePackage(name: string, version?: string): Promise<Package[] | undefined> {
   const resolvedPackages: Package[] = []
 
   const packageJson = await resolvePackageJson(name, version)
-  const packageTypes = await resolvePackageTypes(packageJson)
   const packageDependencies = Object.entries(packageJson.dependencies || {})
 
   ;(await Promise.allSettled(packageDependencies.map(([name, version]) => resolvePackage(name, version))))
@@ -48,7 +33,6 @@ export async function resolvePackage(name: string, version?: string): Promise<Pa
     name,
     version: packageJson.version || 'latest',
     metadata: packageJson,
-    types: packageTypes,
   })
 
   return resolvedPackages

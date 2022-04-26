@@ -1,11 +1,14 @@
 import { definePreset } from '../types'
-import mainStyle from '../default/templates/main.css?raw'
 import mainTemplate from './templates/main.ts?raw'
+import mainStyle from './templates/main.css?raw'
+import mainAppScript from './templates/App_script?raw'
+import mainAppTemplate from './templates/App_template.html?raw'
+import mainStore from './templates/store?raw'
 import { CssFile, SFCFile, ScriptFile } from '~/modules/project/files'
 
 export default definePreset({
-  name: 'vue-router',
-  description: 'Default template with vue-router installed.',
+  name: 'pinia',
+  description: 'The default project with pinia.',
   defaultFile: 'App.vue',
   files: () => [
     new ScriptFile({
@@ -23,18 +26,17 @@ export default definePreset({
     new SFCFile({
       filename: 'App.vue',
       isProtected: true,
+      initialScriptContent: mainAppScript,
+      initialTemplateContent: mainAppTemplate,
     }),
-    new SFCFile({
-      filename: 'Home.vue',
-      isProtected: true,
-    }),
-    new SFCFile({
-      filename: 'About.vue',
-      isProtected: true,
+    new ScriptFile({
+      filename: 'store.ts',
+      initialScriptContent: mainStore,
     }),
   ],
   packages: {
+    'vue': 'latest',
     '@vueuse/core': 'latest',
-    'vue-router': 'latest',
+    'pinia': 'latest',
   },
 })

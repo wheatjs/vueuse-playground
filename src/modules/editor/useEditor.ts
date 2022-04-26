@@ -62,6 +62,8 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
       quickSuggestionsDelay: 0,
       minimap: config.editor.minimap,
       automaticLayout: true,
+      linkedEditing: true,
+      renameOnType: true,
       bracketPairColorization: {
         enabled: true,
       },

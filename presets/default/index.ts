@@ -7,7 +7,7 @@ export default definePreset({
   name: 'default',
   description: 'The default project template.',
   defaultFile: 'App.vue',
-  files: [
+  files: () => [
     new ScriptFile({
       filename: 'main.ts',
       isProtected: true,
@@ -26,6 +26,7 @@ export default definePreset({
     }),
   ],
   packages: {
+    'vue': 'latest',
     '@vueuse/core': 'latest',
   },
 })

@@ -1,3 +1,4 @@
+import { not } from '@vueuse/core'
 import { useEditorStore } from './store'
 import { createAppSettings } from '~/modules/app'
 import { StatusbarAlignment, createStatusbarTextItem } from '~/modules/statusbar'
@@ -22,9 +23,18 @@ export default function init() {
 
     currentEditorColumn,
     currentEditorLine,
+
+    disableAutomaticTypeAcquisition,
+    isAcquiringTypeDefinitions,
   } = storeToRefs(editor)
 
   createAppSettings('Editor', [
+    {
+      name: 'Disable automatic type acquisition',
+      description: 'Disable automatic type acquisition (may improve performance)',
+      type: 'boolean',
+      value: disableAutomaticTypeAcquisition,
+    },
     {
       name: 'Tab Size',
       description: 'The number of spaces a tab is equal to.',
@@ -79,8 +89,17 @@ export default function init() {
   ])
 
   createStatusbarTextItem({
+    alignment: StatusbarAlignment.Left,
+    priority: 0,
+    isHidden: not(isAcquiringTypeDefinitions),
+    isLoading: isAcquiringTypeDefinitions,
+    text: computed(() => isAcquiringTypeDefinitions.value ? 'Acquiring type definitions...' : ''),
+  })
+
+  createStatusbarTextItem({
     alignment: StatusbarAlignment.Right,
     priority: 1,
+    isLoading: false,
     text: computed(() => `Ln ${currentEditorLine.value}, Col ${currentEditorColumn.value}`),
   })
 }

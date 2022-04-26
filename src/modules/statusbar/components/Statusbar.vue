@@ -35,21 +35,23 @@ const itemsAlignedRight = computed(() => {
         v-for="item in itemsAlignedLeft"
         :key="item.id"
       >
-        <StatusbarItemText
-          v-if="item.type === StatusbarItemType.Text"
-          :item="item"
-        />
-        <StatusbarItemSelect
-          v-else-if="item.type === StatusbarItemType.Select"
-          v-model="item.value"
-          :item="item"
-          h-full
-          b-y-0
-        />
-        <StatusbarButton
-          v-else-if="item.type === StatusbarItemType.Button"
-          :item="item"
-        />
+        <template v-if="!item.isHidden">
+          <StatusbarItemText
+            v-if="item.type === StatusbarItemType.Text"
+            :item="item"
+          />
+          <StatusbarItemSelect
+            v-else-if="item.type === StatusbarItemType.Select"
+            v-model="item.value"
+            :item="item"
+            h-full
+            b-y-0
+          />
+          <StatusbarButton
+            v-else-if="item.type === StatusbarItemType.Button"
+            :item="item"
+          />
+        </template>
       </template>
     </div>
 

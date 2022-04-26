@@ -50,10 +50,25 @@ function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new
   const importToIdMap = new Map<string, string>()
 
   function defineImport(node: Node, source: string) {
-    const filename = source.replace(/^\.\/+/, '')
+    let filename = source.replace(/^\.\/+/, '')
 
-    if (!(filename in files))
-      throw new Error(`File "${filename}" does not exist.`)
+    // Should match .ts/.js if no extension is provided
+    const hasExtension = filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2)
+
+    console.log('Has Extension', filename, hasExtension)
+
+    if (hasExtension) {
+      if (!(filename in files))
+        throw new Error(`File "${filename}" does not exist.`)
+    }
+    else {
+      if (`${filename}.ts` in files)
+        filename = `${filename}.ts`
+      else if (`${filename}.js` in files)
+        filename = `${filename}.js`
+      else
+        throw new Error(`File "${filename}" does not exist.`)
+    }
 
     if (importedFiles.has(filename))
       return importToIdMap.get(filename)!

@@ -3,8 +3,10 @@ import config from '@playground/config'
 
 export const useEditorStore = defineStore('editor', () => {
   const currentFilename = ref('')
+  const isAcquiringTypeDefinitions = ref(false)
   const shouldShowAddFile = ref(false)
 
+  const disableAutomaticTypeAcquisition = useLocalStorage('editor:disableAutomaticTypeAcquisition', false)
   const editorTabSize = useLocalStorage('editor:TabSize', 2)
   const editorInsertSpaces = useLocalStorage('editor:InsertSpaces', true)
   const editorWordWrap = useLocalStorage<'off' | 'on' | 'wordWrapColumn' | 'bounded'>('editor:wordWrap', 'off')
@@ -22,6 +24,7 @@ export const useEditorStore = defineStore('editor', () => {
     currentFilename,
     shouldShowAddFile,
 
+    disableAutomaticTypeAcquisition,
     editorTabSize,
     editorInsertSpaces,
     editorWordWrap,
@@ -34,5 +37,7 @@ export const useEditorStore = defineStore('editor', () => {
 
     currentEditorColumn,
     currentEditorLine,
+
+    isAcquiringTypeDefinitions,
   }
 })

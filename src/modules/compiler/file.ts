@@ -1,3 +1,4 @@
+import { customAlphabet } from 'nanoid'
 import * as defaultCompiler from '@vue/compiler-sfc'
 import type { BindingMetadata, SFCDescriptor } from '@vue/compiler-sfc'
 import type { CSSProcessorOptions } from './plugins/types'
@@ -7,10 +8,12 @@ import { CssFile, SFCFile, ScriptFile } from '~/modules/project'
 
 export const COMP_IDENTIFIER = '__sfc__'
 
+const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 8)
 export interface CompiledOutput {
   css?: string
   js?: string
   ssr?: string
+  dts?: string
 }
 
 export interface CompileFileReturn {
@@ -21,6 +24,19 @@ export interface CompileFileReturn {
 export interface CompileFileOptions {
   compiler?: typeof defaultCompiler
   cssProcessors?: ((options: CSSProcessorOptions) => string)[]
+}
+
+async function transformTypescript(src: string) {
+  const { createMonacoInstance } = await import('~/modules/editor')
+  const { tsCompiler } = await import('~/modules/editor/monaco/typescript')
+  const { monaco } = await createMonacoInstance()
+
+  const uri = monaco.Uri.file(`${nanoid()}.ts`)
+  const model = monaco.editor.createModel(src, 'typescript', uri)
+  const compiler = tsCompiler(monaco, model)
+  const output = await compiler.compile()
+
+  return output
 }
 
 export async function compileFile(file: BaseFile, options: CompileFileOptions = {}): Promise<CompileFileReturn> {
@@ -38,8 +54,15 @@ export async function compileFile(file: BaseFile, options: CompileFileOptions = 
     return { compiled: { css }, errors }
   }
 
-  if (file instanceof ScriptFile)
-    return { compiled: { js: file.toString() }, errors }
+  if (file instanceof ScriptFile) {
+    if (file.filename.endsWith('.ts')) {
+      const js = await transformTypescript(file.toString())
+      return { compiled: { js: js.js, dts: js.dts }, errors }
+    }
+    else {
+      return { compiled: { js: file.toString() }, errors }
+    }
+  }
 
   if (file instanceof SFCFile) {
     let js = ''
@@ -134,10 +157,6 @@ export async function compileFile(file: BaseFile, options: CompileFileOptions = 
   }
 }
 
-async function transformTypescript(src: string) {
-  return src
-}
-
 async function compileScript(
   descriptor: SFCDescriptor,
   id: string,
@@ -169,7 +188,7 @@ async function compileScript(
         += `\n${compiler.rewriteDefault(compiledScript.content, COMP_IDENTIFIER)}`
 
       if ((descriptor.script || descriptor.scriptSetup)!.lang === 'ts')
-        code = await transformTypescript(code)
+        code = (await transformTypescript(code)).js
 
       return [code, compiledScript.bindings]
     }

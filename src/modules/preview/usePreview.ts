@@ -30,7 +30,13 @@ const defaultHandlers: PreviewProxyHandlers = {
     })
   },
   onFetchProgress: () => { },
-  onConsole: () => { },
+  onConsole: (x) => {
+    sendTerminalCommand({
+      type: TerminalCommandType.WARN,
+      payload: x.args.join(' '),
+    })
+    console.log(x)
+  },
   onUnhandledRejection: () => { },
   onConsoleGroup: () => { },
   onConsoleGroupCollapsed: () => { },

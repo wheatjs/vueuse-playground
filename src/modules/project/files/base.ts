@@ -44,4 +44,8 @@ export class BaseFile {
     if (this._onUpdate)
       this._onUpdate(this.filename)
   }
+
+  public destroy() {
+    this.documents.forEach(doc => doc.destroy())
+  }
 }

@@ -23,32 +23,38 @@ export interface CreateStatusbarItemButtonOptions extends CreateStatusbarItemOpt
   foreground: MaybeRef<string>
   background: MaybeRef<string>
   onClick: () => void
+  isHidden?: MaybeRef<boolean>
 }
 
 export interface CreateStatusbarItemSelectOptions extends CreateStatusbarItemOptions {
   options: MaybeRef<StatusbarItemSelectOption[]>
   value: Ref<any>
   label: MaybeRef<string>
+  isHidden?: MaybeRef<boolean>
 }
 
 export interface CreateStatusbarItemTextOptions extends CreateStatusbarItemOptions {
   text: MaybeRef<string>
+  isLoading: MaybeRef<boolean>
+  isHidden?: MaybeRef<boolean>
 }
 
-export interface StatusbarItemText {
+export interface StatusbarItemBase {
   id: number
+  alignment: StatusbarAlignment
+  priority: number
+  isHidden?: MaybeRef<boolean>
+}
+
+export interface StatusbarItemText extends StatusbarItemBase {
   type: StatusbarItemType.Text
-  alignment: StatusbarAlignment
-  priority: number
   text: MaybeRef<string>
+  isLoading: MaybeRef<boolean>
 }
 
-export interface StatusbarItemButton {
-  id: number
+export interface StatusbarItemButton extends StatusbarItemBase {
   type: StatusbarItemType.Button
-  alignment: StatusbarAlignment
   icon: StatusbarAlignment
-  priority: number
   text: MaybeRef<string>
   foreground: MaybeRef<string>
   background: MaybeRef<string>
@@ -60,11 +66,8 @@ export interface StatusbarItemSelectOption {
   value: any
 }
 
-export interface StatusbarItemSelect {
-  id: number
+export interface StatusbarItemSelect extends StatusbarItemBase {
   type: StatusbarItemType.Select
-  alignment: StatusbarAlignment
-  priority: number
   options: MaybeRef<StatusbarItemSelectOption[]>
   value: Ref<any>
   label: MaybeRef<string>
@@ -84,9 +87,13 @@ export function createStatusbarTextItem(options: CreateStatusbarItemTextOptions)
     id,
     type: StatusbarItemType.Text,
     alignment: options.alignment,
+    // @ts-expect-error Leave me alone plz
+    isHidden: options.isHidden,
     priority: options.priority,
     // @ts-expect-error Leave me alone plz
     text: options.text,
+    // @ts-expect-error Leave me alone plz
+    isLoading: options.isLoading,
   })
 
   return dispose
@@ -99,6 +106,8 @@ export function createStatusbarSelectItem(options: CreateStatusbarItemSelectOpti
   statusbarItems.value.push({
     id,
     type: StatusbarItemType.Select,
+    // @ts-expect-error Leave me alone plz
+    isHidden: options.isHidden,
     alignment: options.alignment,
     priority: options.priority,
     // @ts-expect-error Leave me alone plz
@@ -118,6 +127,8 @@ export function createStatusbarButtonItem(options: CreateStatusbarItemButtonOpti
   statusbarItems.value.push({
     id,
     type: StatusbarItemType.Button,
+    // @ts-expect-error Leave me alone plz
+    isHidden: options.isHidden,
     alignment: options.alignment,
     priority: options.priority,
     onClick: options.onClick,

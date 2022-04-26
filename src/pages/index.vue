@@ -42,6 +42,7 @@ project.importProject(DefaultProject)
         <Splitpanes
           w-full
           h-full
+          relative z-50
         >
           <Pane
             bg-light-100
@@ -103,5 +104,6 @@ project.importProject(DefaultProject)
       <Statusbar />
     </main>
   </div>
+  <Welcome />
   <Settings />
 </template>
