@@ -1,7 +1,6 @@
 import { createSingletonPromise } from '@vueuse/core'
 import config from '@playground/config'
 import { setupTypeAcquisition } from '@typescript/ata'
-import ts from 'typescript'
 import { useEditorStore } from '../store'
 import { MonacoThemes } from './themes'
 import { createWorkers, useMonacoImport } from './setup'
@@ -18,6 +17,7 @@ export * from './setup'
  */
 export const createMonacoInstance = createSingletonPromise(async() => {
   await createWorkers()
+  const ts = await import('typescript')
   const { emmetHTML } = await import('emmet-monaco-es')
   const monaco = await useMonacoImport()
 

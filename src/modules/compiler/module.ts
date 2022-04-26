@@ -55,8 +55,6 @@ function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new
     // Should match .ts/.js if no extension is provided
     const hasExtension = filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2)
 
-    console.log('Has Extension', filename, hasExtension)
-
     if (hasExtension) {
       if (!(filename in files))
         throw new Error(`File "${filename}" does not exist.`)
