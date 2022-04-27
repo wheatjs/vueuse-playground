@@ -4,17 +4,13 @@ import { setupTypeAcquisition } from '@typescript/ata'
 import { useEditorStore } from '../store'
 import { MonacoThemes } from './themes'
 import { createWorkers, useMonacoImport } from './setup'
+import { createFakeTs } from './typescript/fake-ts'
 import { useAppStore } from '~/modules/app'
 import type { ScriptFile } from '~/modules/project'
 import { useProjectStore } from '~/modules/project'
-import 'monaco-editor/esm/vs/editor/editor.all'
 
 export * from './plugins'
 export * from './setup'
-
-declare global {
-  const ts: typeof import('typescript')
-}
 
 /**
  * Creates and returns a configured monaco instance.
@@ -25,12 +21,7 @@ export const createMonacoInstance = createSingletonPromise(async() => {
   const monaco = await useMonacoImport()
 
   // We need to import this module to make ts available in the global scope.
-  await import('monaco-editor/esm/vs/language/typescript/ts.worker')
-  let ts: typeof import('typescript') | null = null
-
-  if ('ts' in globalThis)
-    ts = (globalThis as any).ts
-
+  const ts = await createFakeTs()
   const app = useAppStore()
 
   // Setup defaults themes for monaco
@@ -141,29 +132,27 @@ export const createMonacoInstance = createSingletonPromise(async() => {
     updateTypeDefinitions()
   })
 
-  if (ts) {
-    const ata = setupTypeAcquisition({
-      projectName: 'VueUse Playground',
-      typescript: ts,
-      logger: console,
-      delegate: {
-        // receivedFile: addLibraryToRuntime,
-        started() {
-          editorStore.isAcquiringTypeDefinitions = true
-        },
-        finished(files) {
-          acquiredTypes = { ...acquiredTypes, ...Object.fromEntries(files) }
-          updateTypeDefinitions()
-          editorStore.isAcquiringTypeDefinitions = false
-        },
+  const ata = setupTypeAcquisition({
+    projectName: 'VueUse Playground',
+    typescript: (ts as any),
+    logger: console,
+    delegate: {
+      // receivedFile: addLibraryToRuntime,
+      started() {
+        editorStore.isAcquiringTypeDefinitions = true
       },
-    })
+      finished(files) {
+        acquiredTypes = { ...acquiredTypes, ...Object.fromEntries(files) }
+        updateTypeDefinitions()
+        editorStore.isAcquiringTypeDefinitions = false
+      },
+    },
+  })
 
-    project.onPackageAdded((pkgs) => {
-      const code = pkgs.map(pkg => `import {} from '${pkg}'`).join('\n')
-      ata(code)
-    })
-  }
+  project.onPackageAdded((pkgs) => {
+    const code = pkgs.map(pkg => `import {} from '${pkg}'`).join('\n')
+    ata(code)
+  })
 
   // Setup monaco emmet
   emmetHTML(monaco)
