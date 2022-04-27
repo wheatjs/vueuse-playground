@@ -26,6 +26,7 @@ declare module '@vue/runtime-core' {
     Navigation: typeof import('./components/Navigation.vue')['default']
     Preview: typeof import('./modules/preview/components/Preview.vue')['default']
     PreviewControls: typeof import('./modules/preview/components/PreviewControls.vue')['default']
+    ProjectLoading: typeof import('./modules/project/components/ProjectLoading.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('./components/Select.vue')['default']

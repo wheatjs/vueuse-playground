@@ -5,12 +5,14 @@ import { prunePackages, resolvePackage } from './packages'
 import type { BaseFile } from './files'
 import type { Package } from './packages/types'
 import { useEditorStore } from '~/modules/editor'
+import { createMonacoInstance, createWorkers } from '~/modules/editor/monaco'
 
 const url = (p: Package) => `${config.project.packages.cdn}${p.name}@${p.version}/${p.metadata.module || p.metadata.main}`
 
 export const useProjectStore = defineStore('project', () => {
   const editor = useEditorStore()
 
+  const isCreatingProject = ref(false)
   const isAddingPackages = ref(false)
 
   const files = shallowRef<Record<string, BaseFile>>({})
@@ -27,11 +29,20 @@ export const useProjectStore = defineStore('project', () => {
    * Compile a project file
    */
   const compileFile = async(filename?: string, silent?: boolean) => {
-    if (filename)
-      await files.value[filename].compile()
+    await createWorkers()
+    await createMonacoInstance()
 
-    if (!silent)
-      onFilesCompiledHook.trigger()
+    return new Promise<void>((resolve) => {
+      setTimeout(async() => {
+        if (filename)
+          await files.value[filename].compile()
+
+        if (!silent)
+          onFilesCompiledHook.trigger()
+
+        resolve()
+      }, 0)
+    })
   }
 
   /**
@@ -114,14 +125,11 @@ export const useProjectStore = defineStore('project', () => {
    * @param project The project to import
    */
   const importProject = async(project: ProjectSolutionPreset) => {
+    isCreatingProject.value = true
     clearProject()
 
     const files = project.files()
     files.forEach(file => createFile(file, true))
-
-    setTimeout(() => {
-      onFileCreatedHook.trigger('')
-    }, 0)
 
     await Promise.all([
       addPackage(Object.entries(project.packages).map(([name, version]) => ({ name, version }))),
@@ -129,11 +137,14 @@ export const useProjectStore = defineStore('project', () => {
     ])
 
     setTimeout(() => {
+      onFileCreatedHook.trigger('')
       onFilesCompiledHook.trigger()
-    }, 0)
+    }, 10)
 
     if (project.defaultFile)
       editor.currentFilename = project.defaultFile
+
+    isCreatingProject.value = false
   }
 
   /**
@@ -145,6 +156,7 @@ export const useProjectStore = defineStore('project', () => {
     files,
     packages,
 
+    isCreatingProject: readonly(isCreatingProject),
     isAddingPackages: readonly(isAddingPackages),
     packageImportMap,
 

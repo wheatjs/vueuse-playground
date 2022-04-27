@@ -104,6 +104,7 @@ project.importProject(DefaultProject)
       <Statusbar />
     </main>
   </div>
-  <Welcome />
   <Settings />
+  <ProjectLoading />
+  <Welcome />
 </template>

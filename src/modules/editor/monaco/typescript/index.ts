@@ -2,22 +2,17 @@ import type { editor as Editor } from 'monaco-editor'
 
 type Monaco = typeof import('monaco-editor')
 
-export async function getTypescript(monaco: Monaco) {
-  const uri = monaco.Uri.file('_default.ts')
-
-  if (!monaco.editor.getModel(uri))
-    monaco.editor.createModel('', 'typescript', uri)
-
-  const worker = await monaco.languages.typescript.getTypeScriptWorker()
-  return worker(uri)
-}
-
 export function tsCompiler(monaco: Monaco, model: Editor.ITextModel) {
   const getWorker = monaco.languages.typescript.getTypeScriptWorker
 
   const getWorkerProcess = async(): Promise<any> => {
-    const worker = await getWorker()
-    return await worker(model.uri)
+    try {
+      const worker = await getWorker()
+      return await worker(model.uri)
+    }
+    catch (error) {
+      return getWorkerProcess()
+    }
   }
 
   const getEmitResult = async() => {
