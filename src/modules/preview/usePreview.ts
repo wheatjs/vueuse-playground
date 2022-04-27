@@ -35,7 +35,6 @@ const defaultHandlers: PreviewProxyHandlers = {
       type: TerminalCommandType.WARN,
       payload: x.args.join(' '),
     })
-    console.log(x)
   },
   onUnhandledRejection: () => { },
   onConsoleGroup: () => { },

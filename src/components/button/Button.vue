@@ -1,17 +1,34 @@
 <script setup lang="ts">
+const props = defineProps<{
+  href?: string
+  to?: string
+}>()
 
+const is = computed(() => {
+  if (props.href)
+    return 'a'
+  else if (props.to)
+    return 'router-link'
+
+  return 'button'
+})
 </script>
 
 <template>
-  <button
+  <component
+    :is="is"
+    target="_blank"
+    :href="href"
+    :to="to"
     px-4 h-8
     flex flex-row
     font-sans
-    text-sm
+    class="text-sm"
     items-center content-center justify-center
     bg-light-900 dark:bg-dark-400
     rounded
+    space-x-1
   >
     <slot />
-  </button>
+  </component>
 </template>

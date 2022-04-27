@@ -25,7 +25,21 @@ const group = computed(() => {
     z-500
   >
     <div
-      v-if="!currentFile"
+      v-if="project.isCreatingProject"
+      grid place-items-center place-content-center gap-2
+      text="sm dark:light-900/50 dark-50"
+      h-full
+    >
+      <Spinner
+        w-8
+        h-8
+      />
+      <div>
+        Opening Project
+      </div>
+    </div>
+    <div
+      v-else-if="!currentFile"
       h-full flex place-content-center
       place-items-center
       text="sm dark:light-900/50 dark-50"

@@ -7,7 +7,7 @@
     p="!0"
     w-10 h-10
     bg="!transparent"
-    text="!2xl dark-50 dark:light-900/50 hover:(dark-700 dark:white)"
+    class="!text-2xl text-dark-50 dark:text-light-900/50 hover:(text-dark-700 dark:text-white)"
   >
     <slot />
   </Button>

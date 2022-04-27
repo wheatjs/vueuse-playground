@@ -1,14 +1,8 @@
 <script setup lang="ts">
 import Draggable from 'vuedraggable'
 import { useProjectStore } from '~/modules/project'
-import type { EditorGroup } from '~/modules/editor'
 import { groups, useEditorStore } from '~/modules/editor'
 import type { BaseFile } from '~/modules/project'
-
-interface TabGroup {
-  group: EditorGroup
-  file: BaseFile
-}
 
 const project = useProjectStore()
 const editor = useEditorStore()
@@ -20,24 +14,6 @@ project.onFileCreated(() => {
 
 project.onFileDeleted(() => {
   files.value = Object.values(project.files).map(file => file.filename)
-})
-
-const pinnedFiles = computed<TabGroup[]>(() => {
-  const pinned: TabGroup[] = []
-
-  Object.values(project.files)
-    .forEach((file) => {
-      const group = groups.find(group => group.match(file as BaseFile))
-
-      if (group && group.pinned) {
-        pinned.push({
-          group,
-          file: file as BaseFile,
-        })
-      }
-    })
-
-  return pinned
 })
 
 const isUnpinned = (filename: string) => {
@@ -67,13 +43,17 @@ const onScroll = (e: WheelEvent) => {
       @dblclick.self="editor.shouldShowAddFile = true"
     >
       <template #header>
-        <EditorTab
-          v-for="pinned in pinnedFiles"
-          :key="pinned.file.filename"
-          :file="pinned.file"
+        <template
+          v-for="pinned in files"
+          :key="pinned"
         >
-          {{ pinned.file.filename }}
-        </EditorTab>
+          <EditorTab
+            v-if="!isUnpinned(pinned)"
+            :file="(project.files[pinned] as BaseFile)"
+          >
+            {{ pinned }}
+          </EditorTab>
+        </template>
       </template>
 
       <template #item="{ element }">

@@ -22,14 +22,19 @@ project.importProject(DefaultProject)
   >
     <Navigation h-screen />
     <main
+      lt-lg="pt-10"
       h-screen
       flex-1
       bg-light-900
       dark:bg-dark-900
       grid
-      grid-rows="[min-content_auto_min-content]"
+      :class="{
+        'grid-rows-[min-content_auto_min-content]': (app.isMobileScreen && app.mobileViewPreference === 'code') || !app.isMobileScreen,
+        'grid-rows-[auto_min-content]': app.isMobileScreen && app.mobileViewPreference === 'preview'
+      }"
     >
       <Titlebar
+        v-show="(app.isMobileScreen && app.mobileViewPreference === 'code') || !app.isMobileScreen"
         px="!0"
         border="b-1 light-900 dark:dark-900"
       >
@@ -45,6 +50,7 @@ project.importProject(DefaultProject)
           relative z-50
         >
           <Pane
+            v-if="(app.isMobileScreen && app.mobileViewPreference === 'code') || !app.isMobileScreen"
             bg-light-100
             dark:bg-dark-800
           >
@@ -58,6 +64,7 @@ project.importProject(DefaultProject)
             </Suspense>
           </Pane>
           <Pane
+            v-if="(app.isMobileScreen && app.mobileViewPreference === 'preview') || !app.isMobileScreen"
             bg-light-100
             dark:bg-dark-800
           >
@@ -105,6 +112,5 @@ project.importProject(DefaultProject)
     </main>
   </div>
   <Settings />
-  <ProjectLoading />
   <Welcome />
 </template>
