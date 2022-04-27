@@ -40,11 +40,3 @@ export const createWorkers = createSingletonPromise(async() => {
 
   ])
 })
-
-/**
- * Imports the monaco editor. We want to defer this to speed up the initial load.
- */
-export const useMonacoImport = createSingletonPromise(async() => {
-  if (typeof window !== 'undefined')
-    return await import('monaco-editor')
-})

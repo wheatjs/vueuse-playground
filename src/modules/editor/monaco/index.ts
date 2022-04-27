@@ -3,7 +3,7 @@ import config from '@playground/config'
 import { setupTypeAcquisition } from '@typescript/ata'
 import { useEditorStore } from '../store'
 import { MonacoThemes } from './themes'
-import { createWorkers, useMonacoImport } from './setup'
+import { createWorkers } from './setup'
 import { createFakeTs } from './typescript/fake-ts'
 import { useAppStore } from '~/modules/app'
 import type { ScriptFile } from '~/modules/project'
@@ -18,7 +18,7 @@ export * from './setup'
 export const createMonacoInstance = createSingletonPromise(async() => {
   await createWorkers()
   const { emmetHTML } = await import('emmet-monaco-es')
-  const monaco = await useMonacoImport()
+  const monaco = await import('monaco-editor')
 
   // We need to import this module to make ts available in the global scope.
   const ts = await createFakeTs()

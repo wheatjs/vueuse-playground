@@ -35,7 +35,7 @@ export class Document {
     this.import = this.import.bind(this)
     this.export = this.export.bind(this)
 
-    useMonacoImport()
+    import('monaco-editor')
       .then((monaco) => {
         if (!monaco)
           return
@@ -119,7 +119,7 @@ export class Document {
    */
   public async updateModelFromPatch(patch: automerge.Patch) {
     this.shouldIgnoreModelUpdate = true
-    const monaco = await useMonacoImport()
+    const monaco = await import('monaco-editor')
 
     if (!monaco)
       return

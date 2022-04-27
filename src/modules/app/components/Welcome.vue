@@ -9,7 +9,6 @@ const preset = ref('default')
 
 const loadPreset = () => {
   const p = presets.find(p => p.name === preset.value)
-  console.log(p)
   if (p) {
     project.importProject(p)
     app.welcomeOpen = false

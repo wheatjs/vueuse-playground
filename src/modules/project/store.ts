@@ -26,11 +26,12 @@ export const useProjectStore = defineStore('project', () => {
   /**
    * Compile a project file
    */
-  const compileFile = async(filename?: string) => {
+  const compileFile = async(filename?: string, silent?: boolean) => {
     if (filename)
       await files.value[filename].compile()
 
-    onFilesCompiledHook.trigger()
+    if (!silent)
+      onFilesCompiledHook.trigger()
   }
 
   /**
@@ -114,15 +115,17 @@ export const useProjectStore = defineStore('project', () => {
    */
   const importProject = async(project: ProjectSolutionPreset) => {
     clearProject()
-    await addPackage(Object.entries(project.packages).map(([name, version]) => ({ name, version })))
 
     const files = project.files()
     files.forEach(file => createFile(file, true))
-
-    for (const file of files)
-      await compileFile(file.filename)
-
     onFileCreatedHook.trigger('')
+
+    await Promise.all([
+      addPackage(Object.entries(project.packages).map(([name, version]) => ({ name, version }))),
+      ...files.map(file => compileFile(file.filename, true)),
+    ])
+
+    onFilesCompiledHook.trigger()
 
     if (project.defaultFile)
       editor.currentFilename = project.defaultFile
