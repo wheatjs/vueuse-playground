@@ -115,7 +115,6 @@ export default defineConfig({
     ],
   },
   build: {
-    sourcemap: true,
     rollupOptions: {
       external: [
         '@iconify/utils/lib/loader/fs',
