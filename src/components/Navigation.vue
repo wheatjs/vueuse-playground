@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRouteQuery } from '@vueuse/router'
-import { useFirebaseStore } from '~/modules/firebase'
+// import { useRouteQuery } from '@vueuse/router'
+// import { useFirebaseStore } from '~/modules/firebase'
 import { useAppStore } from '~/modules/app'
 
 const app = useAppStore()
