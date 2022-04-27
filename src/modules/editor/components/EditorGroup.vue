@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
+import { createWorkers } from '../monaco/setup'
 import type { BaseFile } from '~/modules/project'
 import { useProjectStore } from '~/modules/project'
 import { groups, useEditorStore } from '~/modules/editor'
+
+await createWorkers()
+await import ('monaco-editor')
 
 const project = useProjectStore()
 const editor = useEditorStore()

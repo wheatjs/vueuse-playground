@@ -4,16 +4,16 @@ import { useFirebaseStore } from '~/modules/firebase'
 import { useAppStore } from '~/modules/app'
 
 const app = useAppStore()
-const firebase = useFirebaseStore()
-const project = useRouteQuery('project')
+// const firebase = useFirebaseStore()
+// const project = useRouteQuery('project')
 
 const save = async() => {
-  project.value = await firebase.saveProject()
+  // project.value = await firebase.saveProject()
 }
 
 onMounted(async() => {
-  if (project.value)
-    await firebase.loadProject(project.value as string)
+  // if (project.value)
+  //   await firebase.loadProject(project.value as string)
 })
 </script>
 

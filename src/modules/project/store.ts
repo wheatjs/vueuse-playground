@@ -118,14 +118,19 @@ export const useProjectStore = defineStore('project', () => {
 
     const files = project.files()
     files.forEach(file => createFile(file, true))
-    onFileCreatedHook.trigger('')
+
+    setTimeout(() => {
+      onFileCreatedHook.trigger('')
+    }, 0)
 
     await Promise.all([
       addPackage(Object.entries(project.packages).map(([name, version]) => ({ name, version }))),
       ...files.map(file => compileFile(file.filename, true)),
     ])
 
-    onFilesCompiledHook.trigger()
+    setTimeout(() => {
+      onFilesCompiledHook.trigger()
+    }, 0)
 
     if (project.defaultFile)
       editor.currentFilename = project.defaultFile
