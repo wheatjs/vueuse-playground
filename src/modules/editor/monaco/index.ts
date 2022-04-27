@@ -12,14 +12,24 @@ import 'monaco-editor/esm/vs/editor/editor.all'
 export * from './plugins'
 export * from './setup'
 
+declare global {
+  const ts: typeof import('typescript')
+}
+
 /**
  * Creates and returns a configured monaco instance.
  */
 export const createMonacoInstance = createSingletonPromise(async() => {
   await createWorkers()
-  const ts = await import('typescript')
   const { emmetHTML } = await import('emmet-monaco-es')
   const monaco = await useMonacoImport()
+
+  // We need to import this module to make ts available in the global scope.
+  await import('monaco-editor/esm/vs/language/typescript/ts.worker')
+  let ts: typeof import('typescript') | null = null
+
+  if ('ts' in globalThis)
+    ts = (globalThis as any).ts
 
   const app = useAppStore()
 
@@ -131,27 +141,29 @@ export const createMonacoInstance = createSingletonPromise(async() => {
     updateTypeDefinitions()
   })
 
-  const ata = setupTypeAcquisition({
-    projectName: 'VueUse Playground',
-    typescript: ts,
-    logger: console,
-    delegate: {
-      // receivedFile: addLibraryToRuntime,
-      started() {
-        editorStore.isAcquiringTypeDefinitions = true
+  if (ts) {
+    const ata = setupTypeAcquisition({
+      projectName: 'VueUse Playground',
+      typescript: ts,
+      logger: console,
+      delegate: {
+        // receivedFile: addLibraryToRuntime,
+        started() {
+          editorStore.isAcquiringTypeDefinitions = true
+        },
+        finished(files) {
+          acquiredTypes = { ...acquiredTypes, ...Object.fromEntries(files) }
+          updateTypeDefinitions()
+          editorStore.isAcquiringTypeDefinitions = false
+        },
       },
-      finished(files) {
-        acquiredTypes = { ...acquiredTypes, ...Object.fromEntries(files) }
-        updateTypeDefinitions()
-        editorStore.isAcquiringTypeDefinitions = false
-      },
-    },
-  })
+    })
 
-  project.onPackageAdded((pkgs) => {
-    const code = pkgs.map(pkg => `import {} from '${pkg}'`).join('\n')
-    ata(code)
-  })
+    project.onPackageAdded((pkgs) => {
+      const code = pkgs.map(pkg => `import {} from '${pkg}'`).join('\n')
+      ata(code)
+    })
+  }
 
   // Setup monaco emmet
   emmetHTML(monaco)
