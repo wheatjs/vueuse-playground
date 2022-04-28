@@ -3,6 +3,7 @@ import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import config from '@playground/config'
 import { options, red, yellow } from 'kolorist'
+import { useAppStore } from '~/modules/app'
 
 options.enabled = true
 options.supportLevel = 1
@@ -33,12 +34,18 @@ export const sendTerminalCommand = terminalCommand.trigger
  * @param target Target element to attach the terminal to.
  */
 export function useTerminal(target: Ref<HTMLElement | undefined>) {
+  const app = useAppStore()
+
   const terminal = new Terminal({
-    theme: config.terminal.theme.dark,
+    theme: app.isDark ? config.terminal.theme.dark : config.terminal.theme.light,
     fontFamily: config.terminal.fontFamily,
     fontWeight: config.terminal.fontWeight,
     fontSize: config.terminal.fontSize,
     allowTransparency: true,
+  })
+
+  watch(() => app.isDark, () => {
+    terminal.options.theme = app.isDark ? config.terminal.theme.dark : config.terminal.theme.light
   })
 
   const fitAddon = new FitAddon()

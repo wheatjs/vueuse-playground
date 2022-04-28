@@ -13,6 +13,12 @@ defineProps<{
     }"
   >
     <div
+      v-if="$slots.icon"
+      px-4
+    >
+      <slot name="icon" />
+    </div>
+    <div
       flex
       flex-1
       flex-col

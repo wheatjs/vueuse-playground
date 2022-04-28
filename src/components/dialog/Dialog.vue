@@ -14,7 +14,7 @@ export default {
 <template>
   <UDialog
     fixed
-    z-9000 top-0
+    z-9002 top-0
     w-full h-full
     grid
     place-content-center

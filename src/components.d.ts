@@ -21,6 +21,7 @@ declare module '@vue/runtime-core' {
     Listbox: typeof import('./components/listbox/Listbox.vue')['default']
     ListboxOption: typeof import('./components/listbox/ListboxOption.vue')['default']
     Logo: typeof import('./components/Logo.vue')['default']
+    LogoHorizontal: typeof import('./components/LogoHorizontal.vue')['default']
     Menu: typeof import('./components/menu/Menu.vue')['default']
     MenuItem: typeof import('./components/menu/MenuItem.vue')['default']
     Navigation: typeof import('./components/Navigation.vue')['default']

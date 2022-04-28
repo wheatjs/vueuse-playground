@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useAppStore } from '~/modules/app'
+import { useFirebaseStore } from '~/modules/firebase'
 
 const app = useAppStore()
+const firebase = useFirebaseStore()
 const isOverflowMenuOpen = ref(false)
 
 interface MenuItem {
@@ -136,6 +138,16 @@ const overflow: MenuItem[] = [...menu.start, ...menu.end].filter(m => m.overflow
       </Button>
     </div>
 
+    <IconButton
+      rounded-full
+      @click="app.welcomeOpen = true"
+    >
+      <img
+        :src="firebase.user?.photoURL"
+        rounded-full
+        w="7"
+      >
+    </IconButton>
     <IconButton
       v-for="item in menu.end"
       :key="item.label"
