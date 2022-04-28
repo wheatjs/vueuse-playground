@@ -25,6 +25,7 @@ declare module '@vue/runtime-core' {
     Menu: typeof import('./components/menu/Menu.vue')['default']
     MenuItem: typeof import('./components/menu/MenuItem.vue')['default']
     Navigation: typeof import('./components/Navigation.vue')['default']
+    NewProject: typeof import('./modules/project/components/NewProject.vue')['default']
     Preview: typeof import('./modules/preview/components/Preview.vue')['default']
     PreviewControls: typeof import('./modules/preview/components/PreviewControls.vue')['default']
     ProjectLoading: typeof import('./modules/project/components/ProjectLoading.vue')['default']

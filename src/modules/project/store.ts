@@ -12,6 +12,8 @@ const url = (p: Package) => `${config.project.packages.cdn}${p.name}@${p.version
 export const useProjectStore = defineStore('project', () => {
   const editor = useEditorStore()
 
+  const isNewProjectDialogOpen = ref(false)
+
   const isCreatingProject = ref(false)
   const isAddingPackages = ref(false)
 
@@ -172,6 +174,8 @@ export const useProjectStore = defineStore('project', () => {
     importProject,
     exportProject,
     clearProject,
+
+    isNewProjectDialogOpen,
 
     // Event Hooks
     onFileCreated: onFileCreatedHook.on,

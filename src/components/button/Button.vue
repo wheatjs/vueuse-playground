@@ -2,6 +2,7 @@
 const props = defineProps<{
   href?: string
   to?: string
+  primary?: boolean
 }>()
 
 const is = computed(() => {
@@ -28,6 +29,9 @@ const is = computed(() => {
     bg-light-900 dark:bg-dark-400
     rounded
     space-x-1
+    :class="{
+      '!bg-green-500 !text-green-900 font-bold': primary
+    }"
   >
     <slot />
   </component>

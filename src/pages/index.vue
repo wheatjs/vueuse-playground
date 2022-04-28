@@ -113,4 +113,5 @@ project.importProject(DefaultProject)
   </div>
   <Settings />
   <Welcome />
+  <NewProject />
 </template>

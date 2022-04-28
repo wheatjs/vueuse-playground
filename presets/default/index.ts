@@ -4,7 +4,7 @@ import mainStyle from './templates/main.css?raw'
 import { CssFile, SFCFile, ScriptFile } from '~/modules/project/files'
 
 export default definePreset({
-  name: 'default',
+  name: 'Default',
   description: 'The default project template.',
   defaultFile: 'App.vue',
   files: () => [

@@ -7,7 +7,7 @@ import mainStore from './templates/store?raw'
 import { CssFile, SFCFile, ScriptFile } from '~/modules/project/files'
 
 export default definePreset({
-  name: 'pinia',
+  name: 'Pinia',
   description: 'The default project with pinia.',
   defaultFile: 'App.vue',
   files: () => [
