@@ -1,0 +1,9 @@
+export default [
+  {
+    "name": "demo.vue",
+    "scriptContent": "\nimport { ref } from 'vue'\nimport { useFocus } from '@vueuse/core'\n\nconst text = ref()\nconst input = ref()\nconst button = ref()\n\nconst { focused: paragraphFocus } = useFocus(text)\nconst { focused: inputFocus } = useFocus(input, { initialValue: true })\nconst { focused: buttonFocus } = useFocus(button)\n",
+    "templateContent": "\n  <div>\n    <p ref=\"text\" class=\"demo-el px-2 rounded\" tabindex=\"0\">\n      Paragraph that can be focused\n    </p>\n    <input ref=\"input\" class=\"demo-el\" type=\"text\" placeholder=\"Input that can be focused\">\n    <button ref=\"button\" class=\"demo-el button\">\n      Button that can be focused\n    </button>\n    <hr>\n    <note class=\"mb-2\">\n      <template v-if=\"paragraphFocus\">\n        The paragraph has focus\n      </template>\n      <template v-else-if=\"inputFocus\">\n        The input control has focus\n      </template>\n      <template v-else-if=\"buttonFocus\">\n        The button has focus\n      </template>\n      <template v-else>\n        &nbsp;<!-- prevents paragraph from collapsing when empty otherwise -->\n      </template>\n    </note>\n    <button class=\"button small !ml-0\" :class=\"{orange: paragraphFocus}\" @click=\"paragraphFocus = !paragraphFocus\">\n      Focus text\n    </button>\n    <button class=\"button small\" :class=\"{orange: inputFocus}\" @click=\"inputFocus = !inputFocus\">\n      Focus input\n    </button>\n    <button class=\"button small\" :class=\"{orange: buttonFocus}\" @click=\"buttonFocus = !buttonFocus\">\n      Focus button\n    </button>\n  </div>\n",
+    "styleContent": "\n.demo-el:focus {\n  opacity: .7;\n  box-shadow: 0 0 2px 1px var(--c-brand);\n}\n",
+    "path": "packages/core/useFocus/demo.vue"
+  }
+]

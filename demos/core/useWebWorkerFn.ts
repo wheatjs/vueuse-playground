@@ -1,0 +1,8 @@
+export default [
+  {
+    "name": "demo.vue",
+    "scriptContent": "\nimport dayjs from 'dayjs'\nimport { computed, nextTick, ref } from 'vue'\nimport { useWebWorkerFn } from '@vueuse/core'\nimport { useTimestamp } from '../useTimestamp'\n\nconst heavyTask = () => {\n  const randomNumber = () => Math.trunc(Math.random() * 5_000_00)\n  const numbers: number[] = Array(5_000_000).fill(undefined).map(randomNumber)\n  numbers.sort()\n  return numbers.slice(0, 5)\n}\n\nconst { workerFn, workerStatus, workerTerminate } = useWebWorkerFn(heavyTask)\nconst time = useTimestamp()\nconst computedTime = computed(() => dayjs(time.value).format('YYYY-MM-DD HH:mm:ss SSS'))\nconst running = computed(() => workerStatus.value === 'RUNNING')\n\nconst data = ref<number[] | null>(null)\nconst runner = ref('')\n\nconst baseSort = async() => {\n  data.value = null\n  await nextTick()\n  data.value = heavyTask()\n  runner.value = 'Main'\n}\n\nconst workerSort = async() => {\n  data.value = null\n  await nextTick()\n  data.value = await workerFn()\n  runner.value = 'Worker'\n}\n",
+    "templateContent": "\n  <p>Current Time: <b>{{ computedTime }}</b></p>\n  <note class=\"mb-2\">\n    This is a demo showing sort for large array (5 milion numbers) with or w/o WebWorker.<br>Clock stops when UI blocking happends.\n  </note>\n  <button @click=\"baseSort\">\n    Sort in Main Thread\n  </button>\n  <button v-if=\"!running\" @click=\"workerSort\">\n    Sort in Worker\n  </button>\n  <button v-else class=\"orange\" @click=\"workerTerminate\">\n    Terminate Worker\n  </button>\n  <p v-if=\"data\">\n    Thread: <strong>{{ runner }}</strong><br>\n    Result: <strong>{{ data }}</strong>\n  </p>\n",
+    "path": "packages/core/useWebWorkerFn/demo.vue"
+  }
+]

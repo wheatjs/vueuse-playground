@@ -16,10 +16,7 @@ project.importProject(DefaultProject)
 </script>
 
 <template>
-  <div
-    flex
-    flex-row overflow-hidden
-  >
+  <div flex flex-row overflow-hidden>
     <Navigation h-screen />
     <main
       lt-lg="pt-10"
@@ -40,15 +37,8 @@ project.importProject(DefaultProject)
       >
         <EditorTabs />
       </Titlebar>
-      <div
-        h-full
-        overflow-hidden
-      >
-        <Splitpanes
-          w-full
-          h-full
-          relative z-50
-        >
+      <div h-full overflow-hidden>
+        <Splitpanes w-full h-full relative z-50>
           <Pane
             v-if="(app.isMobileScreen && app.mobileViewPreference === 'code') || !app.isMobileScreen"
             bg-light-100
@@ -58,9 +48,7 @@ project.importProject(DefaultProject)
               <template #loading>
                 Loading...
               </template>
-              <template #default>
-                <EditorGroup />
-              </template>
+              <EditorGroup />
             </Suspense>
           </Pane>
           <Pane
@@ -69,19 +57,9 @@ project.importProject(DefaultProject)
             dark:bg-dark-800
           >
             <Splitpanes horizontal>
-              <Pane
-                flex
-                flex-col size="75"
-              >
-                <Titlebar
-                  flex-shrink-0
-                  border-t-0
-                  pr-2
-                >
-                  <i
-                    i="carbon-chevron-down"
-                    mr-1 text-base
-                  />
+              <Pane flex flex-col size="75">
+                <Titlebar flex-shrink-0 border-t-0 pr-2>
+                  <i i="carbon-chevron-down" mr-1 text-base />
                   <span flex-1>
                     Preview
                   </span>
@@ -89,15 +67,9 @@ project.importProject(DefaultProject)
                 </Titlebar>
                 <Preview flex-1 />
               </Pane>
-              <Pane
-                size="25"
-                flex flex-col
-              >
+              <Pane size="25" flex flex-col>
                 <Titlebar flex-shrink-0>
-                  <i
-                    i="carbon-chevron-down"
-                    mr-1 text-base
-                  />
+                  <i i="carbon-chevron-down" mr-1 text-base />
                   Terminal
                 </Titlebar>
                 <div h="[calc(100%-32px)]">
@@ -114,4 +86,5 @@ project.importProject(DefaultProject)
   <Settings />
   <Welcome />
   <NewProject />
+  <OpenDemo />
 </template>

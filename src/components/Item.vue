@@ -8,6 +8,7 @@ defineProps<{
   <div
     flex flex-row items-center
     rounded
+    pr-4
     :class="{
       '!bg-green-500 !text-green-900 !border-green-400 font-bold': selected,
     }"
@@ -28,8 +29,8 @@ defineProps<{
       </div>
       <div
         v-if="$slots.subtitle"
-        mt="-1"
-        text="dark:light-900/50 dark-50"
+        text="dark:light-900/50 dark-50 sm"
+        leading-4
         :class="{
           '!text-green-900/70': selected,
         }"

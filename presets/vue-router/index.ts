@@ -10,7 +10,9 @@ import { CssFile, SFCFile, ScriptFile } from '~/modules/project/files'
 
 export default definePreset({
   name: 'Vue Router',
-  description: 'Default template with vue-router installed.',
+  featured: true,
+  icon: 'i-logos-vue',
+  description: 'A template with Vue Router pre-installed.',
   defaultFile: 'App.vue',
   files: () => [
     new ScriptFile({
@@ -42,6 +44,7 @@ export default definePreset({
     }),
   ],
   packages: {
+    'vue': 'latest',
     '@vueuse/core': 'latest',
     'vue-router': 'latest',
   },

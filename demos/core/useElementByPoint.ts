@@ -1,0 +1,8 @@
+export default [
+  {
+    "name": "demo.vue",
+    "scriptContent": "\nimport { computed, reactive } from 'vue'\nimport { useElementBounding, useElementByPoint, useEventListener, useMouse } from '@vueuse/core'\n\nconst { x, y } = useMouse({ type: 'client' })\nconst { element } = useElementByPoint({ x, y })\nconst bounding = reactive(useElementBounding(element))\n\nuseEventListener('scroll', bounding.update, true)\n\nconst boxStyles = computed(() => {\n  if (element.value) {\n    return {\n      display: 'block',\n      width: `${bounding.width}px`,\n      height: `${bounding.height}px`,\n      left: `${bounding.left}px`,\n      top: `${bounding.top}px`,\n      backgroundColor: '#3eaf7c44',\n      transition: 'all 0.05s linear',\n    } as Record<string, string | number>\n  }\n  return {\n    display: 'none',\n  }\n})\n\nconst pointStyles = computed<Record<string, string | number>>(() => ({\n  transform: `translate(calc(${x.value}px - 50%), calc(${y.value}px - 50%))`,\n}))\n",
+    "templateContent": "\n  <div\n    :style=\"boxStyles\"\n    fixed\n    pointer-events-none\n    z-9999\n    border=\"1 $vt-c-brand\"\n  />\n  <div\n    :style=\"pointStyles\"\n    fixed\n    top-0\n    left-0\n    pointer-events-none\n    w-2\n    h-2\n    rounded-full\n    bg-green-400\n    shadow\n    z-999\n  />\n  <div class=\"flex items-center\">\n    <span class=\"mr-4\">X</span>\n    <input v-model=\"x\" type=\"number\">\n  </div>\n  <div class=\"flex items-center\">\n    <span class=\"mr-4\">Y</span>\n    <input v-model=\"y\" type=\"number\">\n  </div>\n",
+    "path": "packages/core/useElementByPoint/demo.vue"
+  }
+]

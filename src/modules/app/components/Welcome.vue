@@ -40,6 +40,15 @@ const startActions: StartAction[] = [
 
     },
   },
+  {
+    title: 'Open Demo',
+    subtitle: 'Open an offical VueUse Demo',
+    icon: 'i-mdi-application-brackets-outline',
+    onClick() {
+      app.welcomeOpen = false
+      project.isOpenDemoDialogOpen = true
+    },
+  },
 ]
 </script>
 

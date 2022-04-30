@@ -8,7 +8,9 @@ import { CssFile, SFCFile, ScriptFile } from '~/modules/project/files'
 
 export default definePreset({
   name: 'Pinia',
-  description: 'The default project with pinia.',
+  featured: true,
+  icon: 'i-custom-pinia',
+  description: 'Template with Pinia pre-installed.',
   defaultFile: 'App.vue',
   files: () => [
     new ScriptFile({

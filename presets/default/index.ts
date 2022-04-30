@@ -5,7 +5,9 @@ import { CssFile, SFCFile, ScriptFile } from '~/modules/project/files'
 
 export default definePreset({
   name: 'Default',
-  description: 'The default project template.',
+  featured: true,
+  icon: 'i-logos-vueuse',
+  description: 'A template with just Vue and VueUse installed.',
   defaultFile: 'App.vue',
   files: () => [
     new ScriptFile({

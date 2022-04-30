@@ -13,6 +13,8 @@ export const useProjectStore = defineStore('project', () => {
   const editor = useEditorStore()
 
   const isNewProjectDialogOpen = ref(false)
+  const isOpenDemoDialogOpen = ref(false)
+  const isPackageManagerDialogOpen = ref(false)
 
   const isCreatingProject = ref(false)
   const isAddingPackages = ref(false)
@@ -175,7 +177,9 @@ export const useProjectStore = defineStore('project', () => {
     exportProject,
     clearProject,
 
+    isOpenDemoDialogOpen,
     isNewProjectDialogOpen,
+    isPackageManagerDialogOpen,
 
     // Event Hooks
     onFileCreated: onFileCreatedHook.on,
