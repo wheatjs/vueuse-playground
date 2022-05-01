@@ -2,6 +2,7 @@ import type { BaseFile } from './files'
 
 export interface PackageConfig {
   cdn: string
+  redirects: Record<string, string>
 }
 
 export interface ProjectConfig {

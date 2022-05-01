@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useAppStore } from '~/modules/app'
 import { useFirebaseStore } from '~/modules/firebase'
+import { useProjectStore } from '~/modules/project'
 
 const app = useAppStore()
+const project = useProjectStore()
 const firebase = useFirebaseStore()
 const isOverflowMenuOpen = ref(false)
 
@@ -51,6 +53,14 @@ const menu: Menu = {
       icon: 'i-carbon-logo-github',
       href: 'https://github.com/wheatjs/vueuse-playground',
       overflow: true,
+    },
+    {
+      label: 'Open Demo',
+      icon: 'i-mdi-application-brackets-outline',
+      onClick() {
+        app.welcomeOpen = false
+        project.isOpenDemoDialogOpen = true
+      },
     },
   ],
   end: [

@@ -1,18 +1,29 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
+import { useRouteQuery } from '@vueuse/router'
 import DefaultProject from '../../presets/default'
 import { useProjectStore } from '~/modules/project'
 import { useAppStore } from '~/modules/app'
 
 const app = useAppStore()
+const demo = useRouteQuery('demo')
+const project = useProjectStore()
 
 useEventListener('keydown', (e) => {
   if (e.ctrlKey && e.key === 's' && app.preventCtrlS)
     e.preventDefault()
 })
 
-const project = useProjectStore()
-project.importProject(DefaultProject)
+if (demo.value) {
+  project.openDemo(demo.value)
+}
+else {
+  if (app.showWelcome)
+    app.welcomeOpen = true
+
+  project.importProject(DefaultProject)
+}
+
 </script>
 
 <template>

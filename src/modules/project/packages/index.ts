@@ -18,6 +18,11 @@ export async function resolvePackageJson(name: string, version?: string): Promis
 }
 
 export async function resolvePackage(name: string, version?: string): Promise<Package[] | undefined> {
+  // const originalName = name
+
+  // if (name in config.project.packages.redirects)
+  //   name = config.project.packages.redirects[name]
+
   const resolvedPackages: Package[] = []
 
   const packageJson = await resolvePackageJson(name, version)

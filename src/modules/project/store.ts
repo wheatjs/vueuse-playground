@@ -2,10 +2,13 @@ import config from '@playground/config'
 import type { ProjectSolutionPreset } from 'presets/types'
 import { prunePackages, resolvePackage } from './packages'
 
-import type { BaseFile } from './files'
+import { BaseFile, CssFile, SFCFile, ScriptFile } from './files'
 import type { Package } from './packages/types'
+import DefaultPreset from '~/../presets/default'
 import { useEditorStore } from '~/modules/editor'
 import { createMonacoInstance, createWorkers } from '~/modules/editor/monaco'
+import DemoCss from '~/../demos/shared.css?raw'
+import DocsUtils from '~/../demos/docs-utils?raw'
 
 const url = (p: Package) => `${config.project.packages.cdn}${p.name}@${p.version}/${p.metadata.module || p.metadata.main}`
 
@@ -88,7 +91,7 @@ export const useProjectStore = defineStore('project', () => {
       .flat()
 
     if (resolvedPackages)
-      packages.value = prunePackages(resolvedPackages)
+      packages.value = prunePackages([...resolvedPackages, ...packages.value])
 
     isAddingPackages.value = false
     onPackageAddedHook.trigger(pkgs.map(({ name }) => name))
@@ -132,12 +135,20 @@ export const useProjectStore = defineStore('project', () => {
     isCreatingProject.value = true
     clearProject()
 
-    const files = project.files()
-    files.forEach(file => createFile(file, true))
+    project.files.forEach((file) => {
+      if (file.filename.endsWith('.vue'))
+        createFile(new SFCFile(file))
+      else if (file.filename.endsWith('.ts') || file.filename.endsWith('.js'))
+        createFile(new ScriptFile(file))
+      else if (file.filename.endsWith('.css'))
+        createFile(new CssFile(file))
+      else if (file.filename.endsWith('.json'))
+        createFile(new BaseFile(file))
+    })
 
     await Promise.all([
       addPackage(Object.entries(project.packages).map(([name, version]) => ({ name, version }))),
-      ...files.map(file => compileFile(file.filename, true)),
+      ...project.files.map(file => compileFile(file.filename, true)),
     ])
 
     setTimeout(() => {
@@ -155,6 +166,46 @@ export const useProjectStore = defineStore('project', () => {
    * Exports the existing project
    */
   const exportProject = () => {}
+
+  /**
+   * Open VueUse function demo
+   */
+  const openDemo = async(demo: string) => {
+    isCreatingProject.value = true
+    const demos = await import('~/../demos')
+    const demoEntry = demos.default.find(x => x.name === demo)
+
+    if (demoEntry) {
+      const _files = await demoEntry.files()
+
+      importProject({
+        ...DefaultPreset,
+        files: [
+          ...DefaultPreset.files.filter(f => f.filename !== 'App.vue' && f.filename !== 'main.css'),
+          {
+            filename: 'main.css',
+            initialStyleContent: DemoCss,
+            hide: true,
+            isProtected: true,
+          },
+          ..._files.default.map(file => ({
+            filename: file.name === 'demo.vue' ? 'App.vue' : file.name,
+            isProtected: file.name === 'demo.vue',
+            initialScriptContent: file.scriptContent?.replaceAll('@vueuse/docs-utils', './utils'),
+            initialTemplateContent: file.templateContent,
+          })),
+          {
+            filename: 'utils.ts',
+            initialScriptContent: DocsUtils,
+          },
+        ],
+        packages: {
+          ...DefaultPreset.packages,
+          'js-yaml': 'latest',
+        },
+      })
+    }
+  }
 
   return {
     files,
@@ -176,6 +227,8 @@ export const useProjectStore = defineStore('project', () => {
     importProject,
     exportProject,
     clearProject,
+
+    openDemo,
 
     isOpenDemoDialogOpen,
     isNewProjectDialogOpen,

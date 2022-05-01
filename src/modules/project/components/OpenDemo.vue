@@ -1,17 +1,24 @@
 <script setup lang="ts">
+import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
 import { coreCategoryNames, functions } from '@vueuse/metadata'
 import { useProjectStore } from '~/modules/project'
 
 const filter = ref('')
 const project = useProjectStore()
+const demo = ref('')
 
 const filteredFunctions = computed(() => {
   const value = filter.value
   if (!value)
     return functions
 
-  return functions.filter(({ name }) => name.includes(value))
+  return functions.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()))
 })
+
+const open = () => {
+  project.openDemo(demo.value)
+  project.isOpenDemoDialogOpen = false
+}
 </script>
 
 <template>
@@ -34,19 +41,29 @@ const filteredFunctions = computed(() => {
         </Textfield>
       </div>
       <div overflow-auto space-y-6 p-4 flex-1>
-        <div v-for="category in coreCategoryNames" :key="category">
-          <div tracking-wide font-sans mb-2>
-            {{ category }}
+        <RadioGroup v-model="demo">
+          <div v-for="category in coreCategoryNames" :key="category">
+            <div tracking-wide font-sans mb-2>
+              {{ category }}
+            </div>
+            <div flex flex-row flex-wrap gap-2>
+              <RadioGroupOption
+                v-for="fn in filteredFunctions.filter(x => x.category === category)"
+                :key="fn.name"
+                v-slot="{ checked }"
+                :value="fn.name"
+              >
+                <FunctionBadge
+                  :class="{ 'text-green-500 !op100': checked }"
+                  :fn="fn"
+                  active="outline-0"
+                  ring="active:(green-500)"
+                  op="hover:100 50"
+                />
+              </RadioGroupOption>
+            </div>
           </div>
-          <div flex flex-row flex-wrap gap-2>
-            <FunctionBadge
-              v-for="fn in filteredFunctions.filter(x => x.category === category)"
-              :key="fn.name"
-              :fn="fn"
-              op="hover:100 50"
-            />
-          </div>
-        </div>
+        </RadioGroup>
       </div>
     </div>
     <div
@@ -56,7 +73,7 @@ const filteredFunctions = computed(() => {
       <Button>
         Cancel
       </Button>
-      <Button primary>
+      <Button primary @click="open">
         Open Demo
       </Button>
     </div>

@@ -30,7 +30,7 @@ interface PackageTree {
   tree: PackageFile[]
 }
 
-interface File {
+export interface DemoFile {
   name: string
   path: string
   templateContent?: string
@@ -38,14 +38,14 @@ interface File {
   styleContent?: string
 }
 
-interface Demo {
+export interface Demo {
   package: string
   name: string
-  files: File[]
+  files: DemoFile[]
 }
 
 async function resolveFiles(demo: PackageFile, tree: PackageTree) {
-  const files: File[] = []
+  const files: DemoFile[] = []
   let scriptContent
   let templateContent
   let styleContent

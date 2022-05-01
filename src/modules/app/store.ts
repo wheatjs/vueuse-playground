@@ -13,8 +13,8 @@ export const useAppStore = defineStore('app', () => {
 
   const isDark = useDark()
 
-  if (showWelcome.value)
-    welcomeOpen.value = true
+  // if (showWelcome.value)
+  //   welcomeOpen.value = true
 
   return {
     showWelcome,

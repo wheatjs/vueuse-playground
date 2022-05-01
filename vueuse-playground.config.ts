@@ -38,6 +38,9 @@ export default defineConfig({
   project: {
     packages: {
       cdn: 'https://unpkg.com/',
+      redirects: {
+        axios: 'axios-esm',
+      },
     },
   },
 
