@@ -4,6 +4,7 @@ import mainStyles from './templates/styles.css?raw'
 
 export default definePreset({
   name: 'Demo',
+  defaultFile: 'demo.vue',
   files: [
     {
       filename: 'main.ts',
