@@ -7,6 +7,7 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import VueI18n from '@intlify/vite-plugin-vue-i18n'
 import Pages from 'vite-plugin-pages'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 import Unocss from 'unocss/vite'
 import { presetAttributify, presetIcons, presetTypography, presetUno, presetWebFonts, transformerDirectives, transformerVariantGroup } from 'unocss'
@@ -120,6 +121,13 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      plugins: [
+        visualizer({
+          filename: resolve(__dirname, 'app/dist/client/stats.html'),
+          template: 'treemap', // sunburst|treemap|network
+          sourcemap: true,
+        }),
+      ],
       external: [
         '@iconify/utils/lib/loader/fs',
         '@iconify/utils/lib/loader/install-pkg',

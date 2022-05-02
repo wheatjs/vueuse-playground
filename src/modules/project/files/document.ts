@@ -62,6 +62,10 @@ export class Document {
     return ''
   }
 
+  public export() {
+    return this.model?.getValue()
+  }
+
   public async import(data: string) {
     // this.doc = automerge.from({ text: new automerge.Text(data) })
     this.model?.setValue(data)
