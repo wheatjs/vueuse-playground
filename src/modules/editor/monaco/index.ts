@@ -78,7 +78,6 @@ export const createMonacoInstance = createSingletonPromise(async() => {
     checkJs: false,
     allowJs: true,
     declaration: true,
-    // emitDeclarationOnly: true,
 
     importHelpers: false,
 
@@ -98,7 +97,7 @@ export const createMonacoInstance = createSingletonPromise(async() => {
 
   // Ignore specific diagnostic codes.
   monaco?.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-    diagnosticCodesToIgnore: [6133, 6198, 8006, 8010, 1208, 2451],
+    diagnosticCodesToIgnore: [6133, 6198, 8006, 8010, 1208, 2451, 2307],
   })
 
   let acquiredTypes: Record<string, string> = {}
@@ -112,10 +111,10 @@ export const createMonacoInstance = createSingletonPromise(async() => {
       .filter((f): f is ScriptFile => f.filename.endsWith('.vue'))
       .map(f => ({
         content: `
-        declare module './${f.filename}' 
+        declare module './${f.filename}.ts' {
           import { DefineComponent } from 'vue'
           const component: DefineComponent<{}, {}, any>
-          export default component    
+          export default component
         }`,
       }))
 

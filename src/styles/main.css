@@ -45,11 +45,11 @@ html.dark {
 .editor-decoration-package::after {
   content: 'Install';
   font-size: 0.8em;
-  @apply bg-dark-500 text-light-900/50 px-1 py-0.25 rounded cursor-pointer hover:bg-red-500;
+  @apply dark:bg-dark-500 bg-light-900 dark:text-light-900/50 px-1 py-0.25 rounded cursor-pointer;
 }
 
 .editor-decoration-package:hover::after {
-  @apply bg-green-500/10 text-green-500;
+  @apply dark:bg-green-500/10 bg-green-500/30 text-green-500;
 }
 
 .editor-decoration-package-version {
@@ -59,9 +59,9 @@ html.dark {
 .editor-decoration-package-version::after {
   /* content: 'Install'; */
   font-size: 0.8em;
-  @apply bg-dark-500 text-light-900/50 px-1 py-0.25 rounded cursor-pointer hover:bg-red-500;
+  @apply dark:bg-dark-500 bg-light-900 dark:text-light-900/50 px-1 py-0.25 rounded cursor-pointer;
 }
 
 .editor-decoration-package-version:hover::after {
-  @apply bg-green-500/10 text-green-500;
+  @apply dark:bg-green-500/10 bg-green-500/30 text-green-500;
 }

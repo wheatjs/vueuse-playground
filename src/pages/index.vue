@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
-import { useRouteQuery } from '@vueuse/router'
 import DefaultProject from '../../presets/default'
 import { useProjectStore } from '~/modules/project'
 import { useAppStore } from '~/modules/app'
 
+const Settings = defineAsyncComponent(() => import('~/modules/app/components/Settings.vue'))
+const NewProject = defineAsyncComponent(() => import('~/modules/project/components/NewProject.vue'))
+const OpenDemo = defineAsyncComponent(() => import('~/modules/project/components/OpenDemo.vue'))
+
 const app = useAppStore()
-const demo = useRouteQuery('demo')
 const project = useProjectStore()
 
 useEventListener('keydown', (e) => {
@@ -14,16 +16,10 @@ useEventListener('keydown', (e) => {
     e.preventDefault()
 })
 
-if (demo.value) {
-  project.openDemo(demo.value)
-}
-else {
-  if (app.showWelcome)
-    app.welcomeOpen = true
+if (app.showWelcome)
+  app.welcomeOpen = true
 
-  project.importProject(DefaultProject)
-}
-
+project.importProject(DefaultProject)
 </script>
 
 <template>
@@ -94,8 +90,8 @@ else {
       <Statusbar />
     </main>
   </div>
-  <Settings />
   <Welcome />
+  <Settings />
   <NewProject />
   <OpenDemo />
 </template>

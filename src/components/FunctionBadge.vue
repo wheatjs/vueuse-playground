@@ -14,8 +14,10 @@ function styledName(name: string) {
 </script>
 
 <template>
-  <div cursor-pointer text="sm" class="whitespace-nowrap overflow-hidden overflow-ellipsis">
-    <div bg="gray-400/5" p="x-1.5 y-0.5" class="rounded items-center" flex="inline gap-1">
+  <div
+    bg="gray-400/5" p="x-1.5 y-0.5" class="rounded items-center whitespace-nowrap overflow-hidden overflow-ellipsis" cursor-pointer text="sm"
+  >
+    <div flex="inline gap-1">
       <span v-html="styledName(fn.name)" />
     </div>
   </div>

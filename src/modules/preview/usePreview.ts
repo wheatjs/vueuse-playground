@@ -1,11 +1,11 @@
 import type { Ref, WatchStopHandle } from 'vue'
 import type { MaybeRef } from '@vueuse/core'
 import TailwindReset from '@unocss/reset/tailwind.css?raw'
-import { useAppStore } from '../app'
 import SourceTemplate from './template.html?raw'
 import { PreviewProxy } from './PreviewProxy'
 import type { PreviewProxyHandlers } from './PreviewProxy'
-import { usePreviewStore } from './store'
+import { useAppStore } from '~/modules/app'
+import { usePreviewStore } from '~/modules/preview'
 import { useProjectStore } from '~/modules/project'
 import { compileFilesAsModules, vueRuntimeUrl } from '~/modules/compiler'
 import { TerminalCommandType, sendTerminalCommand } from '~/modules/terminal'
@@ -107,6 +107,7 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
       ])
     }
     catch (error) {
+      console.error(error)
       if (error instanceof Error) {
         sendTerminalCommand({
           type: TerminalCommandType.ERROR,
@@ -157,8 +158,6 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
       ;({ off: stopUpdateWatcher } = project.onFilesCompiled(() => {
         updatePreview()
       }))
-
-      updatePreview()
     })
 
     if (target.value)

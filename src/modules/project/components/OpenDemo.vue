@@ -38,7 +38,7 @@ const open = () => {
     flex flex-col
   >
     <div flex-1 overflow-hidden flex flex-col>
-      <div border="b-1 dark:dark-900" p-4>
+      <div border="b-1 dark:dark-900 light-900" p-4>
         <Textfield v-model="filter" placeholder="Search..." w-full>
           <template #icon>
             <i i-carbon-search />
@@ -59,11 +59,11 @@ const open = () => {
                 :value="fn.name"
               >
                 <FunctionBadge
-                  :class="{ 'text-green-500 !op100': checked }"
+                  :class="{ 'ring-2 ring-green-500': checked }"
                   :fn="fn"
                   active="outline-0"
                   ring="active:(green-500)"
-                  op="hover:100 50"
+                  class="text-green-500"
                 />
               </RadioGroupOption>
             </div>
@@ -73,7 +73,7 @@ const open = () => {
     </div>
     <div
       p-4 flex flex-row justify-end space-x-2
-      border="t-1 dark:dark-900"
+      border="t-1 dark:dark-900 light-900"
     >
       <Button>
         Cancel

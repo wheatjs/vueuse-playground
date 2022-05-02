@@ -6,7 +6,6 @@ import { BaseFile, CssFile, SFCFile, ScriptFile } from './files'
 import type { Package } from './packages/types'
 import { useEditorStore } from '~/modules/editor'
 import { createMonacoInstance, createWorkers } from '~/modules/editor/monaco'
-import DemoPreset from '~/../presets/demo'
 
 const url = (p: Package) => `${config.project.packages.cdn}${p.name}@${p.version}/${p.metadata.module || p.metadata.main}`
 
@@ -170,14 +169,15 @@ export const useProjectStore = defineStore('project', () => {
    */
   const openDemo = async(demo: string) => {
     isCreatingProject.value = true
+    const demoPreset = await import('~/../presets/demo')
     const demos = await import('~/../demos')
     const demoEntry = demos.default.find(x => x.name === demo)
 
     if (demoEntry) {
       const files = await demoEntry.files()
 
-      const extraFiles = DemoPreset.extraFiles
-        ? DemoPreset.extraFiles.filter((f) => {
+      const extraFiles = demoPreset.default.extraFiles
+        ? demoPreset.default.extraFiles.filter((f) => {
           if (demoEntry.includeUtils && f.filename === 'utils.ts')
             return true
 
@@ -193,9 +193,9 @@ export const useProjectStore = defineStore('project', () => {
         : []
 
       importProject({
-        ...DemoPreset,
+        ...demoPreset.default,
         files: [
-          ...DemoPreset.files.map((f) => {
+          ...demoPreset.default.files.map((f) => {
             if (f.filename !== 'main.ts')
               return f
 
@@ -214,7 +214,7 @@ export const useProjectStore = defineStore('project', () => {
           ...extraFiles,
         ],
         packages: {
-          ...DemoPreset.packages,
+          ...demoPreset.default.packages,
           ...(demoEntry.extraDependencies as unknown as Record<string, string>),
         },
       })

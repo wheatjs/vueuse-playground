@@ -37,8 +37,11 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
   watch(options.model, () => {
     const model = unref(options.model)
 
-    if (model && editor)
+    if (model && editor) {
       editor.setModel(model)
+      if (model.getLanguageId() === 'html')
+        editor.getAction('editor.action.formatDocument').run()
+    }
   })
 
   const init = async() => {
@@ -71,6 +74,9 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
       model: unref(options.model),
       wordWrap: editorWordWrap.value,
     })
+
+    if (unref(options.model) && unref(options.model).getLanguageId() === 'html')
+      editor.getAction('editor.action.formatDocument').run()
 
     editorState.editors.push(editor)
 
