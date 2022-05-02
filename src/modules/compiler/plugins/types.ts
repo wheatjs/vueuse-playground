@@ -1,6 +1,7 @@
 export interface CSSProcessorOptions {
   html?: string
   css?: string
+  js?: string
 }
 
 export interface CompilerPlugins {

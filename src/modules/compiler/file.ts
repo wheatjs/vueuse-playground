@@ -111,7 +111,7 @@ export async function compileFile(file: BaseFile, options: CompileFileOptions = 
 
     if (cssProcessors) {
       for (const processor of cssProcessors)
-        css = await processor({ css, html: descriptor.template?.content })
+        css = await processor({ css, html: descriptor.template?.content, js: descriptor.scriptSetup?.content })
     }
 
     for (const style of descriptor.styles) {

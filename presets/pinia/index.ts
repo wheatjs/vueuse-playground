@@ -16,23 +16,23 @@ export default definePreset({
       filename: 'main.ts',
       isProtected: true,
       hide: true,
-      initialScriptContent: mainTemplate,
+      script: mainTemplate,
     },
     {
       filename: 'main.css',
       isProtected: true,
       hide: true,
-      initialStyleContent: mainStyle,
+      style: mainStyle,
     },
     {
       filename: 'App.vue',
       isProtected: true,
-      initialScriptContent: mainAppScript,
-      initialTemplateContent: mainAppTemplate,
+      script: mainAppScript,
+      template: mainAppTemplate,
     },
     {
       filename: 'store.ts',
-      initialScriptContent: mainStore,
+      script: mainStore,
     },
   ],
   packages: {

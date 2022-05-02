@@ -3,7 +3,7 @@ import type { FileOptions } from './base'
 import { BaseFile } from './base'
 
 export interface ScriptFileOptions extends FileOptions {
-  initialScriptContent?: string
+  script?: string
 }
 
 export class ScriptFile extends BaseFile {
@@ -22,7 +22,7 @@ export class ScriptFile extends BaseFile {
     this.script = new Document(`${this.filename}`, {
       onUpdate: () => this.onUpdate(),
       language: 'typescript',
-      initialContent: options.initialScriptContent,
+      initialContent: options.script,
     })
   }
 

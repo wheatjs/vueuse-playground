@@ -4,11 +4,9 @@ import { prunePackages, resolvePackage } from './packages'
 
 import { BaseFile, CssFile, SFCFile, ScriptFile } from './files'
 import type { Package } from './packages/types'
-import DefaultPreset from '~/../presets/default'
 import { useEditorStore } from '~/modules/editor'
 import { createMonacoInstance, createWorkers } from '~/modules/editor/monaco'
-import DemoCss from '~/../demos/shared.css?raw'
-import DocsUtils from '~/../demos/docs-utils?raw'
+import DemoPreset from '~/../presets/demo'
 
 const url = (p: Package) => `${config.project.packages.cdn}${p.name}@${p.version}/${p.metadata.module || p.metadata.main}`
 
@@ -176,32 +174,48 @@ export const useProjectStore = defineStore('project', () => {
     const demoEntry = demos.default.find(x => x.name === demo)
 
     if (demoEntry) {
-      const _files = await demoEntry.files()
+      const files = await demoEntry.files()
+
+      const extraFiles = DemoPreset.extraFiles
+        ? DemoPreset.extraFiles.filter((f) => {
+          if (demoEntry.includeUtils && f.filename === 'utils.ts')
+            return true
+
+          if (demoEntry.includeComponents.length > 0) {
+            for (const entry of demoEntry.includeComponents) {
+              if (f.filename.toLowerCase().includes(entry.toLowerCase()))
+                return true
+            }
+          }
+
+          return false
+        })
+        : []
 
       importProject({
-        ...DefaultPreset,
+        ...DemoPreset,
         files: [
-          ...DefaultPreset.files.filter(f => f.filename !== 'App.vue' && f.filename !== 'main.css'),
-          {
-            filename: 'main.css',
-            initialStyleContent: DemoCss,
-            hide: true,
-            isProtected: true,
-          },
-          ..._files.default.map(file => ({
-            filename: file.name === 'demo.vue' ? 'App.vue' : file.name,
-            isProtected: file.name === 'demo.vue',
-            initialScriptContent: file.scriptContent?.replaceAll('@vueuse/docs-utils', './utils'),
-            initialTemplateContent: file.templateContent,
-          })),
-          {
-            filename: 'utils.ts',
-            initialScriptContent: DocsUtils,
-          },
+          ...DemoPreset.files.map((f) => {
+            if (f.filename !== 'main.ts')
+              return f
+
+            let content = (f as any).script as string
+            const imps = extraFiles.map(f => ({ name: f.filename.split('.')[0], path: `./${f.filename}` }))
+
+            content = content.replace('// EXTRA_IMPORTS', `\n${imps.map(({ name, path }) => `import ${name} from '${path}'`).join('\n')}`)
+            content = content.replace('// EXTRA_APP_MODIFICATIONS', `\n${imps.map(({ name }) => `app.component('${name}', ${name})`).join('\n')}`)
+
+            return {
+              ...f,
+              script: content,
+            }
+          }),
+          ...files.default,
+          ...extraFiles,
         ],
         packages: {
-          ...DefaultPreset.packages,
-          'js-yaml': 'latest',
+          ...DemoPreset.packages,
+          ...(demoEntry.extraDependencies as unknown as Record<string, string>),
         },
       })
     }

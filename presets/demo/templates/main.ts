@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import App from './App.vue'// EXTRA_IMPORTS
+import App from './demo.vue'// EXTRA_IMPORTS
 
 import './main.css'
 

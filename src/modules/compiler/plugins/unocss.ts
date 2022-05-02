@@ -25,7 +25,7 @@ const uno = createGenerator({
   ],
 })
 
-export const unocssPlugin = defineCSSProcessorPlugin(async({ css, html }) => {
+export const unocssPlugin = defineCSSProcessorPlugin(async({ css, html, js }) => {
   let output = css || ''
 
   if (css) {
@@ -36,6 +36,9 @@ export const unocssPlugin = defineCSSProcessorPlugin(async({ css, html }) => {
 
   if (html)
     output += (await uno.generate(html)).css
+
+  if (js)
+    output += (await uno.generate(js)).css
 
   return output
 })

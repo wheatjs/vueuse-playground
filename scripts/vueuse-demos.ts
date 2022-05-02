@@ -7,6 +7,8 @@ import { outputFile } from 'fs-extra'
 import { init, parse } from 'es-module-lexer'
 import { match } from 'minimatch'
 import { parse as vueParse } from '@vue/compiler-sfc'
+import MagicString from 'magic-string'
+import config from '../vueuse-playground.config'
 
 /**
  * Github Access token and username required to prevent rate limiting.
@@ -31,17 +33,19 @@ interface PackageTree {
 }
 
 export interface DemoFile {
-  name: string
-  path: string
-  templateContent?: string
-  scriptContent?: string
-  styleContent?: string
+  filename: string
+  template?: string
+  script?: string
+  style?: string
 }
 
 export interface Demo {
   package: string
   name: string
   files: DemoFile[]
+  includeUtils: boolean
+  includeComponents: string[]
+  extraDependencies: Record<string, string>
 }
 
 async function resolveFiles(demo: PackageFile, tree: PackageTree) {
@@ -62,7 +66,7 @@ async function resolveFiles(demo: PackageFile, tree: PackageTree) {
     const [imports] = parse(content)
 
     for (const { n } of imports) {
-      if (n?.startsWith('./')) {
+      if (n?.startsWith('./') || n?.startsWith('../')) {
         const path = normalize(join(dirname(demo.path), n))
         let file
 
@@ -78,13 +82,36 @@ async function resolveFiles(demo: PackageFile, tree: PackageTree) {
     }
   }
 
+  /**
+   * Nested imports should be rewritten to a flat import.
+   * ./components/Button/Button.vue -> './Button.vue'
+   */
+  const rewriteImports = (content: string) => {
+    const [imports] = parse(content)
+    const newContent = new MagicString(content)
+
+    for (const { n, s, e } of imports) {
+      if (n) {
+        if (n.startsWith('./') || n?.startsWith('../')) {
+          const filename = parsePath(n).base
+          newContent.overwrite(s, e, `./${filename}`)
+        }
+
+        if (n in config.project.packages.redirects)
+          newContent.overwrite(s, e, config.project.packages.redirects[n])
+      }
+    }
+
+    return newContent.toString()
+  }
+
   // Find dependencies
   if (demo.path.endsWith('.vue')) {
     const { descriptor: { scriptSetup, script, template, styles } } = vueParse(data)
     const content = scriptSetup?.content || script?.content
 
-    templateContent = template?.content
-    styleContent = styles.at(0)?.content
+    templateContent = template?.content.trim()
+    styleContent = styles.at(0)?.content.trim()
     scriptContent = content
 
     if (content)
@@ -95,22 +122,55 @@ async function resolveFiles(demo: PackageFile, tree: PackageTree) {
     await resolveDeps(data)
   }
 
+  if (scriptContent)
+    scriptContent = rewriteImports(scriptContent).trim()
+
   files.push({
-    name: parsePath(demo.path).base,
-    scriptContent,
-    templateContent,
-    styleContent,
-    path: demo.path,
+    filename: parsePath(demo.path).base,
+    script: scriptContent,
+    template: templateContent,
+    style: styleContent,
   })
 
   return files
 }
 
 async function resolveDemo(demo: PackageFile, tree: PackageTree): Promise<Demo> {
+  console.log('Resolving Demo', demo.path)
+  const globalComponents = ['BooleanDisplay', 'Note']
+
+  const files = (await resolveFiles(demo, tree)).reverse()
+  const includeUtils = files.some(f => f.script ? f.script.includes('./utils') : false)
+  const extraDependencies = files.reduce((acc: Record<string, string>, f) => {
+    if (f.script) {
+      const [imports] = parse(f.script)
+
+      for (const { n } of imports) {
+        if (n && !(n.startsWith('./') || n.startsWith('../')))
+          acc[n] = 'latest'
+      }
+    }
+
+    return acc
+  }, {})
+  const includeComponents = Array.from(new Set(files.map((f) => {
+    const components = []
+
+    for (const c of globalComponents) {
+      if (f.template?.toLowerCase().includes(c.toLowerCase()))
+        components.push(c)
+    }
+
+    return components
+  }).flat()))
+
   return {
     package: demo.path.split('/')[1],
     name: demo.path.split('/')[2],
-    files: (await resolveFiles(demo, tree)).reverse(),
+    files,
+    includeUtils,
+    includeComponents,
+    extraDependencies,
   }
 }
 
@@ -128,11 +188,11 @@ async function generate() {
   let indexCode = 'export default [\n'
 
   for await (const demo of demos) {
-    const { package: pkg, name, files } = await resolveDemo(demo, tree)
+    const { package: pkg, name, files, includeComponents, includeUtils, extraDependencies } = await resolveDemo(demo, tree)
     const demoFile = JSON.stringify(files, null, 2)
 
     await outputFile(resolve(demos_dir, `./${pkg}/${name}.ts`), `export default ${demoFile}\n`, { encoding: 'utf8' })
-    indexCode += `  { package: '${pkg}', name: '${name}', files: () => import('./${pkg}/${name}') },\n`
+    indexCode += `  { package: '${pkg}', name: '${name}', files: () => import('./${pkg}/${name}'), includeComponents: ${JSON.stringify(includeComponents)}, includeUtils: ${includeUtils}, extraDependencies: ${JSON.stringify(extraDependencies)} },\n`
   }
 
   indexCode += ']\n'

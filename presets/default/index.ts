@@ -1,5 +1,5 @@
 import { definePreset } from '../types'
-import mainTemplate from './templates/main.ts?raw'
+import mainScript from './templates/main.ts?raw'
 import mainStyle from './templates/main.css?raw'
 
 export default definePreset({
@@ -13,13 +13,13 @@ export default definePreset({
       filename: 'main.ts',
       isProtected: true,
       hide: true,
-      initialScriptContent: mainTemplate,
+      script: mainScript.replace('// EXTRA_IMPORTS', '').replace('// EXTRA_APP_MODIFICATIONS', ''),
     },
     {
       filename: 'main.css',
       isProtected: true,
       hide: true,
-      initialStyleContent: mainStyle,
+      style: mainStyle,
     },
     {
       filename: 'App.vue',

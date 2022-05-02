@@ -3,9 +3,9 @@ import type { FileOptions } from './base'
 import { BaseFile } from './base'
 
 export interface SFCFileOptions extends FileOptions {
-  initialScriptContent?: string
-  initialTemplateContent?: string
-  initialStyleContent?: string
+  script?: string
+  template?: string
+  style?: string
 }
 
 export class SFCFile extends BaseFile {
@@ -26,17 +26,17 @@ export class SFCFile extends BaseFile {
     this.template = new Document(this.filename.replace('.vue', '_template.html'), {
       onUpdate: () => this.onUpdate(),
       language: 'html',
-      initialContent: options.initialTemplateContent,
+      initialContent: options.template,
     })
     this.script = new Document(this.filename.replace('.vue', '_script.ts'), {
       onUpdate: () => this.onUpdate(),
       language: 'typescript',
-      initialContent: options.initialScriptContent,
+      initialContent: options.script,
     })
     this.style = new Document(this.filename.replace('.vue', '_style.css'), {
       onUpdate: () => this.onUpdate(),
       language: 'css',
-      initialContent: options.initialStyleContent,
+      initialContent: options.style,
     })
   }
 

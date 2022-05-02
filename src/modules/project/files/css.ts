@@ -3,7 +3,7 @@ import type { FileOptions } from './base'
 import { BaseFile } from './base'
 
 export interface CssFileOptions extends FileOptions {
-  initialStyleContent?: string
+  style?: string
 }
 
 export class CssFile extends BaseFile {
@@ -21,7 +21,7 @@ export class CssFile extends BaseFile {
     this.css = new Document(`${this.filename}:css`, {
       onUpdate: () => this.onUpdate(),
       language: 'css',
-      initialContent: options.initialStyleContent,
+      initialContent: options.style,
     })
   }
 

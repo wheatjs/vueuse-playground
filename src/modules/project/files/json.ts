@@ -3,7 +3,7 @@ import type { FileOptions } from './base'
 import { BaseFile } from './base'
 
 export interface JsonFileOptions extends FileOptions {
-  initialJsonContent?: string
+  json?: string
 }
 
 export class JsonFile extends BaseFile {
@@ -16,7 +16,7 @@ export class JsonFile extends BaseFile {
     this.json = new Document(`${this.filename}:json`, {
       onUpdate: () => this.onUpdate(),
       language: 'json',
-      initialContent: options.initialJsonContent,
+      initialContent: options.json,
     })
   }
 

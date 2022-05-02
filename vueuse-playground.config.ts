@@ -39,7 +39,8 @@ export default defineConfig({
     packages: {
       cdn: 'https://unpkg.com/',
       redirects: {
-        axios: 'axios-esm',
+        'axios': 'axios-esm',
+        '@vueuse/docs-utils': './utils',
       },
     },
   },
