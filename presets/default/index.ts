@@ -29,5 +29,6 @@ export default definePreset({
   packages: {
     'vue': 'latest',
     '@vueuse/core': 'latest',
+    '@unocss/reset': 'latest',
   },
 })

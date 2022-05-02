@@ -44,11 +44,11 @@ export class SFCFile extends BaseFile {
     return [this.script, this.style, this.template]
   }
 
-  public override exportDocuments(asPlainText = false) {
+  public override exportDocuments() {
     return {
-      template: asPlainText ? this.template.text : this.template.export(),
-      script: asPlainText ? this.script.text : this.script.export(),
-      style: asPlainText ? this.style.text : this.style.export(),
+      template: this.template.toString(),
+      script: this.script.toString(),
+      style: this.style.toString(),
     }
   }
 
@@ -65,9 +65,9 @@ export class SFCFile extends BaseFile {
   }
 
   public override toString() {
-    return `<script setup lang="ts">\n${this.script.text}\n</script>\n
-<template>\n${this.template.text}\n</template>\n
-<style>\n${this.style.text}\n</style>
+    return `<script setup lang="ts">\n${this.script.toString()}\n</script>\n
+<template>\n${this.template.toString()}\n</template>\n
+<style>\n${this.style.toString()}\n</style>
     `
   }
 }

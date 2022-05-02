@@ -45,8 +45,11 @@ const doDecorations = async(editor: Editor.IStandaloneCodeEditor) => {
   imports
     .filter(({ n }) => !n?.startsWith('./') && !n?.startsWith('../') && !n?.startsWith('/'))
     .forEach((i) => {
+      const realName = i.n!.split('.').length > 1 ? i.n!.substring(0, i.n!.lastIndexOf('/')) : i.n!
+      // console.log(realName)
+
       const startPosition = model.getPositionAt(i.se)
-      const pkg = project.packages.find(p => p.name === i.n)
+      const pkg = project.packages.find(p => p.name === realName)
 
       decorations.push({
         id: i.n || '',

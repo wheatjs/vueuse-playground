@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { usePreview, usePreviewStore } from '..'
+import { useProjectStore } from '~/modules/project'
 
+const project = useProjectStore()
 const preview = usePreviewStore()
 const target = ref<HTMLElement>()
 usePreview(target)
-
 </script>
 
 <template>
   <div
+    relative
     :class="{
-      'fixed inset-0 z-90000000': preview.isMaximized,
+      '!fixed inset-0 z-90000000': preview.isMaximized,
     }"
   >
     <button
@@ -34,6 +36,7 @@ usePreview(target)
       ref="target"
       w-full h-full class="preview-container"
     />
+    <div v-if="project.isCreatingProject" absolute inset-0 bg="dark:dark-800 light-100" />
   </div>
 </template>
 

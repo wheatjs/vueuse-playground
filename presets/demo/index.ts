@@ -1,6 +1,6 @@
 import { definePreset } from '../types'
 import mainScript from './templates/main.ts?raw'
-import mainStyles from './templates/styles.css?raw'
+import mainStyles from './templates/styles-min.css?raw'
 
 export default definePreset({
   name: 'Demo',
@@ -31,12 +31,13 @@ export default definePreset({
     },
     {
       filename: 'utils.ts',
-      script: 'import { reactify } from \'@vueuse/shared\'\nimport YAML from \'js-yaml\'\n\nexport const stringify = reactify(\n  (input: any) => YAML.dump(input, {\n    skipInvalid: true,\n    forceQuotes: true,\n    condenseFlow: true,\n    quotingType: \'\',\n  }),\n)\n',
+      script: 'import { reactify } from \'@vueuse/shared\'\nimport YAML from \'js-yaml\'\n\nexport const stringify = reactify(\n  (input: any) => YAML.dump(input, {\n    skipInvalid: true,\n    forceQuotes: true,\n    condenseFlow: true,\n})\n',
     },
   ],
   packages: {
     'vue': 'latest',
     '@vueuse/core': 'latest',
     'js-yaml': 'latest',
+    '@unocss/reset': 'latest',
   },
 })

@@ -45,7 +45,7 @@ export class Document {
   }
 
   public bindModel() {
-    this.model?.onDidChangeContent((e) => {
+    this.model?.onDidChangeContent(() => {
       this.publishUpdates()
     })
   }
@@ -55,7 +55,7 @@ export class Document {
       this.onUpdate()
   }
 
-  public get text(): string {
+  public toString() {
     if (this.model)
       return this.model.getValue().toString()
 

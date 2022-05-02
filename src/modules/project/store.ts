@@ -4,10 +4,14 @@ import { prunePackages, resolvePackage } from './packages'
 
 import { BaseFile, CssFile, SFCFile, ScriptFile } from './files'
 import type { Package } from './packages/types'
+import type { ProjectSolution } from './types'
 import { useEditorStore } from '~/modules/editor'
 import { createMonacoInstance, createWorkers } from '~/modules/editor/monaco'
 
-const url = (p: Package) => `${config.project.packages.cdn}${p.name}@${p.version}/${p.metadata.module || p.metadata.main}`
+export * from './packages/types'
+
+export const url = (p: Package) => `${config.project.packages.cdn}${p.name}@${p.version}/${p.metadata.module || p.metadata.main}`
+export const urlBase = (p: Package) => `${config.project.packages.cdn}${p.name}@${p.version}/`
 
 export const useProjectStore = defineStore('project', () => {
   const editor = useEditorStore()
@@ -97,6 +101,7 @@ export const useProjectStore = defineStore('project', () => {
   const packageImportMap = computed(() => {
     return packages.value.reduce((acc: Record<string, string>, pkg) => {
       acc[pkg.name] = url(pkg)
+      acc[`${pkg.name}/`] = urlBase(pkg)
       return acc
     }, {})
   })
@@ -162,7 +167,19 @@ export const useProjectStore = defineStore('project', () => {
   /**
    * Exports the existing project
    */
-  const exportProject = () => {}
+  const exportProject = (): ProjectSolution => {
+    return {
+      defaultFile: editor.currentFilename,
+      files: Object.values(files.value).map(file => ({
+        filename: file.filename,
+        ...(file.exportDocuments() as any),
+      })),
+      packages: Object.values(packages.value).reduce((acc: Record<string, string>, pkg) => {
+        acc[pkg.name] = pkg.version
+        return acc
+      }, {}),
+    }
+  }
 
   /**
    * Open VueUse function demo
@@ -200,7 +217,7 @@ export const useProjectStore = defineStore('project', () => {
               return f
 
             let content = (f as any).script as string
-            const imps = extraFiles.map(f => ({ name: f.filename.split('.')[0], path: `./${f.filename}` }))
+            const imps = extraFiles.filter(f => f.filename !== 'utils.ts').map(f => ({ name: f.filename.split('.')[0], path: `./${f.filename}` }))
 
             content = content.replace('// EXTRA_IMPORTS', `\n${imps.map(({ name, path }) => `import ${name} from '${path}'`).join('\n')}`)
             content = content.replace('// EXTRA_APP_MODIFICATIONS', `\n${imps.map(({ name }) => `app.component('${name}', ${name})`).join('\n')}`)

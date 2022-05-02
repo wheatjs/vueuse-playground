@@ -39,5 +39,6 @@ export default definePreset({
     'vue': 'latest',
     '@vueuse/core': 'latest',
     'pinia': 'latest',
+    '@unocss/reset': 'latest',
   },
 })

@@ -8,7 +8,10 @@ import {
   walkIdentifiers,
 } from '@vue/compiler-sfc'
 import type { ExportSpecifier, Identifier, Node } from '@babel/types'
-import type { BaseFile, ScriptFile } from '~/modules/project'
+import type { BaseFile, Package, ScriptFile } from '~/modules/project'
+import { urlBase } from '~/modules/project'
+
+const cssCache: Record<string, string> = {}
 
 const modulesKey = '__modules__'
 const exportKey = '__export__'
@@ -19,8 +22,8 @@ export interface CompileFilesAsModulesOptions {
   main: ScriptFile
 }
 
-export function compileFilesAsModules({ main }: CompileFilesAsModulesOptions, files: Record<string, BaseFile>) {
-  const _imports = processFile(main, files)
+export async function compileFilesAsModules({ main }: CompileFilesAsModulesOptions, files: Record<string, BaseFile>, packages: Package[] = []) {
+  const _imports = await processFile(main, files, packages)
 
   const sorted = Array.from(_imports).sort((a, b) => {
     if (a.dependencies.includes(b.filename))
@@ -29,16 +32,21 @@ export function compileFilesAsModules({ main }: CompileFilesAsModulesOptions, fi
     return -1
   })
 
-  return sorted.map(c => c.code)
+  const styles = sorted.slice().reverse().map(file => file.css).join('\n')
+
+  return [
+    ...sorted.slice(0, -1).map(c => c.code),
+    sorted.at(-1)!.code += `\nwindow.__css__ = ${JSON.stringify(styles)}`,
+  ]
 }
 
-function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new Set<BaseFile>()) {
+async function processFile(file: BaseFile, files: Record<string, BaseFile>, packages: Package[], seen = new Set<BaseFile>()) {
   if (seen.has(file))
     return []
 
   seen.add(file)
 
-  const { js, css } = file.compiled
+  let { js, css } = file.compiled
 
   const s = new MagicString(js)
 
@@ -120,6 +128,30 @@ function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new
             idToImportMap.set(spec.local.name, importId)
           }
         }
+        s.remove(node.start!, node.end!)
+      }
+      else if (source.endsWith('.css')) {
+        const pkg = source.substring(0, source.lastIndexOf('/'))
+
+        for (const p of packages) {
+          if (p.name === pkg) {
+            try {
+              const url = urlBase(p) + source.split('/').pop()
+              if (!(url in cssCache)) {
+                const result = await (await fetch(url)).text()
+                cssCache[url] = result
+              }
+
+              css += cssCache[url]
+            }
+            catch (error) {
+              console.log('Failed to resolve css for', source)
+            }
+          }
+        }
+
+        // await fetch()
+
         s.remove(node.start!, node.end!)
       }
     }
@@ -250,11 +282,12 @@ function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new
   })
 
   // append CSS injection code
-  if (css)
-    s.append(`\nwindow.__css__ += ${JSON.stringify(css)}`)
+  // if (css)
+  //   s.append(`\nwindow.__css__ += ${JSON.stringify(css)}`)
 
   const processed = [
     {
+      css,
       code: s.toString(),
       filename: file.filename,
       dependencies: Array.from(importedFiles.values()),
@@ -263,7 +296,7 @@ function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new
 
   if (importedFiles.size) {
     for (const imported of importedFiles)
-      processed.push(...processFile(files[imported], files, seen))
+      processed.push(...(await processFile(files[imported], files, packages, seen)))
   }
 
   return processed

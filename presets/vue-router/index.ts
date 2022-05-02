@@ -45,5 +45,6 @@ export default definePreset({
     'vue': 'latest',
     '@vueuse/core': 'latest',
     'vue-router': 'latest',
+    '@unocss/reset': 'latest',
   },
 })

@@ -6,20 +6,15 @@ import viteConfigTemplate from './_template/_vite.config?raw'
 import indexTemplate from './_template/_index.html?raw'
 import envTemplate from './_template/_env.d.ts?raw'
 // import { filesystem } from '~/modules/filesystem'
-import { usePackages } from '~/modules/packages'
+import { useProjectStore } from '~/modules/project'
 
 export function openInStackblitz() {
-  // const packages = usePackages()
-  // const includePackages = packages.packages.reduce((acc: Record<string, string>, pkg) => {
-  //   acc[pkg.name] = pkg.version
-  //   return acc
-  // }, {})
+  const project = useProjectStore()
+  const exportedProject = project.exportProject()
 
-  // const packagesT = JSON.parse(packageTemplate)
-  // packagesT.dependencies = {
-  //   ...packagesT.dependencies,
-  //   ...includePackages,
-  // }
+  // sdk.openProject({
+  //   files:
+  // })
 
   // const coreFiles: Record<string, string> = {
   //   'package.json': JSON.stringify(packagesT, null, 2),

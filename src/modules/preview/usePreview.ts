@@ -1,6 +1,5 @@
 import type { Ref, WatchStopHandle } from 'vue'
 import type { MaybeRef } from '@vueuse/core'
-import TailwindReset from '@unocss/reset/tailwind.css?raw'
 import SourceTemplate from './template.html?raw'
 import { PreviewProxy } from './PreviewProxy'
 import type { PreviewProxyHandlers } from './PreviewProxy'
@@ -67,7 +66,7 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
         },
       }
     }),
-    styles = TailwindReset,
+    styles = '',
   } = options
 
   let sandbox: HTMLIFrameElement
@@ -79,7 +78,7 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
       const mainFile = project.files['main.ts'] as ScriptFile
 
       previewStatus.value.isCompiling = true
-      const modules = compileFilesAsModules({ main: mainFile }, project.files as Record<string, BaseFile>)
+      const modules = await compileFilesAsModules({ main: mainFile }, project.files as Record<string, BaseFile>, project.packages)
       previewStatus.value.isCompiling = false
       previewStatus.value.didCompileSuccessfully = true
       previewStatus.value.hasErrors = false
@@ -96,13 +95,15 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
         app.isDark ? 'document.querySelector("html").classList.add("dark")' : 'document.querySelector("html").classList.remove("dark")',
         ...modules,
         `
-          const mainApp = __modules__['${mainFile.filename}']
-          
-          if (mainApp && mainApp.app) {
-            window.__app__ = mainApp.app
-          }
-
-          document.getElementById('__sfc-styles').innerHTML = window.__css__
+        const mainApp = __modules__['${mainFile.filename}']
+        
+        setTimeout(() => {
+            
+            if (mainApp && mainApp.app) {
+              window.__app__ = mainApp.app
+            }
+            document.getElementById('__sfc-styles').innerHTML = window.__css__
+          }, 0)
         `,
       ])
     }
@@ -158,6 +159,8 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
       ;({ off: stopUpdateWatcher } = project.onFilesCompiled(() => {
         updatePreview()
       }))
+
+      updatePreview()
     })
 
     if (target.value)

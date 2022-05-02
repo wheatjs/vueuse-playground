@@ -30,8 +30,8 @@ export class ScriptFile extends BaseFile {
     return [this.script]
   }
 
-  public override exportDocuments(asPlainText = false) {
-    return { script: asPlainText ? this.script.text : this.script.export() }
+  public override exportDocuments() {
+    return { script: this.script.toString() }
   }
 
   public override importDocuments(imports: any) {
@@ -45,6 +45,6 @@ export class ScriptFile extends BaseFile {
   }
 
   public override toString() {
-    return this.script.text
+    return this.script.toString()
   }
 }

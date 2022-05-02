@@ -10,6 +10,11 @@ export class JsonFile extends BaseFile {
   public json: Document
   public type = 'json'
 
+  public compiled = {
+    js: '',
+    json: '',
+  }
+
   constructor(options: JsonFileOptions) {
     super(options)
 
@@ -24,8 +29,8 @@ export class JsonFile extends BaseFile {
     return [this.json]
   }
 
-  public override exportDocuments(asPlainText = false) {
-    return { json: asPlainText ? this.json.text : this.json.export() }
+  public override exportDocuments() {
+    return { json: this.json.toString() }
   }
 
   public override importDocuments(imports: any) {
@@ -33,13 +38,13 @@ export class JsonFile extends BaseFile {
   }
 
   public override toString() {
-    return this.json.text
+    return this.json.toString()
   }
 
-  public get compiled() {
-    return {
-      json: this.json.text,
-      js: `export default ${JSON.parse(JSON.stringify(this.json.text))}`,
+  public async compile() {
+    this.compiled = {
+      json: this.json.toString(),
+      js: `export default ${JSON.parse(JSON.stringify(this.json.toString()))}`,
     }
   }
 }

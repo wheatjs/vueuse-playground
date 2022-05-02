@@ -29,8 +29,8 @@ export class CssFile extends BaseFile {
     return [this.css]
   }
 
-  public override exportDocuments(asPlainText = false) {
-    return { css: asPlainText ? this.css.text : this.css.export() }
+  public override exportDocuments() {
+    return { style: this.css.toString() }
   }
 
   public override importDocuments(imports: any) {
@@ -38,7 +38,7 @@ export class CssFile extends BaseFile {
   }
 
   public override toString() {
-    return this.css.text
+    return this.css.toString()
   }
 
   public async compile() {
