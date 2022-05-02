@@ -122,11 +122,11 @@ export default defineConfig({
   build: {
     rollupOptions: {
       plugins: [
-        visualizer({
-          filename: resolve(__dirname, 'app/dist/client/stats.html'),
-          template: 'treemap', // sunburst|treemap|network
-          sourcemap: true,
-        }),
+        // visualizer({
+        //   filename: resolve(__dirname, 'app/dist/client/stats.html'),
+        //   template: 'treemap', // sunburst|treemap|network
+        //   sourcemap: true,
+        // }),
       ],
       external: [
         '@iconify/utils/lib/loader/fs',
