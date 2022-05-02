@@ -108,12 +108,6 @@ export async function compileFile(file: BaseFile, options: CompileFileOptions = 
     /**
      * Compile <style>
      */
-
-    if (cssProcessors) {
-      for (const processor of cssProcessors)
-        css = await processor({ css, html: descriptor.template?.content, js: descriptor.scriptSetup?.content })
-    }
-
     for (const style of descriptor.styles) {
       if (style.module) {
         errors.push('<style module> is not supported in the playground.')
@@ -139,6 +133,11 @@ export async function compileFile(file: BaseFile, options: CompileFileOptions = 
       else {
         css += `${styleResult.code}\n`
       }
+    }
+
+    if (cssProcessors) {
+      for (const processor of cssProcessors)
+        css = await processor({ css, html: descriptor.template?.content, js: descriptor.scriptSetup?.content })
     }
 
     if (css)

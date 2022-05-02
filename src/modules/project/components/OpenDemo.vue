@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { RadioGroup, RadioGroupOption } from '@headlessui/vue'
 import { coreCategoryNames, functions } from '@vueuse/metadata'
+import { useRouter } from 'vue-router'
 import { useProjectStore } from '~/modules/project'
+import Demos from '~/../demos'
 
+const baseFunctions = functions.filter(({ name }) => Demos.some(({ name: n }) => n === name))
+
+const { push } = useRouter()
 const filter = ref('')
 const project = useProjectStore()
 const demo = ref('')
@@ -10,13 +15,13 @@ const demo = ref('')
 const filteredFunctions = computed(() => {
   const value = filter.value
   if (!value)
-    return functions
+    return baseFunctions
 
-  return functions.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()))
+  return baseFunctions.filter(({ name }) => name.toLowerCase().includes(value.toLowerCase()))
 })
 
 const open = () => {
-  project.openDemo(demo.value)
+  push(`/demo/${demo.value}`)
   project.isOpenDemoDialogOpen = false
 }
 </script>
@@ -42,8 +47,8 @@ const open = () => {
       </div>
       <div overflow-auto space-y-6 p-4 flex-1>
         <RadioGroup v-model="demo">
-          <div v-for="category in coreCategoryNames" :key="category">
-            <div tracking-wide font-sans mb-2>
+          <div v-for="category in coreCategoryNames" :key="category" mb-4>
+            <div v-if="filteredFunctions.filter(x => x.category === category).length > 0" tracking-wide font-sans mb-2>
               {{ category }}
             </div>
             <div flex flex-row flex-wrap gap-2>

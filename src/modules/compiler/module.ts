@@ -20,12 +20,16 @@ export interface CompileFilesAsModulesOptions {
 }
 
 export function compileFilesAsModules({ main }: CompileFilesAsModulesOptions, files: Record<string, BaseFile>) {
-  const mainImports = processFile(main, files)
-  const postImports = new Set([...mainImports.reverse()])
+  const _imports = processFile(main, files)
 
-  return [
-    ...postImports,
-  ]
+  const sorted = Array.from(_imports).sort((a, b) => {
+    if (a.dependencies.includes(b.filename))
+      return 1
+
+    return -1
+  })
+
+  return sorted.map(c => c.code)
 }
 
 function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new Set<BaseFile>()) {
@@ -53,7 +57,7 @@ function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new
     let filename = source.replace(/^\.\/+/, '')
 
     // Should match .ts/.js if no extension is provided
-    const hasExtension = filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2)
+    const hasExtension = filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2)
 
     if (hasExtension) {
       if (!(filename in files))
@@ -249,12 +253,18 @@ function processFile(file: BaseFile, files: Record<string, BaseFile>, seen = new
   if (css)
     s.append(`\nwindow.__css__ += ${JSON.stringify(css)}`)
 
-  const processed = [s.toString()]
+  const processed = [
+    {
+      code: s.toString(),
+      filename: file.filename,
+      dependencies: Array.from(importedFiles.values()),
+    },
+  ]
+
   if (importedFiles.size) {
     for (const imported of importedFiles)
       processed.push(...processFile(files[imported], files, seen))
   }
 
-  // return a list of files to further process
   return processed
 }
