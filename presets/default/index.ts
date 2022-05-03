@@ -1,6 +1,7 @@
 import { definePreset } from '../types'
 import mainScript from './templates/main.ts?raw'
 import mainStyle from './templates/main.css?raw'
+import unoConfig from './templates/unocss.config?raw'
 
 export default definePreset({
   name: 'Default',
@@ -12,14 +13,27 @@ export default definePreset({
     {
       filename: 'main.ts',
       isProtected: true,
-      hide: true,
+      isPinned: true,
       script: mainScript.replace('// EXTRA_IMPORTS', '').replace('// EXTRA_APP_MODIFICATIONS', ''),
     },
     {
       filename: 'main.css',
       isProtected: true,
-      hide: true,
+      isPinned: true,
       style: mainStyle,
+    },
+    {
+      filename: 'uno.css',
+      isProtected: true,
+      isPinned: true,
+      readOnly: true,
+      asModule: true,
+    },
+    {
+      filename: 'unocss.config.ts',
+      isProtected: true,
+      isPinned: true,
+      script: unoConfig,
     },
     {
       filename: 'App.vue',

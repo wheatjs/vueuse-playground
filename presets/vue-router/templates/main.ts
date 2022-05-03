@@ -6,6 +6,7 @@ import Home from './Home.vue'
 import About from './About.vue'
 
 import '@unocss/reset/tailwind.css'
+import 'uno.css'
 import './main.css'
 
 export const app = createApp(App)

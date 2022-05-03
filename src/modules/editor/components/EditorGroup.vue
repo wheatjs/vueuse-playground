@@ -19,21 +19,14 @@ const group = computed(() => {
 </script>
 
 <template>
-  <div
-    h-full
-    relative
-    z-500
-  >
+  <div h-full relative z-500>
     <div
       v-if="project.isCreatingProject"
       grid place-items-center place-content-center gap-2
       text="sm dark:light-900/50 dark-50"
       h-full
     >
-      <Spinner
-        w-8
-        h-8
-      />
+      <Spinner w-8 h-8 />
       <div>
         Opening Project
       </div>
@@ -46,22 +39,10 @@ const group = computed(() => {
     >
       No File Selected
     </div>
-    <Splitpanes
-      v-else
-      horizontal
-    >
-      <Pane
-        v-for="e in group?.editors"
-        :key="e.name"
-      >
-        <Titlebar
-          flex-shrink-0
-          pr="!0" border-t-0
-        >
-          <i
-            i="carbon-chevron-down"
-            mr-1 text-base
-          />
+    <Splitpanes v-else horizontal>
+      <Pane v-for="e in group?.editors" :key="e.name">
+        <Titlebar flex-shrink-0 pr="!0" border-t-0>
+          <i i="carbon-chevron-down" mr-1 text-base />
           <span flex-1>
             {{ e.name }}
           </span>
@@ -69,6 +50,7 @@ const group = computed(() => {
         <Editor
           flex-1
           h="[calc(100%-32px)]"
+          :read-only="e.file(currentFile as BaseFile, project.files).readOnly"
           :model="e.model(currentFile as BaseFile, project.files)"
         />
       </Pane>

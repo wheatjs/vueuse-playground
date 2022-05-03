@@ -14,6 +14,7 @@
     text="xs dark-50 dark:light-900/50"
     font-mono
     select-none
+    overflow-hidden
   >
     <slot />
   </div>

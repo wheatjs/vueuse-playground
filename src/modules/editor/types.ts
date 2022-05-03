@@ -18,6 +18,7 @@ export interface EditorConfig {
 
 export interface EditorPane {
   name: string
+  file: (file: BaseFile, files: Record<string, BaseFile>) => BaseFile
   model: (file: BaseFile, files: Record<string, BaseFile>) => Editor.ITextModel
 }
 

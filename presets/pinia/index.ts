@@ -15,14 +15,26 @@ export default definePreset({
     {
       filename: 'main.ts',
       isProtected: true,
-      hide: true,
+      isPinned: true,
       script: mainTemplate,
     },
     {
       filename: 'main.css',
       isProtected: true,
-      hide: true,
+      isPinned: true,
       style: mainStyle,
+    },
+    {
+      filename: 'uno.css',
+      isProtected: true,
+      isPinned: true,
+      readOnly: true,
+      asModule: true,
+    },
+    {
+      filename: 'unocss.config.ts',
+      isProtected: true,
+      isPinned: true,
     },
     {
       filename: 'App.vue',

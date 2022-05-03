@@ -14,6 +14,7 @@ export interface CompiledOutput {
   js?: string
   ssr?: string
   dts?: string
+  uno?: string
 }
 
 export interface CompileFileReturn {
@@ -43,7 +44,7 @@ export async function compileFile(file: BaseFile, options: CompileFileOptions = 
   const errors: any[] = []
   const { compiler = defaultCompiler, cssProcessors = plugins.cssProcessors } = options
 
-  if (file instanceof CssFile) {
+  if (file instanceof CssFile && !file.readOnly) {
     let css = file.toString()
 
     if (cssProcessors) {
@@ -67,6 +68,7 @@ export async function compileFile(file: BaseFile, options: CompileFileOptions = 
   if (file instanceof SFCFile) {
     let js = ''
     let css = ''
+    let uno = ''
 
     const id = await hashId(file.filename)
     const { descriptor, errors: compileErrors } = compiler.parse(file.toString(), { filename: file.filename, sourceMap: true })
@@ -137,7 +139,7 @@ export async function compileFile(file: BaseFile, options: CompileFileOptions = 
 
     if (cssProcessors) {
       for (const processor of cssProcessors)
-        css = await processor({ css, html: descriptor.template?.content, js: descriptor.scriptSetup?.content })
+        uno = await processor({ css, html: descriptor.template?.content, js: descriptor.scriptSetup?.content })
     }
 
     if (css)
@@ -146,7 +148,7 @@ export async function compileFile(file: BaseFile, options: CompileFileOptions = 
       css = '/* No <style> tags present */'
 
     return {
-      compiled: { js, css }, errors,
+      compiled: { js, css, uno }, errors,
     }
   }
 

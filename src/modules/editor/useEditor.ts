@@ -14,6 +14,7 @@ const editorState: { index: number; editors: Editor.ICodeEditor[] } = {
 
 export interface UseMonacoOptions {
   model: MaybeRef<Editor.ITextModel>
+  readOnly: MaybeRef<boolean>
 }
 
 export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMonacoOptions) {
@@ -67,6 +68,7 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
       automaticLayout: true,
       linkedEditing: true,
       renameOnType: true,
+      readOnly: unref(options.readOnly),
       bracketPairColorization: {
         enabled: true,
       },
@@ -125,6 +127,7 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
     editorFontFamily,
     editorFontSize,
     editorWordWrap,
+    options.readOnly,
     editorFontLigatures], () => {
     editor.updateOptions({
       insertSpaces: editorInsertSpaces.value,
@@ -135,6 +138,7 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
       autoClosingBrackets: editorAutoClosingBrackets.value,
       autoClosingQuotes: editorAutoClosingQuotes.value,
       wordWrap: editorWordWrap.value,
+      readOnly: unref(options.readOnly),
     })
   })
 

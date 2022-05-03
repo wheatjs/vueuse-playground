@@ -1,4 +1,5 @@
 import { definePreset } from '../types'
+import unoConfig from '../default/templates/unocss.config?raw'
 import mainScript from './templates/main.ts?raw'
 import mainStyles from './templates/styles-min.css?raw'
 
@@ -8,15 +9,28 @@ export default definePreset({
   files: [
     {
       filename: 'main.ts',
-      hide: true,
+      isPinned: true,
       isProtected: true,
       script: mainScript,
     },
     {
       filename: 'main.css',
-      hide: true,
+      isPinned: true,
       isProtected: true,
       style: mainStyles,
+    },
+    {
+      filename: 'uno.css',
+      isProtected: true,
+      isPinned: true,
+      readOnly: true,
+      asModule: true,
+    },
+    {
+      filename: 'unocss.config.ts',
+      isProtected: true,
+      isPinned: true,
+      script: unoConfig,
     },
   ],
   extraFiles: [

@@ -41,6 +41,7 @@ project.importProject(DefaultProject)
         v-show="(app.isMobileScreen && app.mobileViewPreference === 'code') || !app.isMobileScreen"
         px="!0"
         border="b-1 light-900 dark:dark-900"
+        overflow-hidden
       >
         <EditorTabs />
       </Titlebar>

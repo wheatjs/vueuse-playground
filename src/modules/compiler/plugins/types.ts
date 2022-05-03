@@ -2,6 +2,7 @@ export interface CSSProcessorOptions {
   html?: string
   css?: string
   js?: string
+  config?: string
 }
 
 export interface CompilerPlugins {

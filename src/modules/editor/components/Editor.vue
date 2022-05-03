@@ -2,11 +2,11 @@
 import type { editor as Editor } from 'monaco-editor'
 import { useEditor } from '../useEditor'
 
-const props = defineProps<{ model: Editor.ITextModel }>()
+const props = defineProps<{ model: Editor.ITextModel; readOnly: boolean }>()
 const editor = ref<HTMLElement>()
-const { model } = toRefs(props)
+const { model, readOnly } = toRefs(props)
 
-useEditor(editor, { model })
+useEditor(editor, { model, readOnly })
 </script>
 
 <template>

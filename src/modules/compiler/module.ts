@@ -46,6 +46,8 @@ async function processFile(file: BaseFile, files: Record<string, BaseFile>, pack
 
   seen.add(file)
 
+  // @ts-expect-error It is fine
+  // eslint-disable-next-line prefer-const
   let { js, css } = file.compiled
 
   const s = new MagicString(js)
@@ -130,6 +132,25 @@ async function processFile(file: BaseFile, files: Record<string, BaseFile>, pack
         }
         s.remove(node.start!, node.end!)
       }
+      else if (Object.values(files).some(f => f.asModule && f.filename === source)) {
+        const importId = defineImport(node, node.source.value)
+        for (const spec of node.specifiers) {
+          if (spec.type === 'ImportSpecifier') {
+            idToImportMap.set(
+              spec.local.name,
+              `${importId}.${(spec.imported as Identifier).name}`,
+            )
+          }
+          else if (spec.type === 'ImportDefaultSpecifier') {
+            idToImportMap.set(spec.local.name, `${importId}.default`)
+          }
+          else {
+            // namespace specifier
+            idToImportMap.set(spec.local.name, importId)
+          }
+        }
+        s.remove(node.start!, node.end!)
+      }
       else if (source.endsWith('.css')) {
         const pkg = source.substring(0, source.lastIndexOf('/'))
 
@@ -145,13 +166,11 @@ async function processFile(file: BaseFile, files: Record<string, BaseFile>, pack
               css += cssCache[url]
             }
             catch (error) {
+              // eslint-disable-next-line no-console
               console.log('Failed to resolve css for', source)
             }
           }
         }
-
-        // await fetch()
-
         s.remove(node.start!, node.end!)
       }
     }

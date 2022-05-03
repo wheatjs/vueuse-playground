@@ -18,6 +18,7 @@ export class SFCFile extends BaseFile {
     js: '',
     css: '',
     ssr: '',
+    uno: '',
   }
 
   constructor(options: SFCFileOptions) {

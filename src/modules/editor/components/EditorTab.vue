@@ -61,7 +61,7 @@ const deleteFile = () => {
   >
     <div
       w-4
-      h-4 :class="[`i-${icon}`, group?.iconOnly ? '' : 'mr-1']"
+      h-4 :class="[`${icon}`, group?.iconOnly ? '' : 'mr-1']"
     />
     <span v-if="!group?.iconOnly">
       <slot />

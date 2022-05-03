@@ -2,7 +2,7 @@ import config from '@playground/config'
 import type { ProjectSolutionPreset } from 'presets/types'
 import { prunePackages, resolvePackage } from './packages'
 
-import { BaseFile, CssFile, SFCFile, ScriptFile } from './files'
+import { BaseFile, CssFile, SFCFile, ScriptFile, UnoConfigFile } from './files'
 import type { Package } from './packages/types'
 import type { ProjectSolution } from './types'
 import { useEditorStore } from '~/modules/editor'
@@ -37,13 +37,45 @@ export const useProjectStore = defineStore('project', () => {
    * Compile a project file
    */
   const compileFile = async(filename?: string, silent?: boolean) => {
+    if (filename === 'uno.css')
+      return
+
     await createWorkers()
     await createMonacoInstance()
 
     return new Promise<void>((resolve) => {
       setTimeout(async() => {
-        if (filename)
-          await files.value[filename].compile()
+        if (filename) {
+          const file = files.value[filename]
+          await file.compile()
+
+          /**
+           * Should recompile entire project.
+           */
+          if (file.hasSideEffects && !silent) {
+            await nextTick()
+
+            for (const f in files.value) {
+              if (!files.value[f].hasSideEffects)
+                await files.value[f].compile()
+            }
+          }
+        }
+
+        /**
+         * TODO: Extract unocss logic into a seperate place outside of the compile logic.
+         */
+        const uno: CssFile = Object.values(files.value).find(f => f.filename === 'uno.css')
+
+        if (uno) {
+          let unocss = ''
+          for (const file of Object.values(files.value)) {
+            if ('uno' in file.compiled)
+              unocss += file.compiled.uno
+          }
+          uno.css.model?.setValue(unocss)
+          uno.compiled.css = unocss
+        }
 
         if (!silent)
           onFilesCompiledHook.trigger()
@@ -140,6 +172,8 @@ export const useProjectStore = defineStore('project', () => {
     project.files.forEach((file) => {
       if (file.filename.endsWith('.vue'))
         createFile(new SFCFile(file))
+      else if (file.filename === ('unocss.config.ts'))
+        createFile(new UnoConfigFile(file))
       else if (file.filename.endsWith('.ts') || file.filename.endsWith('.js'))
         createFile(new ScriptFile(file))
       else if (file.filename.endsWith('.css'))

@@ -14,6 +14,7 @@ export class ScriptFile extends BaseFile {
     js: '',
     css: '',
     dts: '',
+    uno: '',
   }
 
   constructor(options: ScriptFileOptions) {
