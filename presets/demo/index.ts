@@ -1,5 +1,5 @@
 import { definePreset } from '../types'
-import unoConfig from '../default/templates/unocss.config?raw'
+import unoConfig from './templates/unocss.config?raw'
 import mainScript from './templates/main.ts?raw'
 import mainStyles from './templates/styles-min.css?raw'
 

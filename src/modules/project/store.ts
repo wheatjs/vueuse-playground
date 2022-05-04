@@ -37,35 +37,24 @@ export const useProjectStore = defineStore('project', () => {
    * Compile a project file
    */
   const compileFile = async(filename?: string, silent?: boolean) => {
-    if (filename === 'uno.css')
+    if (filename && files.value[filename].readOnly)
       return
 
     await createWorkers()
     await createMonacoInstance()
+    console.log('compiling file', filename)
 
     return new Promise<void>((resolve) => {
       setTimeout(async() => {
         if (filename) {
           const file = files.value[filename]
           await file.compile()
-
-          /**
-           * Should recompile entire project.
-           */
-          if (file.hasSideEffects && !silent) {
-            await nextTick()
-
-            for (const f in files.value) {
-              if (!files.value[f].hasSideEffects)
-                await files.value[f].compile()
-            }
-          }
         }
 
         /**
          * TODO: Extract unocss logic into a seperate place outside of the compile logic.
          */
-        const uno: CssFile = Object.values(files.value).find(f => f.filename === 'uno.css')
+        const uno = Object.values(files.value).find((f): f is CssFile => f.filename === 'uno.css')
 
         if (uno) {
           let unocss = ''
@@ -182,15 +171,13 @@ export const useProjectStore = defineStore('project', () => {
         createFile(new BaseFile(file))
     })
 
-    await Promise.all([
-      addPackage(Object.entries(project.packages).map(([name, version]) => ({ name, version }))),
-      ...project.files.map(file => compileFile(file.filename, true)),
-    ])
+    await addPackage(Object.entries(project.packages).map(([name, version]) => ({ name, version })))
+    await Promise.all(project.files.map(file => compileFile(file.filename, true)))
 
     setTimeout(() => {
       onFileCreatedHook.trigger('')
       onFilesCompiledHook.trigger()
-    }, 10)
+    }, 0)
 
     if (project.defaultFile)
       editor.currentFilename = project.defaultFile

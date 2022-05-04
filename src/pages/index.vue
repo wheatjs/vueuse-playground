@@ -4,10 +4,6 @@ import DefaultProject from '../../presets/default'
 import { useProjectStore } from '~/modules/project'
 import { useAppStore } from '~/modules/app'
 
-const Settings = defineAsyncComponent(() => import('~/modules/app/components/Settings.vue'))
-const NewProject = defineAsyncComponent(() => import('~/modules/project/components/NewProject.vue'))
-const OpenDemo = defineAsyncComponent(() => import('~/modules/project/components/OpenDemo.vue'))
-
 const app = useAppStore()
 const project = useProjectStore()
 

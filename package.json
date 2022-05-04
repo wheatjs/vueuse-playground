@@ -9,12 +9,12 @@
     "demos": "esno ./scripts/vueuse-demos"
   },
   "dependencies": {
-    "@headlessui/vue": "^1.6.1",
+    "@headlessui/vue": "1.6",
     "@stackblitz/sdk": "^1.6.0",
     "@typescript/ata": "^0.9.3",
     "@typescript/vfs": "^1.3.5",
     "@unocss/transformer-directives": "^0.32.12",
-    "@vueuse/core": "^8.4.0",
+    "@vueuse/core": "8.3.1",
     "@vueuse/router": "^8.4.0",
     "automerge": "^1.0.1-preview.7",
     "emmet-monaco-es": "^5.1.0",

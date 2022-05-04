@@ -35,7 +35,6 @@ export class BaseFile {
   public type = 'base'
   public readOnly: boolean
   public asModule: boolean
-  public hasSideEffects = false
 
   protected _onUpdate: ((filename: string) => void) | undefined
 

@@ -1,7 +1,6 @@
 import * as __unocss from 'unocss'
 import type { ScriptFileOptions } from './script'
 import { ScriptFile } from './script'
-import { Document } from './document'
 
 const AsyncFunction = Object.getPrototypeOf(async() => {}).constructor
 
@@ -15,18 +14,10 @@ export function clearModuleCache() {
 }
 
 export class UnoConfigFile extends ScriptFile {
-  public script: Document
   public compiled = { js: '', css: '', dts: '', uno: '', config: '' }
-  public hasSideEffects = true
 
   constructor(options: ScriptFileOptions) {
     super(options)
-
-    this.script = new Document(`${this.filename}`, {
-      onUpdate: () => this.onUpdate(),
-      language: 'typescript',
-      initialContent: options.script,
-    })
   }
 
   private async evaluateUserConfig(configStr: string) {

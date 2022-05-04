@@ -7,6 +7,8 @@ const app = useAppStore()
 const firebase = useFirebaseStore()
 const project = useProjectStore()
 
+const { welcomeOpen } = storeToRefs(app)
+
 interface StartAction {
   title: string
   subtitle: string
@@ -20,7 +22,7 @@ const startActions: StartAction[] = [
     subtitle: 'Create a new project from a template',
     icon: 'i-carbon-intent-request-create',
     onClick() {
-      app.welcomeOpen = false
+      welcomeOpen.value = false
       project.isNewProjectDialogOpen = true
     },
   },
@@ -45,7 +47,7 @@ const startActions: StartAction[] = [
     subtitle: 'Open an offical VueUse Demo',
     icon: 'i-mdi-application-brackets-outline',
     onClick() {
-      app.welcomeOpen = false
+      welcomeOpen.value = false
       project.isOpenDemoDialogOpen = true
     },
   },
@@ -54,7 +56,7 @@ const startActions: StartAction[] = [
 
 <template>
   <Dialog
-    v-model="app.welcomeOpen"
+    v-model="welcomeOpen"
     max-w-250
     lg:max-h-125
     h-full
@@ -86,11 +88,7 @@ const startActions: StartAction[] = [
         border="1 dark:dark-900 light-900"
       >
         <template #icon>
-          <img
-            :src="firebase.user?.photoURL"
-            w-12 h-12
-            rounded-full
-          >
+          <img :src="firebase.user?.photoURL ?? ''" w-12 h-12 rounded-full>
         </template>
         Welcome back {{ firebase.user?.displayName }}!
         <template #subtitle>
