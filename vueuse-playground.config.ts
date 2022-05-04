@@ -60,6 +60,7 @@ export default defineConfig({
       light: VitesseLight,
       dark: VitesseDark,
     },
+    extraTypes: ['unocss'],
   },
 
   terminal: {

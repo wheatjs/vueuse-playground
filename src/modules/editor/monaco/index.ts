@@ -45,7 +45,6 @@ export const createMonacoInstance = createSingletonPromise(async() => {
 
   // Configure monaco typescript
   monaco?.languages.typescript.typescriptDefaults.setCompilerOptions({
-    // ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
     strict: true,
 
     noImplicitAny: true,
@@ -148,10 +147,20 @@ export const createMonacoInstance = createSingletonPromise(async() => {
     },
   })
 
-  project.onPackageAdded((pkgs) => {
-    const code = pkgs.map(pkg => `import {} from '${pkg}'`).join('\n')
+  const doGetTypesFromPackages = () => {
+    const packages = Object.values(project.basePackages)
+    let code = packages.map(pkg => `import {} from '${pkg.name}'`).join('\n')
+
+    if (config.editor.extraTypes)
+      code += `\n${config.editor.extraTypes.map(pkg => `import {} from '${pkg}'`).join('\n')}`
+
     ata(code)
+  }
+
+  project.onPackageAdded(() => {
+    doGetTypesFromPackages()
   })
+  doGetTypesFromPackages()
 
   // Setup monaco emmet
   emmetHTML(monaco)

@@ -45,7 +45,7 @@ export default definePreset({
     },
     {
       filename: 'utils.ts',
-      script: 'import { reactify } from \'@vueuse/shared\'\nimport YAML from \'js-yaml\'\n\nexport const stringify = reactify(\n  (input: any) => YAML.dump(input, {\n    skipInvalid: true,\n    forceQuotes: true,\n    condenseFlow: true,\n})\n',
+      script: 'import { reactify } from \'@vueuse/shared\'\nimport YAML from \'js-yaml\'\n\nexport const stringify = reactify(\n  (input: any) => YAML.dump(input, {\n    skipInvalid: true,\n    forceQuotes: true,\n    condenseFlow: true,\n}))\n',
     },
   ],
   packages: {

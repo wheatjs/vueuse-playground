@@ -6,6 +6,7 @@ import { BaseFile, CssFile, SFCFile, ScriptFile, UnoConfigFile } from './files'
 import type { Package } from './packages/types'
 import type { ProjectSolution } from './types'
 import { useEditorStore } from '~/modules/editor'
+import { usePreviewStore } from '~/modules/preview'
 import { createMonacoInstance, createWorkers } from '~/modules/editor/monaco'
 
 export * from './packages/types'
@@ -15,6 +16,8 @@ export const urlBase = (p: Package) => `${config.project.packages.cdn}${p.name}@
 
 export const useProjectStore = defineStore('project', () => {
   const editor = useEditorStore()
+  const preview = usePreviewStore()
+  const { previewUpdateDelay } = storeToRefs(preview)
 
   const isNewProjectDialogOpen = ref(false)
   const isOpenDemoDialogOpen = ref(false)
@@ -24,6 +27,7 @@ export const useProjectStore = defineStore('project', () => {
   const isAddingPackages = ref(false)
 
   const files = shallowRef<Record<string, BaseFile>>({})
+  const basePackages = ref<Package[]>([])
   const packages = ref<Package[]>([])
 
   const onFileCreatedHook = createEventHook<string>()
@@ -78,7 +82,8 @@ export const useProjectStore = defineStore('project', () => {
    * Creates a new project file
    */
   const createFile = (file: BaseFile, silent?: boolean) => {
-    file.onUpdate = () => compileFile(file.filename)
+    const _compile = useDebounceFn(() => compileFile(file.filename), previewUpdateDelay)
+    file.onUpdate = () => _compile()
     files.value = {
       ...files.value,
       [file.filename]: file,
@@ -112,8 +117,10 @@ export const useProjectStore = defineStore('project', () => {
       .map(result => result.value)
       .flat()
 
-    if (resolvedPackages)
+    if (resolvedPackages) {
       packages.value = prunePackages([...resolvedPackages, ...packages.value])
+      basePackages.value = prunePackages([...resolvedPackages.filter(x => pkgs.some(y => y.name === x.name)), ...basePackages.value])
+    }
 
     isAddingPackages.value = false
     onPackageAddedHook.trigger(pkgs.map(({ name }) => name))
@@ -261,6 +268,7 @@ export const useProjectStore = defineStore('project', () => {
 
   return {
     files,
+    basePackages,
     packages,
 
     isCreatingProject: readonly(isCreatingProject),
