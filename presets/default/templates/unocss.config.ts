@@ -1,4 +1,4 @@
-import { defineConfig, presetAttributify, presetTypography, presetUno, transformerDirectives, transformerVariantGroup } from 'unocss'
+import { defineConfig, presetAttributify, presetIcons, presetTypography, presetUno, transformerDirectives, transformerVariantGroup } from 'unocss'
 
 export default defineConfig({
   transformers: [
@@ -13,5 +13,8 @@ export default defineConfig({
     presetUno(),
     presetAttributify(),
     presetTypography(),
+    presetIcons({
+      cdn: 'https://esm.sh/',
+    }),
   ],
 })

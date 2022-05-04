@@ -46,7 +46,7 @@ declare module '@vue/runtime-core' {
     Textfield: typeof import('./components/Textfield.vue')['default']
     Titlebar: typeof import('./components/titlebar/Titlebar.vue')['default']
     TitlebarTab: typeof import('./components/titlebar/TitlebarTab.vue')['default']
-    TitlebarTabs: typeof import('./components/titlebar/TitlebarTabs.vue')['default']
+    TitlebarTabs: typeof import('./components/TitlebarTabs.vue')['default']
     Welcome: typeof import('./modules/app/components/Welcome.vue')['default']
   }
 }
