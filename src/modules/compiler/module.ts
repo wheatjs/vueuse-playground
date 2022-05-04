@@ -36,7 +36,7 @@ export async function compileFilesAsModules({ main }: CompileFilesAsModulesOptio
 
   return [
     ...sorted.slice(0, -1).map(c => c.code),
-    sorted.at(-1)!.code += `\nwindow.__css__ = ${JSON.stringify(styles)}`,
+    sorted.slice(-1)[0]!.code += `\nwindow.__css__ = ${JSON.stringify(styles)}`,
   ]
 }
 

@@ -11,7 +11,7 @@ const files = ref<string[]>([])
 const pinnedFileGroups = computed(() => {
   return groups
     .filter(x => x.pinned)
-    .map(x => x.editors.at(0)?.name)
+    .map(x => x.editors[0]?.name)
     .filter(x => files.value.includes(x))
 })
 

@@ -111,7 +111,7 @@ async function resolveFiles(demo: PackageFile, tree: PackageTree) {
     const content = scriptSetup?.content || script?.content
 
     templateContent = template?.content.trim()
-    styleContent = styles.at(0)?.content.trim()
+    styleContent = styles[0]?.content.trim()
     scriptContent = content
 
     if (content)
