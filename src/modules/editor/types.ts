@@ -15,6 +15,7 @@ export interface EditorConfig {
     dark: any
   }
   extraTypes?: string[]
+  ambientModules?: string[]
 }
 
 export interface EditorPane {

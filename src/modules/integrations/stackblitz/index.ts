@@ -1,5 +1,5 @@
 import sdk from '@stackblitz/sdk'
-import packageTemplate from './_template/_package.json?raw'
+import packageTemplate from './_template/_package.json'
 import tsconfigTemplate from './_template/_tsconfig.json?raw'
 import tsconfigNodeTemplate from './_template/_tsconfig.node.json?raw'
 import viteConfigTemplate from './_template/_vite.config?raw'
@@ -12,17 +12,35 @@ export function openInStackblitz() {
   const project = useProjectStore()
   const exportedProject = project.exportProject()
 
+  const files = exportedProject.files.reduce((acc: Record<string, string>, file) => {
+    acc[`${file.dir}${file.filename}`] = file.content
+    return acc
+  }, {})
+
+  // @ts-expect-error leave me alone
+  packageTemplate.dependencies = exportedProject.packages
+
+  sdk.openProject({
+    title: 'VueUse Playground Fork',
+    description: '',
+    template: 'node',
+    files: {
+      ...files,
+      'package.json': JSON.stringify(packageTemplate, null, 2),
+      'index.html': indexTemplate,
+      'src/env.d.ts': envTemplate,
+      'tsconfig.json': tsconfigTemplate,
+      'vite.config.ts': viteConfigTemplate,
+      'tsconfig.node.json': tsconfigNodeTemplate,
+    },
+  })
+
   // sdk.openProject({
   //   files:
   // })
 
   // const coreFiles: Record<string, string> = {
   //   'package.json': JSON.stringify(packagesT, null, 2),
-  //   'vite.config.ts': viteConfigTemplate,
-  //   'tsconfig.json': tsconfigTemplate,
-  //   'tsconfig.node.json': tsconfigNodeTemplate,
-  //   'src/env.d.ts': envTemplate,
-  //   'index.html': indexTemplate,
   // }
 
   // const files = Object.values(filesystem.files)

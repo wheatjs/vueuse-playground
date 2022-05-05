@@ -26,6 +26,8 @@ declare module '@vue/runtime-core' {
     LogoHorizontal: typeof import('./components/LogoHorizontal.vue')['default']
     Menu: typeof import('./components/menu/Menu.vue')['default']
     MenuItem: typeof import('./components/menu/MenuItem.vue')['default']
+    Message: typeof import('./modules/messages/components/Message.vue')['default']
+    MessageTray: typeof import('./modules/messages/components/MessageTray.vue')['default']
     Navigation: typeof import('./components/Navigation.vue')['default']
     NewProject: typeof import('./modules/project/components/NewProject.vue')['default']
     OpenDemo: typeof import('./modules/project/components/OpenDemo.vue')['default']

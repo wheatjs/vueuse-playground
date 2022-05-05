@@ -40,16 +40,15 @@ export const useProjectStore = defineStore('project', () => {
   /**
    * Compile a project file
    */
-  const compileFile = async(filename?: string, silent?: boolean) => {
+  const compileFile = async (filename?: string, silent?: boolean) => {
     if (filename && files.value[filename].readOnly)
       return
 
     await createWorkers()
     await createMonacoInstance()
-    console.log('compiling file', filename)
 
     return new Promise<void>((resolve) => {
-      setTimeout(async() => {
+      setTimeout(async () => {
         if (filename) {
           const file = files.value[filename]
           await file.compile()
@@ -64,7 +63,7 @@ export const useProjectStore = defineStore('project', () => {
           let unocss = ''
           for (const file of Object.values(files.value)) {
             if ('uno' in file.compiled)
-              unocss += file.compiled.uno
+              unocss += (file.compiled as any).uno
           }
           uno.css.model?.setValue(unocss)
           uno.compiled.css = unocss
@@ -99,6 +98,10 @@ export const useProjectStore = defineStore('project', () => {
    * Deletes a project file
    */
   const deleteFile = (filename: string) => {
+    const { [filename]: old, ...rest } = files.value
+    old.destroy()
+    files.value = rest
+
     delete files.value[filename]
     onFileDeletedHook.trigger(filename)
   }
@@ -109,7 +112,7 @@ export const useProjectStore = defineStore('project', () => {
    * @param name Package name
    * @param version Package version
    */
-  const addPackage = async(pkgs: { name: string; version?: string }[]) => {
+  const addPackage = async (pkgs: { name: string; version?: string }[]) => {
     isAddingPackages.value = true
 
     const resolvedPackages = (await Promise.allSettled(pkgs.map(({ name, version }) => resolvePackage(name, version))))
@@ -161,7 +164,7 @@ export const useProjectStore = defineStore('project', () => {
    *
    * @param project The project to import
    */
-  const importProject = async(project: ProjectSolutionPreset) => {
+  const importProject = async (project: ProjectSolutionPreset) => {
     isCreatingProject.value = true
     clearProject()
 
@@ -186,7 +189,15 @@ export const useProjectStore = defineStore('project', () => {
       onFilesCompiledHook.trigger()
     }, 0)
 
-    if (project.defaultFile)
+    /**
+     * Set the project current file. First check if the url file query exsists and the file exists.
+     */
+    const query = new URLSearchParams(window.location.search)
+    const _file = query.has('file') && query.get('file')
+
+    if (files.value[_file as string])
+      editor.currentFilename = _file as string
+    else if (project.defaultFile)
       editor.currentFilename = project.defaultFile
 
     isCreatingProject.value = false
@@ -198,11 +209,15 @@ export const useProjectStore = defineStore('project', () => {
   const exportProject = (): ProjectSolution => {
     return {
       defaultFile: editor.currentFilename,
-      files: Object.values(files.value).map(file => ({
-        filename: file.filename,
-        ...(file.exportDocuments() as any),
-      })),
-      packages: Object.values(packages.value).reduce((acc: Record<string, string>, pkg) => {
+      files: Object.values(files.value)
+        .filter(f => !f.readOnly)
+        .map(file => ({
+          filename: file.filename,
+          dir: file.dir,
+          content: file.toString(),
+          ...(file.exportDocuments() as any),
+        })),
+      packages: Object.values(basePackages.value).reduce((acc: Record<string, string>, pkg) => {
         acc[pkg.name] = pkg.version
         return acc
       }, {}),
@@ -212,7 +227,7 @@ export const useProjectStore = defineStore('project', () => {
   /**
    * Open VueUse function demo
    */
-  const openDemo = async(demo: string) => {
+  const openDemo = async (demo: string) => {
     isCreatingProject.value = true
     const demoPreset = await import('~/../presets/demo')
     const demos = await import('~/../demos')
@@ -255,7 +270,7 @@ export const useProjectStore = defineStore('project', () => {
               script: content,
             }
           }),
-          ...files.default,
+          ...files.default.map(x => ({ ...x, dir: 'src/' })),
           ...extraFiles,
         ],
         packages: {

@@ -15,12 +15,14 @@ export default definePreset({
       isProtected: true,
       isPinned: true,
       script: mainScript.replace('// EXTRA_IMPORTS', '').replace('// EXTRA_APP_MODIFICATIONS', ''),
+      dir: 'src/',
     },
     {
       filename: 'main.css',
       isProtected: true,
       isPinned: true,
       style: mainStyle,
+      dir: 'src/styles/',
     },
     {
       filename: 'uno.css',
@@ -38,6 +40,7 @@ export default definePreset({
     {
       filename: 'App.vue',
       isProtected: true,
+      dir: 'src/',
     },
   ],
   packages: {

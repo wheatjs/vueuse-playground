@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Draggable from 'vuedraggable'
+import { useRouteQuery } from '@vueuse/router'
 import { useProjectStore } from '~/modules/project'
 import { groups, useEditorStore } from '~/modules/editor'
 import type { BaseFile } from '~/modules/project'
@@ -7,6 +8,12 @@ import type { BaseFile } from '~/modules/project'
 const project = useProjectStore()
 const editor = useEditorStore()
 const files = ref<string[]>([])
+
+const filename = useRouteQuery('file')
+
+watch(() => editor.currentFilename, () => {
+  filename.value = editor.currentFilename
+})
 
 const pinnedFileGroups = computed(() => {
   return groups
@@ -47,13 +54,13 @@ const onScroll = (e: WheelEvent) => {
   >
     <Draggable
       v-model="files"
-      :component-data="{ 'onWheel': onScroll, class: 'flex h-full overflow-y-hidden small-scrollbar cursor-grab' }"
+      :component-data="{ onWheel: onScroll, class: 'flex h-full overflow-y-hidden small-scrollbar cursor-grab' }"
       item-key="filename"
       @dblclick.self="editor.shouldShowAddFile = true"
     >
       <template #header>
         <template v-for="pinned in pinnedFileGroups" :key="pinned">
-          <EditorTab :file="(project.files[pinned] as BaseFile)">
+          <EditorTab :file="project.files[pinned] as BaseFile">
             {{ pinned }}
           </EditorTab>
         </template>
@@ -62,7 +69,7 @@ const onScroll = (e: WheelEvent) => {
       <template #item="{ element }">
         <EditorTab
           v-if="isUnpinned(element)"
-          :file="(project.files[element] as BaseFile)"
+          :file="project.files[element] as BaseFile"
         >
           {{ element }}
         </EditorTab>

@@ -1,5 +1,6 @@
 import { init, parse } from 'es-module-lexer'
 import type { editor as Editor } from 'monaco-editor'
+import config from '@playground/config'
 import { createMonacoInstance } from '..'
 import type { EditorPlugin } from './types'
 import { useProjectStore } from '~/modules/project'
@@ -42,17 +43,31 @@ const doDecorations = async(editor: Editor.IStandaloneCodeEditor) => {
   packageNames = imports.map(i => i.n as string)
   const decorations: Editor.IModelDecoration[] = []
 
+  const shouldDecorate = (pkg: string) => {
+    if (config.editor.ambientModules && config.editor.ambientModules.includes(pkg))
+      return false
+
+    if (pkg.startsWith('./') || pkg.startsWith('../') || pkg.startsWith('/'))
+      return false
+
+    if (pkg in project.files)
+      return false
+
+    return true
+  }
+
   imports
-    .filter(({ n }) => !n?.startsWith('./') && !n?.startsWith('../') && !n?.startsWith('/'))
+    .filter(({ n }) => shouldDecorate(n!))
     .forEach((i) => {
       const realName = i.n!.split('.').length > 1 ? i.n!.substring(0, i.n!.lastIndexOf('/')) : i.n!
       // console.log(realName)
 
       const startPosition = model.getPositionAt(i.se)
       const pkg = project.packages.find(p => p.name === realName)
+      const version = pkg?.version || 'none'
 
       decorations.push({
-        id: i.n || '',
+        id: i.n ? i.n + version : '',
         ownerId: 0,
         range: new monaco.Range(startPosition.lineNumber, startPosition.column, startPosition.lineNumber, startPosition.column),
         options: {
@@ -81,12 +96,12 @@ export const PackageInstallerPlugin: EditorPlugin = {
         if (packageVersionId) {
           const id = packageVersionId.split('-')[2]
           const pkg = Object.values(project.packages).find(p => p.id === id)
+
+          console.log(pkg)
         }
         else if (packageIndex) {
           const index = packageIndex.split('-')[2] as unknown as number
           const pkg = packageNames[index]
-
-          console.log(pkg)
 
           project.addPackage([{
             name: pkg,

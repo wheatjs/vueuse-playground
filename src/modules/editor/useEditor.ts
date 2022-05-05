@@ -44,7 +44,7 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
       //   editor.getAction('editor.action.formatDocument').run()
   })
 
-  const init = async() => {
+  const init = async () => {
     const el = unref(target)
     const { monaco } = await createMonacoInstance()
 
@@ -89,7 +89,7 @@ export function useEditor(target: Ref<HTMLElement | undefined>, options: UseMona
 
     let subscriptions: IDisposable[] = []
 
-    const mountEditorPlugins = async() => {
+    const mountEditorPlugins = async () => {
       subscriptions.forEach(s => s.dispose())
       subscriptions = []
 

@@ -9,10 +9,14 @@ export interface ProjectConfig {
   packages: PackageConfig
 }
 
+export interface ExportedProjectFile extends BaseFile {
+  content: string
+}
+
 export interface ProjectSolution {
   name?: string
   description?: string
   defaultFile?: string
-  files: BaseFile[]
+  files: ExportedProjectFile[]
   packages: Record<string, string>
 }

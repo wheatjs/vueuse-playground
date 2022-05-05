@@ -26,6 +26,11 @@ export interface FileOptions {
    * via `import {} from 'filename'` rather than `import {} from './filename'`
   */
   asModule?: boolean
+
+  /**
+   * When exporting the file, if this field is set the file will be placed in the specified directory.
+   */
+  dir?: string
 }
 
 export class BaseFile {
@@ -35,6 +40,7 @@ export class BaseFile {
   public type = 'base'
   public readOnly: boolean
   public asModule: boolean
+  public dir: string
 
   protected _onUpdate: ((filename: string) => void) | undefined
 
@@ -47,6 +53,7 @@ export class BaseFile {
     this.isPinned = options.isPinned || false
     this.readOnly = options.readOnly || false
     this.asModule = options.asModule || false
+    this.dir = options.dir || ''
   }
 
   public get documents(): Document[] {
@@ -71,5 +78,9 @@ export class BaseFile {
 
   public destroy() {
     this.documents.forEach(doc => doc.destroy())
+  }
+
+  public toString() {
+    return ''
   }
 }

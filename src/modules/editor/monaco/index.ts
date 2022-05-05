@@ -104,20 +104,24 @@ export const createMonacoInstance = createSingletonPromise(async() => {
   const updateTypeDefinitions = async() => {
     const localScriptFiles = Object.values(project.files)
       .filter((f): f is ScriptFile => f.filename.endsWith('.ts'))
-      .map(f => ({ content: `declare module './${f.filename}' { ${f.compiled.dts} }` }))
+      .map(f => ({
+        filePath: `file://node_modules/@types/${f.filename}/index.d.ts`,
+        content: `declare module './${f.filename.substring(0, f.filename.lastIndexOf('.'))}' { ${f.compiled.dts} }`,
+      }))
 
     const localVueFiles = Object.values(project.files)
       .filter((f): f is ScriptFile => f.filename.endsWith('.vue'))
       .map(f => ({
+        filePath: `file://node_modules/@types/${f.filename}/index.d.ts`,
         content: `
-        declare module './${f.filename}.ts' {
-          import { DefineComponent } from 'vue'
-          const component: DefineComponent<{}, {}, any>
-          export default component
+        declare module './${f.filename}' {
+          const content: string;
+          export default content;
         }`,
       }))
 
-    const extraLibs = Object.entries(acquiredTypes).map(([name, content]) => ({ filePath: `file://${name}`, content }))
+    const extraLibs = Object.entries(acquiredTypes)
+      .map(([name, content]) => ({ filePath: `file://${name}`, content }))
 
     defaults?.setExtraLibs([
       ...extraLibs,
@@ -140,7 +144,18 @@ export const createMonacoInstance = createSingletonPromise(async() => {
         editorStore.isAcquiringTypeDefinitions = true
       },
       finished(files) {
-        acquiredTypes = { ...acquiredTypes, ...Object.fromEntries(files) }
+        const excludeList = ['postcss', 'rollup', 'esbuild', '@babel', '@types/node', 'vite', 'source-map-js']
+
+        const result = Array.from(files).filter(([name]) => {
+          for (const exclude of excludeList) {
+            if (name.includes(exclude))
+              return false
+          }
+
+          return true
+        })
+
+        acquiredTypes = Object.fromEntries(result)
         updateTypeDefinitions()
         editorStore.isAcquiringTypeDefinitions = false
       },

@@ -18,12 +18,14 @@ export default definePreset({
       isProtected: true,
       isPinned: true,
       script: mainTemplate,
+      dir: 'src/',
     },
     {
       filename: 'main.css',
       isProtected: true,
       isPinned: true,
       style: mainStyle,
+      dir: 'src/',
     },
     {
       filename: 'uno.css',
@@ -41,16 +43,19 @@ export default definePreset({
       filename: 'App.vue',
       isProtected: true,
       template: appTemplate,
+      dir: 'src/',
     },
     {
       filename: 'Home.vue',
       isProtected: true,
       template: homeTemplate,
+      dir: 'src/',
     },
     {
       filename: 'About.vue',
       isProtected: true,
       template: aboutTemplate,
+      dir: 'src/',
     },
   ],
   packages: {

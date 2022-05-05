@@ -17,12 +17,14 @@ export default definePreset({
       isProtected: true,
       isPinned: true,
       script: mainTemplate,
+      dir: 'src/',
     },
     {
       filename: 'main.css',
       isProtected: true,
       isPinned: true,
       style: mainStyle,
+      dir: 'src/',
     },
     {
       filename: 'uno.css',
@@ -41,10 +43,12 @@ export default definePreset({
       isProtected: true,
       script: mainAppScript,
       template: mainAppTemplate,
+      dir: 'src/',
     },
     {
       filename: 'store.ts',
       script: mainStore,
+      dir: 'src/',
     },
   ],
   packages: {

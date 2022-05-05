@@ -30,7 +30,7 @@ project.importProject(DefaultProject)
       grid
       :class="{
         'grid-rows-[min-content_auto_min-content]': (app.isMobileScreen && app.mobileViewPreference === 'code') || !app.isMobileScreen,
-        'grid-rows-[auto_min-content]': app.isMobileScreen && app.mobileViewPreference === 'preview'
+        'grid-rows-[auto_min-content]': app.isMobileScreen && app.mobileViewPreference === 'preview',
       }"
     >
       <Titlebar
@@ -91,4 +91,5 @@ project.importProject(DefaultProject)
   <Settings />
   <NewProject />
   <OpenDemo />
+  <MessageTray />
 </template>
