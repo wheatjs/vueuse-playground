@@ -195,6 +195,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  padding: 2em;
+
   font-size: var(--vt-doc-code-font-size);
   background: var(--vt-c-bg-soft);
   position: relative;
