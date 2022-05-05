@@ -84,7 +84,7 @@ project.importProject(DefaultProject)
           </Pane>
         </Splitpanes>
       </div>
-      <Statusbar />
+      <Statusbar z-500000 relative />
     </main>
   </div>
   <Welcome />

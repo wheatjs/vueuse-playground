@@ -23,6 +23,11 @@ export const useProjectStore = defineStore('project', () => {
   const isOpenDemoDialogOpen = ref(false)
   const isPackageManagerDialogOpen = ref(false)
 
+  const importStatus = ref({
+    installingPackages: false,
+    compiling: false,
+  })
+
   const isCreatingProject = ref(false)
   const isAddingPackages = ref(false)
 
@@ -80,7 +85,10 @@ export const useProjectStore = defineStore('project', () => {
   /**
    * Creates a new project file
    */
-  const createFile = (file: BaseFile, silent?: boolean) => {
+  const createFile = async (file: BaseFile, silent?: boolean) => {
+    await import('monaco-editor')
+    await createWorkers()
+
     const _compile = useDebounceFn(() => compileFile(file.filename), previewUpdateDelay)
     file.onUpdate = () => _compile()
     files.value = {
@@ -168,26 +176,35 @@ export const useProjectStore = defineStore('project', () => {
     isCreatingProject.value = true
     clearProject()
 
-    project.files.forEach((file) => {
+    await Promise.all(project.files.map((file) => {
       if (file.filename.endsWith('.vue'))
-        createFile(new SFCFile(file))
+        return createFile(new SFCFile(file))
       else if (file.filename === ('unocss.config.ts'))
-        createFile(new UnoConfigFile(file))
+        return createFile(new UnoConfigFile(file))
       else if (file.filename.endsWith('.ts') || file.filename.endsWith('.js'))
-        createFile(new ScriptFile(file))
+        return createFile(new ScriptFile(file))
       else if (file.filename.endsWith('.css'))
-        createFile(new CssFile(file))
+        return createFile(new CssFile(file))
       else if (file.filename.endsWith('.json'))
-        createFile(new BaseFile(file))
-    })
+        return createFile(new BaseFile(file))
+    }))
+
+    importStatus.value = { compiling: false, installingPackages: true }
 
     await addPackage(Object.entries(project.packages).map(([name, version]) => ({ name, version })))
-    await Promise.all(project.files.map(file => compileFile(file.filename, true)))
+      .then(() => {
+        importStatus.value = { compiling: true, installingPackages: false }
+
+        return Promise.all(project.files.map(file => compileFile(file.filename, true)))
+          .then(() => {
+            importStatus.value = { compiling: false, installingPackages: false }
+            onFilesCompiledHook.trigger()
+          })
+      })
 
     setTimeout(() => {
       onFileCreatedHook.trigger('')
-      onFilesCompiledHook.trigger()
-    }, 0)
+    }, 10)
 
     /**
      * Set the project current file. First check if the url file query exsists and the file exists.
@@ -304,6 +321,8 @@ export const useProjectStore = defineStore('project', () => {
     clearProject,
 
     openDemo,
+
+    importStatus,
 
     isOpenDemoDialogOpen,
     isNewProjectDialogOpen,

@@ -12,7 +12,7 @@ usePreview(target)
   <div
     relative
     :class="{
-      '!fixed inset-0 z-90000000': preview.isMaximized,
+      '!fixed inset-0 !z-9002': preview.isMaximized,
     }"
   >
     <button
@@ -36,7 +36,22 @@ usePreview(target)
       ref="target"
       w-full h-full class="preview-container"
     />
-    <div v-if="project.isCreatingProject" absolute inset-0 bg="dark:dark-800 light-100" />
+    <div
+      v-if="project.importStatus.installingPackages || project.importStatus.compiling" absolute inset-0 bg="dark:dark-800 light-100" grid
+      place-items-center place-content-center gap-4
+    >
+      <Spinner />
+      <div flex flex-row space-x-2 items-center text-lg>
+        <div
+          w-6 h-6 :class="{
+            'i-raphael-package': project.importStatus.installingPackages,
+            'i-carbon-tool-kit': project.importStatus.compiling,
+          }"
+        />
+        <span v-if="project.importStatus.installingPackages">Installing Packages</span>
+        <span v-if="project.importStatus.compiling">Compiling Project</span>
+      </div>
+    </div>
   </div>
 </template>
 

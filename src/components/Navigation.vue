@@ -87,7 +87,6 @@ const overflow: MenuItem[] = [...menu.start, ...menu.end].filter(m => m.overflow
 
 <template>
   <nav
-    z-9001
     flex
     flex-col items-center w-16
     bg="dark:dark-700 light-100"
@@ -210,6 +209,10 @@ const overflow: MenuItem[] = [...menu.start, ...menu.end].filter(m => m.overflow
         bg="!transparent"
         rounded="none"
         px-0
+        title="item.label"
+        :href="item.href"
+        :to="item.to"
+        @click="() => item.onClick ? item.onClick() : null"
       >
         <i
           :class="item.icon"

@@ -21,7 +21,7 @@ const itemsAlignedRight = computed(() => {
 </script>
 
 <template>
-  <Titlebar border-b-0>
+  <Titlebar border-b-0 relative z-10>
     <!-- Left -->
     <div
       flex
@@ -29,6 +29,7 @@ const itemsAlignedRight = computed(() => {
       flex-row
       h-full
       items-center
+      relative
       divide="x-1 dark:dark-900 light-900"
     >
       <template

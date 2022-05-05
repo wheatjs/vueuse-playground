@@ -73,8 +73,11 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
   let proxy: PreviewProxy
   let stopUpdateWatcher: WatchStopHandle
 
-  const updatePreview = useDebounceFn(async() => {
+  const updatePreview = useDebounceFn(async () => {
     try {
+      if (Object.values(project.files).length === 0)
+        return
+
       const mainFile = project.files['main.ts'] as ScriptFile
 
       previewStatus.value.isCompiling = true

@@ -25,7 +25,7 @@ export default {
   <div
     relative
     h-full
-    z-5000
+    z-1
   >
     <Listbox v-model="value">
       <ListboxButton

@@ -76,32 +76,31 @@ const deleteFile = () => {
       w-4
       h-4 @click.stop="isCloseDialogOpen = true"
     />
+    <Dialog v-model="isCloseDialogOpen" max-w-130>
+      <div flex flex-row p-8 pb-0 space-x-4>
+        <div>
+          <div w-12 h-12 i-carbon-warning-alt text-amber-600 />
+        </div>
+        <div prose>
+          <h4 mt="!0">
+            Are you sure you want to permanently delete <span text-green-500>'{{ file?.filename }}'</span>?
+          </h4>
+          <p>
+            Your changes will be lost if you don't save them.
+          </p>
+        </div>
+      </div>
+      <div
+        p-4 pt-2 flex flex-row justify-end
+        space-x-2
+      >
+        <Button @click="isCloseDialogOpen = false">
+          Cancel
+        </Button>
+        <Button primary @click="deleteFile">
+          Delete
+        </Button>
+      </div>
+    </Dialog>
   </div>
-
-  <Dialog v-model="isCloseDialogOpen" max-w-130>
-    <div flex flex-row p-8 pb-0 space-x-4>
-      <div>
-        <div w-12 h-12 i-carbon-warning-alt text-amber-600 />
-      </div>
-      <div prose>
-        <h4 mt="!0">
-          Are you sure you want to permanently delete <span text-green-500>'{{ file?.filename }}'</span>?
-        </h4>
-        <p>
-          Your changes will be lost if you don't save them.
-        </p>
-      </div>
-    </div>
-    <div
-      p-4 pt-2 flex flex-row justify-end
-      space-x-2
-    >
-      <Button @click="isCloseDialogOpen = false">
-        Cancel
-      </Button>
-      <Button primary @click="deleteFile">
-        Delete
-      </Button>
-    </div>
-  </Dialog>
 </template>

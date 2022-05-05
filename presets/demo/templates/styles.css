@@ -115,9 +115,7 @@
 html {
   font-size: var(--vt-doc-code-font-size);
   background: var(--vt-c-bg-soft);
-  padding: 2em;
   position: relative;
-  margin-bottom: 10px;
   border-radius: 8px;
   transition: background-color 0.5s;
 }

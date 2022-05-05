@@ -9,10 +9,10 @@ const project = useProjectStore()
 const editor = useEditorStore()
 const files = ref<string[]>([])
 
-const filename = useRouteQuery('file')
+const _filename = useRouteQuery('file')
 
 watch(() => editor.currentFilename, () => {
-  filename.value = editor.currentFilename
+  _filename.value = editor.currentFilename
 })
 
 const pinnedFileGroups = computed(() => {
