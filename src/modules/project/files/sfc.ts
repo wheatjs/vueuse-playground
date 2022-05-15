@@ -59,12 +59,6 @@ export class SFCFile extends BaseFile {
     this.style.import(imports.style)
   }
 
-  public async compile() {
-    const { compileFile } = await import('~/modules/compiler')
-    const { compiled } = await compileFile(this)
-    this.compiled = { ...this.compiled, ...compiled }
-  }
-
   public override toString() {
     return `<script setup lang="ts">\n${this.script.toString()}\n</script>\n
 <template>\n${this.template.toString()}\n</template>\n

@@ -6,9 +6,8 @@ import type { PreviewProxyHandlers } from './PreviewProxy'
 import { useAppStore } from '~/modules/app'
 import { usePreviewStore } from '~/modules/preview'
 import { useProjectStore } from '~/modules/project'
-import { compileFilesAsModules, vueRuntimeUrl } from '~/modules/compiler'
+import { vueRuntimeUrl } from '~/modules/compiler'
 import { TerminalCommandType, sendTerminalCommand } from '~/modules/terminal'
-import type { BaseFile, ScriptFile } from '~/modules/project'
 
 const forcePreivewUpdateHook = createEventHook()
 export const forcePreviewUpdate = forcePreivewUpdateHook.trigger
@@ -30,9 +29,12 @@ const defaultHandlers: PreviewProxyHandlers = {
   },
   onFetchProgress: () => { },
   onConsole: (x) => {
+    if (x.duplicate)
+      return
+
     sendTerminalCommand({
       type: TerminalCommandType.WARN,
-      payload: x.args.join(' '),
+      payload: x.args,
     })
   },
   onUnhandledRejection: () => { },
@@ -78,40 +80,27 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
       if (Object.values(project.files).length === 0)
         return
 
-      const mainFile = project.files['main.ts'] as ScriptFile
-
-      previewStatus.value.isCompiling = true
-      const modules = await compileFilesAsModules({ main: mainFile }, project.files as Record<string, BaseFile>, project.packages)
-      previewStatus.value.isCompiling = false
-      previewStatus.value.didCompileSuccessfully = true
-      previewStatus.value.hasErrors = false
-
       await proxy.eval([
         `
           window.__modules__ = {}
           window.__css__ = ''
-          if (window.__app__) {
+          if (window.__app__ && 'unmount' in window.__app__) {
             window.__app__.unmount()
-            document.getElementById('app').innerHTML = ''
+            // document.getElementById('app').innerHTML = ''
           }
         `,
         app.isDark ? 'document.querySelector("html").classList.add("dark")' : 'document.querySelector("html").classList.remove("dark")',
-        ...modules,
+        ...project.modules.styles.map((style) => {
+          return `window.__css__ += \`${style.replace(/\\/g, '\\\\')}\``
+        }),
         `
-        const mainApp = __modules__['${mainFile.filename}']
-        
-        setTimeout(() => {
-            
-            if (mainApp && mainApp.app) {
-              window.__app__ = mainApp.app
-            }
-            document.getElementById('__sfc-styles').innerHTML = window.__css__
-          }, 0)
+          ${project.modules.scripts[0]}
+          window.__app__ = app
+          document.getElementById('__sfc-styles').innerHTML = window.__css__
         `,
       ])
     }
     catch (error) {
-      console.error(error)
       if (error instanceof Error) {
         sendTerminalCommand({
           type: TerminalCommandType.ERROR,
@@ -159,7 +148,7 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
     sandbox.addEventListener('load', () => {
       proxy.handle_links()
 
-      ;({ off: stopUpdateWatcher } = project.onFilesCompiled(() => {
+      ; ({ off: stopUpdateWatcher } = project.onFilesCompiled(() => {
         updatePreview()
       }))
 

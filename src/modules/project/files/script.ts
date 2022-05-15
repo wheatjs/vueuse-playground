@@ -39,12 +39,6 @@ export class ScriptFile extends BaseFile {
     this.script.import(imports.script)
   }
 
-  public async compile() {
-    const { compileFile } = await import('~/modules/compiler')
-    const { compiled } = await compileFile(this)
-    this.compiled = { ...this.compiled, ...compiled }
-  }
-
   public override toString() {
     return this.script.toString()
   }

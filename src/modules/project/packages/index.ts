@@ -3,6 +3,7 @@ import type { PackageJson } from 'type-fest'
 import config from '@playground/config'
 import { compare } from 'semver'
 import type { Package } from './types'
+import { buildPackage } from '~/modules/esbuild'
 
 const VERSION_DATA_URL = 'https://data.jsdelivr.com/v1/package/npm/'
 const url = (path: string) => `${config.project.packages.cdn}${path}`
@@ -17,18 +18,24 @@ export async function resolvePackageJson(name: string, version?: string): Promis
   return await response.json()
 }
 
-export async function resolvePackage(name: string, version?: string): Promise<Package[] | undefined> {
+export async function resolvePackage(name: string, version?: string, topLevel = true): Promise<Package[] | undefined> {
+  const external = ['vue', '@babel/parser', 'source-map', '@vue/compiler-ssr', '@vue/reactivity-transform', 'postcss', 'source-map-js', '']
   // const originalName = name
 
   // if (name in config.project.packages.redirects)
   //   name = config.project.packages.redirects[name]
 
+  let content: string | undefined
   const resolvedPackages: Package[] = []
 
   const packageJson = await resolvePackageJson(name, version)
   const packageDependencies = Object.entries(packageJson.dependencies || {})
+  const supportsEsm = isDefined(packageJson.module)
 
-  ;(await Promise.allSettled(packageDependencies.map(([name, version]) => resolvePackage(name, version))))
+  if (!supportsEsm && !external.includes(name) && topLevel)
+    content = await buildPackage(packageJson)
+
+    ;(await Promise.allSettled(packageDependencies.map(([name, version]) => resolvePackage(name, version, false))))
     .filter((result): result is PromiseFulfilledResult<Package[]> => result.status === 'fulfilled')
     .map(result => result.value)
     .forEach(pkg => resolvedPackages.push(...pkg))
@@ -38,6 +45,8 @@ export async function resolvePackage(name: string, version?: string): Promise<Pa
     name,
     version: packageJson.version || 'latest',
     metadata: packageJson,
+    supportsEsm,
+    content,
   })
 
   return resolvedPackages

@@ -15,7 +15,7 @@ export * from './setup'
 /**
  * Creates and returns a configured monaco instance.
  */
-export const createMonacoInstance = createSingletonPromise(async() => {
+export const createMonacoInstance = createSingletonPromise(async () => {
   await createWorkers()
   const { emmetHTML } = await import('emmet-monaco-es')
   const monaco = await import('monaco-editor')
@@ -101,7 +101,7 @@ export const createMonacoInstance = createSingletonPromise(async() => {
 
   let acquiredTypes: Record<string, string> = {}
 
-  const updateTypeDefinitions = async() => {
+  const updateTypeDefinitions = async () => {
     const localScriptFiles = Object.values(project.files)
       .filter((f): f is ScriptFile => f.filename.endsWith('.ts'))
       .map(f => ({

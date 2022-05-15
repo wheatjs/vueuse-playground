@@ -5,4 +5,6 @@ export interface Package {
   name: string
   version: string
   metadata: PackageJson
+  content: string | undefined
+  supportsEsm: boolean
 }

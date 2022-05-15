@@ -152,7 +152,7 @@ const overflow: MenuItem[] = [...menu.start, ...menu.end].filter(m => m.overflow
       @click="app.welcomeOpen = true"
     >
       <img
-        :src="firebase.user?.photoURL"
+        :src="firebase.user?.photoURL || undefined"
         rounded-full
         w="7"
       >

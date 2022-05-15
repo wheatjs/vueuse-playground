@@ -7,7 +7,8 @@ import type { Package } from './packages/types'
 import type { ProjectSolution } from './types'
 import { useEditorStore } from '~/modules/editor'
 import { usePreviewStore } from '~/modules/preview'
-import { createMonacoInstance, createWorkers } from '~/modules/editor/monaco'
+import { createWorkers } from '~/modules/editor/monaco'
+import { build, disposeEsbuild } from '~/modules/esbuild'
 
 export * from './packages/types'
 
@@ -32,6 +33,7 @@ export const useProjectStore = defineStore('project', () => {
   const isAddingPackages = ref(false)
 
   const files = shallowRef<Record<string, BaseFile>>({})
+  const modules = ref<{ scripts: string[]; styles: string[] }>({ scripts: [], styles: [] })
   const basePackages = ref<Package[]>([])
   const packages = ref<Package[]>([])
 
@@ -49,37 +51,22 @@ export const useProjectStore = defineStore('project', () => {
     if (filename && files.value[filename].readOnly)
       return
 
-    await createWorkers()
-    await createMonacoInstance()
+    try {
+      const { outputFiles } = await build(files.value, packages.value)
 
-    return new Promise<void>((resolve) => {
-      setTimeout(async () => {
-        if (filename) {
-          const file = files.value[filename]
-          await file.compile()
-        }
-
-        /**
-         * TODO: Extract unocss logic into a seperate place outside of the compile logic.
-         */
-        const uno = Object.values(files.value).find((f): f is CssFile => f.filename === 'uno.css')
-
-        if (uno) {
-          let unocss = ''
-          for (const file of Object.values(files.value)) {
-            if ('uno' in file.compiled)
-              unocss += (file.compiled as any).uno
-          }
-          uno.css.model?.setValue(unocss)
-          uno.compiled.css = unocss
+      if (outputFiles && outputFiles.length > 0) {
+        modules.value = {
+          scripts: outputFiles.filter(f => f.path.endsWith('.js')).map(f => f.text),
+          styles: outputFiles.filter(f => f.path.endsWith('.css')).map(f => f.text),
         }
 
         if (!silent)
           onFilesCompiledHook.trigger()
+      }
+    }
+    catch (error) {
 
-        resolve()
-      }, 0)
-    })
+    }
   }
 
   /**
@@ -88,6 +75,8 @@ export const useProjectStore = defineStore('project', () => {
   const createFile = async (file: BaseFile, silent?: boolean) => {
     await import('monaco-editor')
     await createWorkers()
+
+    disposeEsbuild()
 
     const _compile = useDebounceFn(() => compileFile(file.filename), previewUpdateDelay)
     file.onUpdate = () => _compile()
@@ -106,11 +95,12 @@ export const useProjectStore = defineStore('project', () => {
    * Deletes a project file
    */
   const deleteFile = (filename: string) => {
+    disposeEsbuild()
+
     const { [filename]: old, ...rest } = files.value
     old.destroy()
     files.value = rest
 
-    delete files.value[filename]
     onFileDeletedHook.trigger(filename)
   }
 
@@ -123,6 +113,7 @@ export const useProjectStore = defineStore('project', () => {
   const addPackage = async (pkgs: { name: string; version?: string }[]) => {
     isAddingPackages.value = true
 
+    // Package already suppors modules, so we can skip building it and instead add it to the import map.
     const resolvedPackages = (await Promise.allSettled(pkgs.map(({ name, version }) => resolvePackage(name, version))))
       .filter((result): result is PromiseFulfilledResult<Package[]> => result.status === 'fulfilled')
       .map(result => result.value)
@@ -133,16 +124,19 @@ export const useProjectStore = defineStore('project', () => {
       basePackages.value = prunePackages([...resolvedPackages.filter(x => pkgs.some(y => y.name === x.name)), ...basePackages.value])
     }
 
+    disposeEsbuild()
+
     isAddingPackages.value = false
     onPackageAddedHook.trigger(pkgs.map(({ name }) => name))
   }
 
   const packageImportMap = computed(() => {
-    return packages.value.reduce((acc: Record<string, string>, pkg) => {
-      acc[pkg.name] = url(pkg)
-      acc[`${pkg.name}/`] = urlBase(pkg)
-      return acc
-    }, {})
+    return packages.value
+      .filter(pkg => pkg.supportsEsm)
+      .reduce((acc: Record<string, string>, pkg) => {
+        acc[pkg.name] = url(pkg)
+        return acc
+      }, {})
   })
 
   /**
@@ -187,6 +181,8 @@ export const useProjectStore = defineStore('project', () => {
         return createFile(new CssFile(file))
       else if (file.filename.endsWith('.json'))
         return createFile(new BaseFile(file))
+
+      return null
     }))
 
     importStatus.value = { compiling: false, installingPackages: true }
@@ -302,6 +298,7 @@ export const useProjectStore = defineStore('project', () => {
     files,
     basePackages,
     packages,
+    modules,
 
     isCreatingProject: readonly(isCreatingProject),
     isAddingPackages: readonly(isAddingPackages),

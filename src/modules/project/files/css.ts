@@ -40,10 +40,4 @@ export class CssFile extends BaseFile {
   public override toString() {
     return this.css.toString()
   }
-
-  public async compile() {
-    const { compileFile } = await import('~/modules/compiler')
-    const { compiled } = await compileFile(this)
-    this.compiled = { ...this.compiled, ...compiled }
-  }
 }

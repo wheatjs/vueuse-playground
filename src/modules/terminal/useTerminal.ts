@@ -2,7 +2,7 @@ import type { Ref } from 'vue'
 import { Terminal } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import config from '@playground/config'
-import { options, red, yellow } from 'kolorist'
+import { blue, options, red, yellow } from 'kolorist'
 import { useAppStore } from '~/modules/app'
 
 options.enabled = true
@@ -44,6 +44,10 @@ export function useTerminal(target: Ref<HTMLElement | undefined>) {
     allowTransparency: true,
   })
 
+  terminal.onKey((e) => {
+    terminal.write(e.key)
+  })
+
   watch(() => app.isDark, () => {
     terminal.options.theme = app.isDark ? config.terminal.theme.dark : config.terminal.theme.light
   })
@@ -57,6 +61,9 @@ export function useTerminal(target: Ref<HTMLElement | undefined>) {
 
     if (type === TerminalCommandType.WARN)
       terminal.writeln(yellow(payload.toString()))
+
+    if (type === TerminalCommandType.INFO)
+      terminal.writeln(blue(payload.toString()))
   })
 
   const fit = () => {
