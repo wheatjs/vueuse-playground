@@ -1,22 +1,51 @@
 import type { Plugin } from 'esbuild-wasm'
-import { createGenerator, presetAttributify, presetUno, transformerDirectives, transformerVariantGroup } from 'unocss'
+import { createGenerator } from 'unocss'
 import { transformDirectives } from '@unocss/transformer-directives'
+import * as __unocss from 'unocss'
 import MagicString from 'magic-string'
 import type { BaseFile, CssFile } from '~/modules/project'
 
-const uno = createGenerator({
-  transformers: [
-    transformerDirectives(),
-    transformerVariantGroup(),
-  ],
-  presets: [presetUno(), presetAttributify()],
-})
+const CDN_BASE = 'https://cdn.skypack.dev/'
+const uno = createGenerator()
 
 export interface UnoCssPluginOptions {
   files: Record<string, BaseFile>
+  configFilename: string
 }
 
-export function unocssPlugin({ files }: UnoCssPluginOptions): Plugin {
+let configCache = ''
+const modulesCache = new Map<string, Promise<unknown> | unknown>()
+modulesCache.set('unocss', __unocss)
+
+export function clearModuleCache() {
+  modulesCache.clear()
+  modulesCache.set('unocss', __unocss)
+}
+
+const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor
+
+async function evaluateUserConfig(configStr: string) {
+  const code = configStr
+    .replace(/import\s*(.*?)\s*from\s*(['"])unocss\2/g, 'const $1 = await __import("unocss");')
+    .replace(/import\s*(\{.*?\})\s*from\s*(['"])([\w-@/]+)\2/g, `const $1 = await __import("${CDN_BASE}$3");`)
+    .replace(/import\s*(.*?)\s*from\s*(['"])([\w-@/]+)\2/g, `const $1 = (await __import("${CDN_BASE}/$3")).default;`)
+    .replace(/export default /, 'return ')
+
+  const __import = (name: string): any => {
+    if (!modulesCache.has(name))
+      modulesCache.set(name, import(/* @vite-ignore */ name))
+    return modulesCache.get(name)
+  }
+
+  // eslint-disable-next-line no-new-func
+  const fn = new AsyncFunction('__import', code)
+  const result = await fn(__import)
+
+  if (result)
+    return result
+}
+
+export function unocssPlugin({ files, configFilename = 'unocss.config.ts' }: UnoCssPluginOptions): Plugin {
   return {
     name: 'unocss',
     setup(build) {
@@ -46,6 +75,13 @@ export function unocssPlugin({ files }: UnoCssPluginOptions): Plugin {
 
         if (unofile === -1)
           return
+
+        const currentConfig = files[configFilename]?.toString()
+
+        if (currentConfig !== configCache) {
+          configCache = currentConfig
+          uno.setConfig(await evaluateUserConfig(currentConfig))
+        }
 
         let output = ''
 

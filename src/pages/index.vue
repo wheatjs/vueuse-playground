@@ -20,7 +20,7 @@ project.importProject(DefaultProject)
 
 <template>
   <div flex flex-row overflow-hidden>
-    <Navigation h-screen />
+    <Navigation />
     <main
       lt-lg="pt-10"
       h-screen

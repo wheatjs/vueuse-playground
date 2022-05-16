@@ -22,7 +22,7 @@ useEventListener('keydown', (e) => {
 
 <template>
   <div flex flex-row overflow-hidden>
-    <Navigation h-screen />
+    <Navigation />
     <main
       lt-lg="pt-10"
       h-screen
@@ -32,7 +32,7 @@ useEventListener('keydown', (e) => {
       grid
       :class="{
         'grid-rows-[min-content_auto_min-content]': (app.isMobileScreen && app.mobileViewPreference === 'code') || !app.isMobileScreen,
-        'grid-rows-[auto_min-content]': app.isMobileScreen && app.mobileViewPreference === 'preview'
+        'grid-rows-[auto_min-content]': app.isMobileScreen && app.mobileViewPreference === 'preview',
       }"
     >
       <Titlebar

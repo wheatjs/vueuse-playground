@@ -2,7 +2,7 @@ import config from '@playground/config'
 import type { ProjectSolutionPreset } from 'presets/types'
 import { prunePackages, resolvePackage } from './packages'
 
-import { BaseFile, CssFile, SFCFile, ScriptFile, UnoConfigFile } from './files'
+import { BaseFile, CssFile, SFCFile, ScriptFile } from './files'
 import type { Package } from './packages/types'
 import type { ProjectSolution } from './types'
 import { useEditorStore } from '~/modules/editor'
@@ -173,8 +173,6 @@ export const useProjectStore = defineStore('project', () => {
     await Promise.all(project.files.map((file) => {
       if (file.filename.endsWith('.vue'))
         return createFile(new SFCFile(file))
-      else if (file.filename === ('unocss.config.ts'))
-        return createFile(new UnoConfigFile(file))
       else if (file.filename.endsWith('.ts') || file.filename.endsWith('.js'))
         return createFile(new ScriptFile(file))
       else if (file.filename.endsWith('.css'))

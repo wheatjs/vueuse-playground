@@ -6,8 +6,11 @@ import type { PreviewProxyHandlers } from './PreviewProxy'
 import { useAppStore } from '~/modules/app'
 import { usePreviewStore } from '~/modules/preview'
 import { useProjectStore } from '~/modules/project'
-import { vueRuntimeUrl } from '~/modules/compiler'
 import { TerminalCommandType, sendTerminalCommand } from '~/modules/terminal'
+
+const defaultVueUrl = import.meta.env.PROD
+  ? `${location.origin}/vue.runtime.esm-browser.js` // to be copied on build
+  : `${location.origin}/src/vue-dev-proxy`
 
 const forcePreivewUpdateHook = createEventHook()
 export const forcePreviewUpdate = forcePreivewUpdateHook.trigger
@@ -64,7 +67,7 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
       return {
         imports: {
           ...project.packageImportMap,
-          vue: vueRuntimeUrl.value,
+          vue: defaultVueUrl,
         },
       }
     }),

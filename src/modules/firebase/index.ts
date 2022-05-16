@@ -29,11 +29,11 @@ export const useFirebaseStore = defineStore('firebase', () => {
 
   auth.onIdTokenChanged(u => user.value = u)
 
-  const signIn = async() => {
+  const signIn = async () => {
     signInWithPopup(auth, new GithubAuthProvider())
   }
 
-  const signOut = async() => {
+  const signOut = async () => {
     auth.signOut()
   }
 
