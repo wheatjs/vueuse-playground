@@ -15,16 +15,20 @@ const editor = useEditorStore()
 
 <template>
   <div>
-    <MonacoEditor
-      v-if="editor.codeEditor === 'monaco'"
-      :document="document"
-      :file="file"
-    />
-    <CodeMirrorEditor
-      v-else
-      :document="document"
-      :file="file"
-    />
+    <div v-if="editor.codeEditor === 'monaco'" h-full>
+      <MonacoEditor
+
+        :document="document"
+        :file="file"
+      />
+    </div>
+    <div v-else w-full h-full>
+      <CodeMirrorEditor
+
+        :document="document"
+        :file="file"
+      />
+    </div>
   </div>
 </template>
 

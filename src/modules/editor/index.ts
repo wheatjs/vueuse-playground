@@ -6,8 +6,6 @@ import { StatusbarAlignment, createStatusbarTextItem } from '~/modules/statusbar
 export * from './types'
 export * from './groups'
 export * from './store'
-export * from './monaco/useMonacoEditor'
-export * from './monaco'
 
 export default function init() {
   const editor = useEditorStore()

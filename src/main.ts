@@ -17,7 +17,7 @@ createApp(App)
   .use(createPinia())
   .mount('#app')
 
-Object.values(import.meta.glob('./modules/**/index.ts'))
+Object.values(import.meta.glob('./modules/*/index.ts'))
   .forEach((module) => {
     module()
       .then((mod) => {
