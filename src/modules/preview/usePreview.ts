@@ -6,7 +6,7 @@ import type { PreviewProxyHandlers } from './PreviewProxy'
 import { useAppStore } from '~/modules/app'
 import { usePreviewStore } from '~/modules/preview'
 import { useProjectStore } from '~/modules/project'
-import { TerminalCommandType, sendTerminalCommand } from '~/modules/terminal'
+import { TerminalCommandType, sendConsoleCommand, sendTerminalCommand } from '~/modules/terminal'
 
 const defaultVueUrl = import.meta.env.PROD
   ? `${location.origin}/vue.runtime.esm-browser.js` // to be copied on build
@@ -25,20 +25,18 @@ export const previewStatus = ref({
 
 const defaultHandlers: PreviewProxyHandlers = {
   onError: (error) => {
-    sendTerminalCommand({
-      type: TerminalCommandType.ERROR,
-      payload: `[App] ${error.value}`,
-    })
+    // sendTerminalCommand({
+    //   type: TerminalCommandType.ERROR,
+    //   payload: `[App] ${error.value}`,
+    // })
+    if (error.args)
+      sendConsoleCommand(['error', error.value])
   },
   onFetchProgress: () => { },
   onConsole: (x) => {
-    if (x.duplicate)
-      return
-
-    sendTerminalCommand({
-      type: TerminalCommandType.WARN,
-      payload: x.args,
-    })
+    console.log(x)
+    if (x.args)
+      sendConsoleCommand([x.level.replace('system-', ''), ...x.args])
   },
   onUnhandledRejection: () => { },
   onConsoleGroup: () => { },
@@ -88,8 +86,13 @@ export function usePreview(target: Ref<HTMLElement | undefined>, options: UsePre
           window.__modules__ = {}
           window.__css__ = ''
           if (window.__app__ && 'unmount' in window.__app__) {
-            window.__app__.unmount()
-            // document.getElementById('app').innerHTML = ''
+            try {
+              window.__app__.unmount()
+              document.getElementById('app').innerHTML = ''
+              window.__app__ = null
+            } catch(e) {
+              console.log('[App] Could not unmount app', e)
+            }
           }
         `,
         app.isDark ? 'document.querySelector("html").classList.add("dark")' : 'document.querySelector("html").classList.remove("dark")',

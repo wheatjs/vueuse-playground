@@ -10,7 +10,7 @@ const uno = createGenerator()
 
 export interface UnoCssPluginOptions {
   files: Record<string, BaseFile>
-  configFilename: string
+  configFilename?: string
 }
 
 let configCache = ''
@@ -100,7 +100,7 @@ export function unocssPlugin({ files, configFilename = 'unocss.config.ts' }: Uno
           }
         }
 
-        (files['uno.css'] as CssFile).css.model?.setValue(output)
+        (files['uno.css'] as CssFile).css.setValue(output)
 
         result.outputFiles[unofile] = {
           ...result.outputFiles[unofile],

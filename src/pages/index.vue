@@ -3,6 +3,7 @@ import { Pane, Splitpanes } from 'splitpanes'
 import DefaultProject from '../../presets/default'
 import { useProjectStore } from '~/modules/project'
 import { useAppStore } from '~/modules/app'
+import { sendConsoleCommand } from '~/modules/terminal'
 
 const app = useAppStore()
 const project = useProjectStore()
@@ -14,6 +15,10 @@ useEventListener('keydown', (e) => {
 
 if (app.showWelcome)
   app.welcomeOpen = true
+
+const clearConsole = () => {
+  sendConsoleCommand(['clear', undefined])
+}
 
 project.importProject(DefaultProject)
 </script>
@@ -74,7 +79,12 @@ project.importProject(DefaultProject)
               <Pane size="25" flex flex-col>
                 <Titlebar flex-shrink-0>
                   <i i="carbon-chevron-down" mr-1 text-base />
-                  Terminal
+                  <span flex-1>
+                    Console
+                  </span>
+                  <button @click="clearConsole">
+                    <i i-material-symbols-clear-all block w-5 h-5 />
+                  </button>
                 </Titlebar>
                 <div h="[calc(100%-32px)]">
                   <Terminal />

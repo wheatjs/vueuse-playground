@@ -1,5 +1,5 @@
 import type { editor as Editor } from 'monaco-editor'
-import type { BaseFile } from '~/modules/project'
+import type { BaseFile, Document } from '~/modules/project'
 
 export interface EditorConfig {
   fontFamily?: string
@@ -21,7 +21,7 @@ export interface EditorConfig {
 export interface EditorPane {
   name: string
   file: (file: BaseFile, files: Record<string, BaseFile>) => BaseFile
-  model: (file: BaseFile, files: Record<string, BaseFile>) => Editor.ITextModel
+  document: (file: BaseFile, files: Record<string, BaseFile>) => Document
 }
 
 export interface EditorGroup {

@@ -18,7 +18,7 @@ export class CssFile extends BaseFile {
   constructor(options: CssFileOptions) {
     super(options)
 
-    this.css = new Document(`${this.filename}:css`, {
+    this.css = new Document(`${this.filename}`, {
       onUpdate: () => this.onUpdate(),
       language: 'css',
       initialContent: options.style,

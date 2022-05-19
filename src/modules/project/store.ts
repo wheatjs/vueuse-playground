@@ -7,7 +7,6 @@ import type { Package } from './packages/types'
 import type { ProjectSolution } from './types'
 import { useEditorStore } from '~/modules/editor'
 import { usePreviewStore } from '~/modules/preview'
-import { createWorkers } from '~/modules/editor/monaco'
 import { build, disposeEsbuild } from '~/modules/esbuild'
 
 export * from './packages/types'
@@ -73,9 +72,6 @@ export const useProjectStore = defineStore('project', () => {
    * Creates a new project file
    */
   const createFile = async (file: BaseFile, silent?: boolean) => {
-    await import('monaco-editor')
-    await createWorkers()
-
     disposeEsbuild()
 
     const _compile = useDebounceFn(() => compileFile(file.filename), previewUpdateDelay)

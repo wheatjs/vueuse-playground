@@ -12,7 +12,7 @@ export const groups = defineEditorGroups([
       {
         name: 'main.ts',
         file: (file, files) => files['main.ts'] as ScriptFile,
-        model: (file, files) => (files['main.ts'] as ScriptFile).script.model!,
+        document: (file, files) => (files['main.ts'] as ScriptFile).script,
       },
     ],
   },
@@ -26,7 +26,7 @@ export const groups = defineEditorGroups([
       {
         name: 'main.css',
         file: (file, files) => files['main.css'] as CssFile,
-        model: (file, files) => (files['main.css'] as CssFile).css.model!,
+        document: (file, files) => (files['main.css'] as CssFile).css,
       },
     ],
   },
@@ -40,12 +40,12 @@ export const groups = defineEditorGroups([
       {
         name: 'unocss.config.ts',
         file: (file, files) => files['unocss.config.ts'] as ScriptFile,
-        model: (file, files) => (files['unocss.config.ts'] as ScriptFile).script.model!,
+        document: (file, files) => (files['unocss.config.ts'] as ScriptFile).script,
       },
       {
         name: 'Compiled CSS',
         file: (file, files) => files['uno.css'] as CssFile,
-        model: (file, files) => (files['uno.css'] as CssFile).css.model!,
+        document: (file, files) => (files['uno.css'] as CssFile).css,
       },
     ],
   },
@@ -57,12 +57,12 @@ export const groups = defineEditorGroups([
       {
         name: 'Script Setup',
         file: file => file as SFCFile,
-        model: file => (file as SFCFile).script.model!,
+        document: file => (file as SFCFile).script,
       },
       {
         name: 'Template',
         file: file => file as SFCFile,
-        model: file => (file as SFCFile).template.model!,
+        document: file => (file as SFCFile).template,
       },
     ],
   },
@@ -74,7 +74,7 @@ export const groups = defineEditorGroups([
       {
         name: 'Script',
         file: file => file as ScriptFile,
-        model: file => (file as ScriptFile).script.model!,
+        document: file => (file as ScriptFile).script,
       },
     ],
   },
@@ -86,7 +86,7 @@ export const groups = defineEditorGroups([
       {
         name: 'JSON',
         file: file => file as JsonFile,
-        model: file => (file as JsonFile).json.model!,
+        document: file => (file as JsonFile).json,
       },
     ],
   },
@@ -98,7 +98,7 @@ export const groups = defineEditorGroups([
       {
         name: 'CSS',
         file: file => file as CssFile,
-        model: file => (file as CssFile).css.model!,
+        document: file => (file as CssFile).css,
       },
     ],
   },

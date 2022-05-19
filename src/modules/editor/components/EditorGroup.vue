@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { Pane, Splitpanes } from 'splitpanes'
-import { createWorkers } from '../monaco/setup'
 import type { BaseFile } from '~/modules/project'
 import { useProjectStore } from '~/modules/project'
 import { groups, useEditorStore } from '~/modules/editor'
-
-await createWorkers()
-await import ('monaco-editor')
 
 const project = useProjectStore()
 const editor = useEditorStore()
@@ -50,8 +46,8 @@ const group = computed(() => {
         <Editor
           flex-1
           h="[calc(100%-32px)]"
-          :read-only="e.file(currentFile as BaseFile, project.files).readOnly"
-          :model="e.model(currentFile as BaseFile, project.files)"
+          :file="e.file(currentFile as BaseFile, project.files)"
+          :document="e.document(currentFile as BaseFile, project.files)"
         />
       </Pane>
     </Splitpanes>

@@ -1,11 +1,11 @@
 import type { BuildResult } from 'esbuild-wasm'
 import type { PackageJson } from 'type-fest'
-import { build as esbuild, initialize } from 'esbuild-wasm'
+import { build as esbuild, formatMessages, initialize } from 'esbuild-wasm'
 import { createSingletonPromise } from '@vueuse/core'
 import { cssPlugin, npmPlugin, scriptPlugin, unocssPlugin, vuePlugin } from './plugins'
 import type { BaseFile, Package } from '~/modules/project'
 import { makeCDNUrl } from '~/modules/shared'
-import { TerminalCommandType, sendTerminalCommand } from '~/modules/terminal'
+import { sendConsoleCommand } from '~/modules/terminal'
 
 let instance: BuildResult | undefined
 
@@ -23,65 +23,93 @@ export async function buildPackage(pkg: PackageJson) {
   if (!pkg.main && !pkg.module)
     return undefined
 
-  sendTerminalCommand({
-    payload: `[App] Compiling package "${pkg.name}" for browser `,
-    type: TerminalCommandType.INFO,
-  })
+  sendConsoleCommand(['info', `[App] Compiling package "${pkg.name}" for browser`])
 
   const content = await fetch(makeCDNUrl(`${pkg.name}@${pkg.version}`)).then(res => res.text())
 
-  const result = await esbuild({
-    resolveExtensions: ['.js', '.vue', '.css', '.ts', '.json'],
-    entryPoints: ['/index.ts'],
-    format: 'esm',
-    outdir: '/node_modules/',
-    bundle: true,
-    write: false,
+  try {
+    const result = await esbuild({
+      resolveExtensions: ['.js', '.vue', '.css', '.ts', '.json'],
+      entryPoints: ['/index.ts'],
+      format: 'esm',
+      outdir: '/node_modules/',
+      bundle: true,
+      write: false,
+      logLevel: 'error',
 
-    external: EXTERNAL_PACKAGES,
+      external: EXTERNAL_PACKAGES,
 
-    plugins: [
-      npmPlugin({
-        entry: content,
-      }),
-    ],
-  })
+      plugins: [
+        npmPlugin({
+          entry: content,
+        }),
+      ],
+    })
 
-  if (result.outputFiles.length > 0)
-    return result.outputFiles[0].text
+    if (result.outputFiles.length > 0) {
+      sendConsoleCommand(['info', `[App] Successfully compiled "${pkg.name}" for browser`])
+      return result.outputFiles[0].text
+    }
 
-  return undefined
+    sendConsoleCommand(['error', `[App] Failed to compile "${pkg.name}" for browser`])
+    return undefined
+  }
+  catch (error) {
+    sendConsoleCommand(['error', `[App] Failed to compile "${pkg.name}" for browser`])
+    return undefined
+  }
 }
 
 export async function build(files: Record<string, BaseFile>, packages: Package[]) {
   await init()
 
+  const handleErrors = async (result: BuildResult) => {
+    console.log(result)
+    if (result.errors.length > 0) {
+      const errors = await formatMessages(result.errors, { kind: 'error' })
+      sendConsoleCommand(['error', errors])
+    }
+  }
+
   if (instance) {
-    const result = await instance.rebuild!()
-    return result!
+    try {
+      const result = await instance.rebuild!()
+      handleErrors(result)
+      return result!
+    }
+    catch (error) {
+      // sendConsoleCommand(['error', error])
+      // console.log('should handle eorr', error)
+    }
   }
   else {
-    instance = await esbuild({
-      resolveExtensions: ['.js', '.vue', '.css', '.ts', '.json'],
-      entryPoints: ['/main.ts'],
-      outdir: '/dist',
-      format: 'esm',
-      write: false,
-      bundle: true,
-      incremental: true,
+    try {
+      instance = await esbuild({
+        resolveExtensions: ['.js', '.vue', '.css', '.ts', '.json'],
+        entryPoints: ['/main.ts'],
+        outdir: '/dist',
+        format: 'esm',
+        write: false,
+        bundle: true,
+        incremental: true,
 
-      external: [
-        ...EXTERNAL_PACKAGES,
-        ...packages.filter(pkg => pkg.supportsEsm).map(pkg => pkg.name),
-      ],
+        external: [
+          ...EXTERNAL_PACKAGES,
+          ...packages.filter(pkg => pkg.supportsEsm).map(pkg => pkg.name),
+        ],
 
-      plugins: [
-        unocssPlugin({ files }),
-        cssPlugin({ files }),
-        vuePlugin({ files }),
-        scriptPlugin({ files, packages: packages.filter(pkg => !pkg.supportsEsm) }),
-      ],
-    })
+        plugins: [
+          unocssPlugin({ files }),
+          cssPlugin({ files }),
+          vuePlugin({ files }),
+          scriptPlugin({ files, packages: packages.filter(pkg => !pkg.supportsEsm) }),
+        ],
+      })
+
+      handleErrors(instance!)
+    }
+    catch (error) {
+    }
 
     return instance!
   }

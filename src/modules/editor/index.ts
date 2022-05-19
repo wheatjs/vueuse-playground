@@ -6,7 +6,7 @@ import { StatusbarAlignment, createStatusbarTextItem } from '~/modules/statusbar
 export * from './types'
 export * from './groups'
 export * from './store'
-export * from './useEditor'
+export * from './monaco/useMonacoEditor'
 export * from './monaco'
 
 export default function init() {
@@ -23,12 +23,20 @@ export default function init() {
 
     currentEditorColumn,
     currentEditorLine,
+    codeEditor,
 
     disableAutomaticTypeAcquisition,
     isAcquiringTypeDefinitions,
   } = storeToRefs(editor)
 
   createAppSettings('Editor', [
+    {
+      name: 'Editor',
+      description: 'The editor to use',
+      type: 'string',
+      enum: ['monaco', 'codemirror'],
+      value: codeEditor,
+    },
     {
       name: 'Disable automatic type acquisition',
       description: 'Disable automatic type acquisition (may improve performance)',

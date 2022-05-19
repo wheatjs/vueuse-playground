@@ -7,6 +7,7 @@ export const useEditorStore = defineStore('editor', () => {
   const shouldShowAddFile = ref(false)
 
   const disableAutomaticTypeAcquisition = useLocalStorage('editor:disableAutomaticTypeAcquisition', false)
+  const codeEditor = useLocalStorage('editor:codeEditor', 'monaco')
   const editorTabSize = useLocalStorage('editor:TabSize', 2)
   const editorInsertSpaces = useLocalStorage('editor:InsertSpaces', true)
   const editorWordWrap = useLocalStorage<'off' | 'on' | 'wordWrapColumn' | 'bounded'>('editor:wordWrap', 'off')
@@ -24,6 +25,7 @@ export const useEditorStore = defineStore('editor', () => {
     currentFilename,
     shouldShowAddFile,
 
+    codeEditor,
     disableAutomaticTypeAcquisition,
     editorTabSize,
     editorInsertSpaces,
