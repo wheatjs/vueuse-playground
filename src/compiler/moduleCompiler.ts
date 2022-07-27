@@ -4,9 +4,8 @@ import {
   walk,
   walkIdentifiers,
 } from '@vue/compiler-sfc'
-import { babelParserDefaultPlugins } from '@vue/shared'
 import { ExportSpecifier, Identifier, Node, ObjectProperty } from '@babel/types'
-import {  orchestrator as store, OrchestratorFile as File } from '../orchestrator'
+import { orchestrator as store, OrchestratorFile as File } from '../orchestrator'
 import { MAIN_FILE } from './sfcCompiler'
 
 export function compileModulesForPreview() {
@@ -32,7 +31,6 @@ function processFile(file: File, seen = new Set<File>()) {
   const ast = babelParse(js, {
     sourceFilename: file.filename,
     sourceType: 'module',
-    plugins: [...babelParserDefaultPlugins],
   }).program.body
 
   const idToImportMap = new Map<string, string>()

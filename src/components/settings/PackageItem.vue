@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, computed, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { orchestrator } from '~/orchestrator'
 
 const props = defineProps<{

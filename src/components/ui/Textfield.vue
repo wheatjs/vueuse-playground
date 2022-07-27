@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import { useVModel } from '@vueuse/core'
 
 const props = defineProps<{ modelValue: string; placeholder?: string }>()
