@@ -233,8 +233,6 @@ const coordinateTemplate = `
 `
 
 const coordinateScript = `
-import { defineProps } from 'vue'
-
 defineProps({
   label: String,
   value: Number,
@@ -252,13 +250,13 @@ const initialPackages = [
     name: '@vueuse/shared',
     source: 'unpkg',
     description: 'Shared VueUse utilities.',
-    url: 'https://unpkg.com/@vueuse/shared@5.0.1/index.esm.js',
+    url: 'https://unpkg.com/@vueuse/shared@9.0.0/index.mjs',
   },
   {
     name: '@vueuse/core',
     source: 'unpkg',
     description: 'Collection of essential Vue Composition Utilities',
-    url: 'https://unpkg.com/@vueuse/core@5.0.1/index.esm.js',
+    url: 'https://unpkg.com/@vueuse/core@9.0.0/index.mjs',
   },
 ]
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { useVModel } from '@vueuse/core'
 import { orchestrator } from '~/orchestrator'
 

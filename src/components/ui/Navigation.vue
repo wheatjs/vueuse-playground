@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import { useVModel, useClipboard, useEventListener } from '@vueuse/core'
 import { isDark, toggleDark } from '~/logic/dark'
 import { exportState } from '~/orchestrator'
