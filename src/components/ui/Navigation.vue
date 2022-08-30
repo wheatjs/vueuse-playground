@@ -43,7 +43,7 @@ useEventListener('keydown', (ev) => {
     <Button
       icon
       text="base"
-      @click="share()"
+      @click="share"
     >
       <carbon-share />
     </Button>
