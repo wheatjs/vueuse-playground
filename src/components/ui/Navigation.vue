@@ -35,7 +35,7 @@ useEventListener('keydown', (ev) => {
     <Button
       icon
       text="base"
-      @click="toggleDark"
+      @click="toggleDark()"
     >
       <carbon-moon v-if="isDark" />
       <carbon-sun v-else />
@@ -43,7 +43,7 @@ useEventListener('keydown', (ev) => {
     <Button
       icon
       text="base"
-      @click="share()"
+      @click="share"
     >
       <carbon-share />
     </Button>
