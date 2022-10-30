@@ -69,7 +69,7 @@ const addPackage = () => {
           </Textfield>
           <div flex="~ row" space="x-4">
             <span flex="1"></span>
-            <Button>Cancel</Button>
+            <Button @click="isOpen = false">Cancel</Button>
             <Button primary @click="addPackage()">
               Add Package
             </Button>
