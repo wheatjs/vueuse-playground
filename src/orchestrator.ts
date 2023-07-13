@@ -258,6 +258,12 @@ const initialPackages = [
     description: 'Collection of essential Vue Composition Utilities',
     url: 'https://unpkg.com/@vueuse/core@10.1.0/index.mjs',
   },
+  {
+    name: '@vueuse/components',
+    source: 'unpkg',
+    description: 'An extension of VueUse, enables renderless component usage for composable functions',
+    url: 'https://unpkg.com/@vueuse/components@10.1.0/index.mjs',
+  },
 ]
 
 function loadInitialState() {
